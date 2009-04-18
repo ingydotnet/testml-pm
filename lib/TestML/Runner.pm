@@ -1,21 +1,31 @@
 package TestML::Runner;
 use strict;
 use warnings;
-# use TestML::Parser;
-use XXX;
+use TestML::Base -base;
 
-sub import {
-    my $pkg = shift;
-    $pkg->run;
-}
+use TestML::Parser;
+use Test::Builder;
+
+field 'fixture_class';
+field 'testml_file';
+field 'test_builder' => -init => 'Test::Builder->new';
 
 sub run {
+    my $self = shift;
     my $parser = TestML::Parser->new();
-    my $test_file_name = (caller(1))[1];
-    my $tesml_file_name =~ s/\.t$/.tml/;
+    $parser->open($self->testml_file);
+    my $test = $parser->parse;
 
-    my $$parser->open();
-    my $test_object = 
+    if ($test->tests) {
+        $self->test_builder->plan(tests => $test->tests);
+    }
+    else {
+        $self->test_builder->no_plan();
+    }
+    $self->test_builder->ok(1);
+    $self->test_builder->ok(1);
+    $self->test_builder->ok(1);
+    $self->test_builder->ok(1);
 }
 
 1;
