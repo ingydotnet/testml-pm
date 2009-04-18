@@ -1,0 +1,39 @@
+--META
+testml: 1.0.8
+title: A Basic TestML File
+tests: 12
+data_syntax: testml
+testml_test_marker: ===
+testml_data_marker: ---
+show_diff: false
+
+--TEST
+@foo.join(' - ')    == $bar
+@foo.reverse        == @baz
+@foo.sort           == @baz.sort
+@foo.scalar         == $foo
+@foo.union(@baz).sort.unique == @foo
+$foo.some_func      == $bar
+
+--DATA
+=== Test One
+--- foo
+a
+b
+c
+--- bar: a - b - c
+--- baz
+c
+b
+a
+
+=== Test Two
+--- foo
+I
+like
+pie!
+--- bar: I - like - pie!
+--- baz
+pie!
+like
+I

@@ -1,0 +1,10 @@
+TestML is a meta language for defining software tests. It is
+programming language agnostic and therefore can be implemented in any
+programming language.
+
+This project is a set of TestML tests for testing TestML itself. It is
+an acting specification of TestML. An implementation that can make these
+tests pass, can be considered complete.
+
+These tests should be included in an implementation. One way to do this
+using `git` is to use git submodules.
