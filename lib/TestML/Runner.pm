@@ -16,16 +16,14 @@ sub run {
     $parser->open($self->testml_file);
     my $test = $parser->parse;
 
-    if ($test->tests) {
-        $self->test_builder->plan(tests => $test->tests);
+    if ($test->meta->tests) {
+        $self->test_builder->plan(tests => $test->meta->tests);
     }
     else {
         $self->test_builder->no_plan();
     }
-    $self->test_builder->ok(1);
-    $self->test_builder->ok(1);
-    $self->test_builder->ok(1);
-    $self->test_builder->ok(1);
+
+    $self->test_builder->ok(1, 'Dummy test');
 }
 
 1;
