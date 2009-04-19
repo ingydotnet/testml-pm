@@ -14,16 +14,17 @@ sub run {
     my $self = shift;
     my $parser = TestML::Parser->new();
     $parser->open($self->testml_file);
-    my $test = $parser->parse;
+    my $spec = $parser->parse;
 
-    if ($test->meta->tests) {
-        $self->test_builder->plan(tests => $test->meta->tests);
+    if ($spec->meta->tests) {
+        $self->test_builder->plan(tests => $spec->meta->tests);
     }
     else {
         $self->test_builder->no_plan();
     }
 
-    $self->test_builder->ok(1, 'Dummy test');
+    my $count = @{$spec->tests->{tests}} * @{$spec->data->{blocks}};
+    $self->test_builder->ok(1, 'Dummy test') for 1..$count;
 }
 
 1;
