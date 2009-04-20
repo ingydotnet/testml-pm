@@ -62,13 +62,15 @@ sub _parse_expr {
     my $self = shift;
     my $text = shift;
     $text =~ s/^(\w+)//;
-    my $expr = TestML::Spec::Expr->new(name => $1);
+    my $expr = TestML::Spec::Expr->new(start => $1);
     while (length $text) {
         $text =~ s/^\.(\w+)// or die;
         my $func = TestML::Spec::Function->new(name => $1);
         $expr->add($func);
-        if ($text =~ s/\((.*?)\)//) {
-            $func->args($1);
+        if ($text =~ s/^\((.*?)\)//) {
+            my $args = $1;
+            $args =~ s/^'(.*)'$/$1/;
+            $func->args([$args]);
         }
     }
     return $expr;
@@ -79,15 +81,15 @@ sub _parse_data {
     my $text = shift;
     die unless $self->spec->meta->data_syntax eq 'testml';
     my $block_marker = $self->spec->meta->testml_block_marker;
-    my $field_marker = $self->spec->meta->testml_field_marker;
+    my $entry_marker = $self->spec->meta->testml_entry_marker;
     my $current_block;
-    my $current_field;
+    my $current_entry;
     my $current_notes = '';
     my @lines = ($text =~ /(.*\n)/g);
 
     my $is_throw_away = qr/^\s*(#.*)?$/;
     my $is_start_block = qr/^\Q$block_marker\E(?:\s+(.*))?$/;
-    my $is_start_field = qr/^\Q$field_marker\E\s+(\w+)(?:\s*:\s*(.*?)\s*)?$/;
+    my $is_start_entry = qr/^\Q$entry_marker\E\s+(\w+)(?:\s*:\s*(.*?)\s*)?$/;
 
     my ($r1, $r2);
 
@@ -104,7 +106,7 @@ sub _parse_data {
         my $notes = '';
         $notes .= shift(@lines) while
             @lines &&
-            $lines[0] !~ $is_start_field &&
+            $lines[0] !~ $is_start_entry &&
             $lines[0] !~ $is_start_block;
         $block->notes($notes);
         last BLOCK unless @lines;
@@ -112,39 +114,46 @@ sub _parse_data {
             $r1 = $1;
             next BLOCK;
         }
-        $lines[0] =~ $is_start_field or die;
+        $lines[0] =~ $is_start_entry or die;
         $r1 = $1;
         $r2 = $2;
-        FIELD: while (@lines) {
+        ENTRY: while (@lines) {
             shift(@lines);
             my $set = 0;
-            my $field = TestML::Spec::Field->new(name => $r1);
-            $block->add($field);
+            my $entry = TestML::Spec::Entry->new(name => $r1);
+            $block->add($entry);
             if (defined $r2) {
-                $field->content($r2);
+                $entry->value($r2);
                 $set = 1;
             }
 
             my $text = '';
             $text .= shift(@lines) while
                 @lines &&
-                $lines[0] !~ $is_start_field &&
+                $lines[0] !~ $is_start_entry &&
                 $lines[0] !~ $is_start_block;
             if ($set) {
-                $field->notes($text);
+                $entry->notes($text);
             }
             else {
-                $field->content($text);
+                $entry->value($text);
+            }
+            if (@lines and $lines[0] =~ $is_start_entry) {
+                $r1 = $1;
+                $r2 = $2;
+                next ENTRY;
+            }
+            if ($block->entries->{ONLY}) {
+                $self->spec->data->blocks([]);
+                $self->spec->data->add($block);
+                last BLOCK;
             }
             last BLOCK unless @lines;
             if ($lines[0] =~ $is_start_block) {
                 $r1 = $1;
                 next BLOCK;
             }
-            $lines[0] =~ $is_start_field or die;
-            $r1 = $1;
-            $r2 = $2;
-            next FIELD;
+            die;
         }
     }
 }

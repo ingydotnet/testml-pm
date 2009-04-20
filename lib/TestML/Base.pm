@@ -166,7 +166,7 @@ sub field {
     }
 
     my $sub = eval $code;
-    throw $@ if $@;
+    die "eval('$code') failed: $@" if $@;
     no strict 'refs';
     *{"${package}::$field"} = $sub;
     return $code if defined wantarray;

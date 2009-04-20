@@ -17,7 +17,7 @@ field 'title' => '';
 field 'tests' => 0;
 field 'data_syntax' => 'testml';
 field 'testml_block_marker' => '===';
-field 'testml_field_marker' => '---';
+field 'testml_entry_marker' => '---';
 
 #-----------------------------------------------------------------------------
 package TestML::Spec::Tests;
@@ -53,8 +53,9 @@ field 'right';
 package TestML::Spec::Expr;
 use TestML::Base -base;
 
-field 'name';
+field 'start';
 field 'functions' => [];
+field 'iterator' => 0;
 
 sub add {
     my $self = shift;
@@ -73,11 +74,17 @@ sub next {
     return $self->functions->[$iterator];
 }
 
+sub peek {
+    my $self = shift;
+    my $iterator = $self->iterator;
+    return $self->functions->[$iterator];
+}
+
 package TestML::Spec::Function;
 use TestML::Base -base;
 
 field 'name';
-field 'args';
+field 'args' => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Spec::Data;
@@ -109,19 +116,23 @@ use TestML::Base -base;
 
 field 'description' => '';
 field 'notes' => '';
-field 'fields' => {};
+field 'entries' => {};
 
 sub add {
     my $self = shift;
-    my $field = shift;
-    $self->fields->{$field->name} = $field;
+    my $entry = shift;
+    $self->entries->{$entry->name} = $entry;
 }
 
-package TestML::Spec::Field;
+sub fetch {
+    my $self = shift;
+    my $name = shift;
+    return $self->entries->{$name};
+}
+
+package TestML::Spec::Entry;
 use TestML::Base -base;
 
 field 'name' => '';
 field 'notes' => '';
-field 'content' => '';
-
-1;
+field 'value' => '';
