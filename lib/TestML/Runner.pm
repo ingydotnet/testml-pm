@@ -23,8 +23,12 @@ sub run {
         $self->test_builder->no_plan();
     }
 
-    my $count = @{$spec->tests->{tests}} * @{$spec->data->{blocks}};
-    $self->test_builder->ok(1, 'Dummy test') for 1..$count;
+    while (my $test = $spec->tests->next) {
+        $spec->data->reset;
+        while (my $block = $spec->data->next) {
+            $self->test_builder->ok(1, 'Dummy test');
+        }
+    }
 }
 
 1;

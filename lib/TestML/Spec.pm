@@ -23,13 +23,25 @@ field 'testml_field_marker' => '---';
 package TestML::Spec::Tests;
 use TestML::Base -base;
 
+field 'tests' => [];
+field 'iterator' => 0;
+
 sub add {
     my $self = shift;
     push @{$self->tests}, shift;
 }
 
-field 'tests' => [];
-field 'iterator' => 0;
+sub reset {
+    my $self = shift;
+    $self->iterator(0);
+}
+
+sub next {
+    my $self = shift;
+    my $iterator = $self->iterator;
+    $self->iterator($iterator + 1);
+    return $self->tests->[$iterator];
+}
 
 package TestML::Spec::Test;
 use TestML::Base -base;
@@ -41,13 +53,25 @@ field 'right';
 package TestML::Spec::Expr;
 use TestML::Base -base;
 
+field 'name';
+field 'functions' => [];
+
 sub add {
     my $self = shift;
     push @{$self->functions}, shift;
 }
 
-field 'name';
-field 'functions' => [];
+sub reset {
+    my $self = shift;
+    $self->iterator(0);
+}
+
+sub next {
+    my $self = shift;
+    my $iterator = $self->iterator;
+    $self->iterator($iterator + 1);
+    return $self->functions->[$iterator];
+}
 
 package TestML::Spec::Function;
 use TestML::Base -base;
@@ -59,27 +83,39 @@ field 'args';
 package TestML::Spec::Data;
 use TestML::Base -base;
 
+field 'notes' => '';
+field 'blocks' => [];
+field 'iterator' => 0;
+
 sub add {
     my $self = shift;
     push @{$self->blocks}, shift;
 }
 
-field 'notes' => '';
-field 'blocks' => [];
-field 'iterator' => 0;
+sub reset {
+    my $self = shift;
+    $self->iterator(0);
+}
+
+sub next {
+    my $self = shift;
+    my $iterator = $self->iterator;
+    $self->iterator($iterator + 1);
+    return $self->blocks->[$iterator];
+}
 
 package TestML::Spec::Block;
 use TestML::Base -base;
+
+field 'description' => '';
+field 'notes' => '';
+field 'fields' => {};
 
 sub add {
     my $self = shift;
     my $field = shift;
     $self->fields->{$field->name} = $field;
 }
-
-field 'description' => '';
-field 'notes' => '';
-field 'fields' => {};
 
 package TestML::Spec::Field;
 use TestML::Base -base;
