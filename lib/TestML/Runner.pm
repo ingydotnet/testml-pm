@@ -2,18 +2,20 @@ package TestML::Runner;
 use strict;
 use warnings;
 use TestML::Base -base;
-use TestML::Fixture;
 
 use TestML::Parser;
 use Test::Builder;
 use Test::More();
 
-field 'fixture';
+field 'class';
 field 'testml';
 field 'test_builder' => -init => 'Test::Builder->new';
 
 sub run {
     my $self = shift;
+    my $class = $self->class;
+    eval "require $class";
+
     my $parser = TestML::Parser->new();
     $parser->open($self->testml);
     my $spec = $parser->parse;
@@ -67,7 +69,7 @@ sub apply {
 
     $expr->reset;
     while (my $function = $expr->next) {
-        my $func = $self->fixture->get_function($function->name)
+        my $func = $self->class->get_function($function->name)
             or die;
         my @args = @{$function->args};
         $value = &$func($value, @args);
