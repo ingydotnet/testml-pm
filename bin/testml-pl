@@ -1,0 +1,5 @@
+#!/usr/bin/perl
+
+use lib 'lib';
+use TestML::CLI;
+TestML::CLI->new->run;
