@@ -1,21 +1,22 @@
---META
-testml: 1.0.8
+# This is the TestML spec version 
+testml: 0.0.1
+
 title: A Basic TestML File
-tests: 12
+tests: 8
+
 data_syntax: testml
 testml_test_marker: ===
 testml_data_marker: ---
-show_diff: false
 
---TEST
-@foo.join(' - ')    == $bar
-@foo.reverse        == @baz
-@foo.sort           == @baz.sort
-@foo.scalar         == $foo
-@foo.union(@baz).sort.unique == @foo
-$foo.some_func      == $bar
+foo.list.join(' - ')        == bar
+foo.list.reverse.item       == baz
+foo.list.sort.item          == baz.sort
+foo.list.scalar.item        == foo
 
---DATA
+# foo.union(@baz).sort.unique == @foo
+# foo.some_func      == $bar
+
+
 === Test One
 --- foo
 a
