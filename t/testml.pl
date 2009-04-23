@@ -1,5 +1,5 @@
 $TestML::config = {
-    fixture_class => 'TestML::TestFixture',
+    bridge_class => 'TestMLTestBridge',
     testml_files => [
         't/testml/*.tml',
     ],

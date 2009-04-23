@@ -1,4 +1,4 @@
-package TestML::Fixture;
+package TestML::BridgeBase;
 use strict;
 use warnings;
 
@@ -7,8 +7,7 @@ use TestML::Base -base;
 sub get_function {
     my $self = shift;
     my $name = shift;
-    my $function = "testml_${name}";
-    no strict 'refs';
+    my $function = $self->can("testml_${name}");
     if (not defined &$function) {
         die "Can't find function '$function'";
     }

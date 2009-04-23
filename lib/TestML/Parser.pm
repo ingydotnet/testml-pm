@@ -19,42 +19,45 @@ sub open {
 
 sub parse {
     my $self = shift;
-    my $testml = $self->stream;
-    $testml =~ /^--META\n(.*)^--TEST\n(.*)^--DATA\n(.*)/ms or die $testml;
-    my ($meta, $tests, $data) = ($1, $2, $3);
-    $self->_parse_meta($meta);
-    $self->_parse_tests($tests);
-    $self->_parse_data($data);
+    $self->_parse_header();
+    $self->_parse_data();
     return $self->spec;
 }
 
-sub _parse_meta {
+sub _parse_header {
     my $self = shift;
-    my $text = shift;
-    for my $line (split /\n/, $text) {
-        next if $line =~ /^\s*(#.*)?$/;
-        if ($line =~ /^(\w+):\s*(.*)/) {
+    my $text = $self->stream;
+    while (length $text) {
+        $text =~ s/^(.*)\n//;
+        my $line = $1;
+        if ($line =~ /^\s*(#.*)?$/) {
+            next;
+        }
+        elsif (
+            $line =~ /^===\s+\S/ and
+            $self->spec->meta->data_syntax eq 'testml'
+        ) {
+            $self->stream("$line\n$text");
+            last;
+        }
+        elsif ($line =~ /^(\w+):\s*(.*)/) {
             my ($key, $value) = ($1, $2);
             if ($self->spec->meta->can($key)) {
                 $self->spec->meta->$key($value);
             }
         }
-    }
-}
-
-sub _parse_tests {
-    my $self = shift;
-    my $text = shift;
-    for my $line (split /\n/, $text) {
-        next if $line =~ /^\s*(#.*)?$/;
-        $line =~ /\s*(.+?)\s+(==)\s+(.+?)\s*$/ or die;
-        my ($left, $op, $right) = ($1, $2, $3);
-        my $test = TestML::Spec::Test->new(
-           left => $self->_parse_expr($left), 
-           op => $op,
-           right => $self->_parse_expr($right), 
-        );
-        $self->spec->tests->add($test);
+        elsif ($line =~ /\s*(.+?)\s+(==)\s+(.+?)\s*$/) {
+            my ($left, $op, $right) = ($1, $2, $3);
+            my $test = TestML::Spec::Test->new(
+               left => $self->_parse_expr($left), 
+               op => $op,
+               right => $self->_parse_expr($right), 
+            );
+            $self->spec->tests->add($test);
+        }
+        else {
+            die "TestML parse failure on line:\n$line\n";
+        }
     }
 }
 
@@ -78,7 +81,7 @@ sub _parse_expr {
 
 sub _parse_data {
     my $self = shift;
-    my $text = shift;
+    my $text = $self->stream;
     die unless $self->spec->meta->data_syntax eq 'testml';
     my $block_marker = $self->spec->meta->testml_block_marker;
     my $entry_marker = $self->spec->meta->testml_entry_marker;

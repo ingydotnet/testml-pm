@@ -7,14 +7,18 @@ use TestML::Parser;
 use Test::Builder;
 use Test::More();
 
-field 'class';
+field 'bridge';
 field 'testml';
 field 'test_builder' => -init => 'Test::Builder->new';
 
 sub run {
     my $self = shift;
-    my $class = $self->class;
-    eval "require $class";
+    {
+        local @INC = ('t', 't/lib', @INC);
+        my $class = $self->bridge;
+        eval "require $class";
+        die $@ if $@;
+    }
 
     my $parser = TestML::Parser->new();
     $parser->open($self->testml);
@@ -69,7 +73,7 @@ sub apply {
 
     $expr->reset;
     while (my $function = $expr->next) {
-        my $func = $self->class->get_function($function->name)
+        my $func = $self->bridge->get_function($function->name)
             or die;
         my @args = @{$function->args};
         $value = &$func($value, @args);

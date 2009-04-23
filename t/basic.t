@@ -1,6 +1,6 @@
 use TestML::Runner;
 
 TestML::Runner->new(
-    class => 'TestML::Fixture',
-    testml => 'testml/tests/basic.tml',
+    testml => 't/testml/basic.tml',
+    bridge => 'TestMLTestBridge',
 )->run();
