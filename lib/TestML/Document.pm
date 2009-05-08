@@ -1,15 +1,15 @@
-package TestML::Spec;
+package TestML::Document;
 use strict;
 use warnings;
 
 use TestML::Base -base;
 
-field 'meta' => -init => 'TestML::Spec::Meta->new';
-field 'tests' => -init => 'TestML::Spec::Tests->new';
-field 'data' => -init => 'TestML::Spec::Data->new';
+field 'meta' => -init => 'TestML::Document::Meta->new';
+field 'tests' => -init => 'TestML::Document::Tests->new';
+field 'data' => -init => 'TestML::Document::Data->new';
 
 #-----------------------------------------------------------------------------
-package TestML::Spec::Meta;
+package TestML::Document::Meta;
 use TestML::Base -base;
 
 field 'testml' => 0.0.1;
@@ -20,7 +20,7 @@ field 'testml_block_marker' => '===';
 field 'testml_entry_marker' => '---';
 
 #-----------------------------------------------------------------------------
-package TestML::Spec::Tests;
+package TestML::Document::Tests;
 use TestML::Base -base;
 
 field 'tests' => [];
@@ -43,14 +43,14 @@ sub next {
     return $self->tests->[$iterator];
 }
 
-package TestML::Spec::Test;
+package TestML::Document::Test;
 use TestML::Base -base;
 
 field 'op';
 field 'left';
 field 'right';
 
-package TestML::Spec::Expr;
+package TestML::Document::Expr;
 use TestML::Base -base;
 
 field 'start';
@@ -80,14 +80,14 @@ sub peek {
     return $self->functions->[$iterator];
 }
 
-package TestML::Spec::Function;
+package TestML::Document::Function;
 use TestML::Base -base;
 
 field 'name';
 field 'args' => [];
 
 #-----------------------------------------------------------------------------
-package TestML::Spec::Data;
+package TestML::Document::Data;
 use TestML::Base -base;
 
 field 'notes' => '';
@@ -111,7 +111,7 @@ sub next {
     return $self->blocks->[$iterator];
 }
 
-package TestML::Spec::Block;
+package TestML::Document::Block;
 use TestML::Base -base;
 
 field 'description' => '';
@@ -130,7 +130,7 @@ sub fetch {
     return $self->entries->{$name};
 }
 
-package TestML::Spec::Entry;
+package TestML::Document::Entry;
 use TestML::Base -base;
 
 field 'name' => '';

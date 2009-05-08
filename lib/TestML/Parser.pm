@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use TestML::Base -base;
 
-use TestML::Spec;
+use TestML::Document;
 
 field 'spec';
 field 'stream';
@@ -14,7 +14,7 @@ sub open {
     open FILE, $file;
     my $testml = do {local $/; <FILE>};
     $self->stream($testml);
-    $self->spec(TestML::Spec->new());
+    $self->spec(TestML::Document->new());
 }
 
 sub parse {
@@ -48,7 +48,7 @@ sub _parse_header {
         }
         elsif ($line =~ /\s*(.+?)\s+(==)\s+(.+?)\s*$/) {
             my ($left, $op, $right) = ($1, $2, $3);
-            my $test = TestML::Spec::Test->new(
+            my $test = TestML::Document::Test->new(
                left => $self->_parse_expr($left), 
                op => $op,
                right => $self->_parse_expr($right), 
@@ -65,10 +65,10 @@ sub _parse_expr {
     my $self = shift;
     my $text = shift;
     $text =~ s/^(\w+)//;
-    my $expr = TestML::Spec::Expr->new(start => $1);
+    my $expr = TestML::Document::Expr->new(start => $1);
     while (length $text) {
         $text =~ s/^\.(\w+)// or die;
-        my $func = TestML::Spec::Function->new(name => $1);
+        my $func = TestML::Document::Function->new(name => $1);
         $expr->add($func);
         if ($text =~ s/^\((.*?)\)//) {
             my $args = $1;
@@ -103,7 +103,7 @@ sub _parse_data {
 
     BLOCK: while (@lines) {
         shift(@lines);
-        my $block = TestML::Spec::Block->new(description => $r1);
+        my $block = TestML::Document::Block->new(description => $r1);
         $self->spec->data->add($block);
 
         my $notes = '';
@@ -123,7 +123,7 @@ sub _parse_data {
         ENTRY: while (@lines) {
             shift(@lines);
             my $set = 0;
-            my $entry = TestML::Spec::Entry->new(name => $r1);
+            my $entry = TestML::Document::Entry->new(name => $r1);
             $block->add($entry);
             if (defined $r2) {
                 $entry->value($r2);
