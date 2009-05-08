@@ -7,19 +7,21 @@ $TestML::VERSION = '0.01';
 
 1;
 
+=encoding utf-8
+
 =head1 NAME
 
 TestML - Generic Software Testing Meta Language
 
 =head1 SYNOPSIS
 
-    testml: 0.0.1
+    # file t/testml/encode.tml
+    testml: 1.0
     title: Tests for AcmeEncode
     tests: 3
 
-    text.apply_rot13  == rot13
-    text.apply_md5    == md5
-
+    text.apply_rot13()  == rot13
+    text.apply_md5()    == md5
 
     === Encode some poetry
     --- text
@@ -34,11 +36,21 @@ TestML - Generic Software Testing Meta Language
     --- text: soopersekrit
     --- md5: 64002c26dcc62c1d6d0f1cb908de1435
 
-This TestML specification defines 2 tests, and defines 2 data blocks.
+This TestML document defines 2 assertions, and defines 2 data blocks.
 The first block has 3 data entries, but the second one has only 2.
-Therefore the rot13 test applies only to the first block, while the the
-md5 test applies to both. This results in a total of 3 tests, which is
-specified in the test.
+Therefore the rot13 assertion applies only to the first block, while the
+the md5 assertion applies to both. This results in a total of 3 tests,
+which is specified in meta statement in the document.
+
+To run this test you would have a normal test file that looks like this:
+
+
+    use TestML::Runner;
+
+    TestML::Runner->new(
+        testml => 't/testml/encode.tml',
+        bridge => 'AcmeEncode::Bridge',
+    )->run();
 
 The apply_* functions are defined in a bridge class that is specified
 outside this test.
@@ -56,8 +68,6 @@ expected results. Using a simple syntax, you specify what functions the
 data must pass through to produce the expected results. You use a bridge
 class to write the functions that pass the data through your
 application.
-
-This is an early release. More doc coming soon.
 
 =head1 AUTHOR
 
