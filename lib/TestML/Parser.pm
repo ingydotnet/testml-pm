@@ -103,7 +103,7 @@ sub _parse_data {
 
     BLOCK: while (@lines) {
         shift(@lines);
-        my $block = TestML::Document::Block->new(description => $r1);
+        my $block = TestML::Document::Block->new(label => $r1);
         $self->spec->data->add($block);
 
         my $notes = '';

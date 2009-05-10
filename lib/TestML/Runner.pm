@@ -22,23 +22,23 @@ sub run {
 
     my $parser = TestML::Parser->new();
     $parser->open($self->testml);
-    my $spec = $parser->parse;
+    my $document = $parser->parse;
 
-    print '=== ', $spec->meta->title, " ===\n";
+    print '=== ', $document->meta->title, " ===\n";
 
-    if ($spec->meta->tests) {
-        $self->test_builder->plan(tests => $spec->meta->tests);
+    if ($document->meta->tests) {
+        $self->test_builder->plan(tests => $document->meta->tests);
     }
     else {
         $self->test_builder->no_plan();
     }
 
-    while (my $test = $spec->tests->next) {
-        $spec->data->reset;
+    while (my $test = $document->tests->next) {
+        $document->data->reset;
         my $left_name = $test->left->start;
         my $op = $test->op;
         my $right_name = $test->right->start;
-        while (my $block = $spec->data->next) {
+        while (my $block = $document->data->next) {
             $block->fetch('SKIP') and next;
             $block->fetch('LAST') and last;
             my $left_entry = $block->fetch($test->left->start) or next; 
@@ -48,7 +48,7 @@ sub run {
                 $self->apply($test->left, $left_entry),
                 $test->op,
                 $self->apply($test->right, $right_entry),
-                $block->description,
+                $block->label,
             );
         }
     }
@@ -87,11 +87,11 @@ sub test {
     my $left_value = shift;
     my $operator = shift;
     my $right_value = shift;
-    my $description = shift;
+    my $label = shift;
     if (ref($left_value)) {
-        Test::More::is_deeply($left_value, $right_value, $description);
+        Test::More::is_deeply($left_value, $right_value, $label);
     }
     else {
-        $self->test_builder->is_eq($left_value, $right_value, $description);
+        $self->test_builder->is_eq($left_value, $right_value, $label);
     }
 }

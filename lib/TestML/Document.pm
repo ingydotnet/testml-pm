@@ -114,7 +114,7 @@ sub next {
 package TestML::Document::Block;
 use TestML::Base -base;
 
-field 'description' => '';
+field 'label' => '';
 field 'notes' => '';
 field 'entries' => {};
 
