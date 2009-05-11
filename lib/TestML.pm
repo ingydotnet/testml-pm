@@ -1,9 +1,11 @@
+# To Do:
+#
 package TestML;
 use strict;
 use warnings;
 use 5.006001;
 
-$TestML::VERSION = '0.01';
+$TestML::VERSION = '0.02';
 
 1;
 
@@ -68,6 +70,10 @@ expected results. Using a simple syntax, you specify what functions the
 data must pass through to produce the expected results. You use a bridge
 class to write the functions that pass the data through your
 application.
+
+=head1 SEE ALSO
+
+See L<http://www.testml.org/> for more information on TestML.
 
 =head1 AUTHOR
 

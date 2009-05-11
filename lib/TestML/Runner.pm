@@ -5,10 +5,10 @@ use TestML::Base -base;
 
 use TestML::Parser;
 use Test::Builder;
-use Test::More();
 
 field 'bridge';
-field 'testml';
+field 'document';
+
 field 'test_builder' => -init => 'Test::Builder->new';
 
 sub run {
@@ -21,7 +21,7 @@ sub run {
     }
 
     my $parser = TestML::Parser->new();
-    $parser->open($self->testml);
+    $parser->open($self->document);
     my $document = $parser->parse;
 
     print '=== ', $document->meta->title, " ===\n";
@@ -35,63 +35,70 @@ sub run {
 
     while (my $test = $document->tests->next) {
         $document->data->reset;
-        my $left_name = $test->left->start;
-        my $op = $test->op;
-        my $right_name = $test->right->start;
+
         while (my $block = $document->data->next) {
             $block->fetch('SKIP') and next;
             $block->fetch('LAST') and last;
-            my $left_entry = $block->fetch($test->left->start) or next; 
-            my $right_entry = $block->fetch($test->right->start) or next; 
+            for my $point_name ($test->point_names) {
+                $block->fetch($point_name) or next; 
+            }
 
-            $self->test(
-                $self->apply($test->left, $left_entry),
+            $self->do_test(
+                $self->evaluate_expression($test->left, $block),
                 $test->op,
-                $self->apply($test->right, $right_entry),
+                $self->evaluate_expression($test->right, $block),
                 $block->label,
             );
         }
     }
 }
 
-sub apply {
+sub evaluate_expression {
     my $self = shift;
-    my $expr = shift;
-    my $entry = shift;
+    my $expression = shift;
+    my $block = shift;
 
-    my $value = $entry->value;
+    my $point = $block->fetch($expression->start);
 
-    my $function = $expr->peek;
+    my $context = TestML::Context->new(
+        name => $point->name,
+        value => $point->value,
+    );
 
-    if ($function and $function->name eq 'raw') {
-        $expr->next;
+    my $transform = $expression->peek;
+    if ($transform and $transform->name eq 'raw') {
+        $expression->next;
     }
     else {
-        $value =~ s/\A\s*\n//;
-        $value =~ s/\n\s*\z/\n/;
+        $context->{value} =~ s/\A\s*\n//;
+        $context->{value} =~ s/\n\s*\z/\n/;
     }
 
-    $expr->reset;
-    while (my $function = $expr->next) {
-        my $func = $self->bridge->get_function($function->name)
+    $expression->reset;
+    while (my $transform = $expression->next) {
+        my $function = $self->bridge->get_transform_function($transform->name)
             or die;
-        my @args = @{$function->args};
-        $value = &$func($value, @args);
+        my @args = @{$transform->args};
+        my $value = &$function($context, @args);
+        $context->value($value);
     }
 
-    return $value;
+    return $context;
 }
 
-sub test {
+sub do_test {
     my $self = shift;
-    my $left_value = shift;
+    my $left = shift;
     my $operator = shift;
-    my $right_value = shift;
+    my $right = shift;
     my $label = shift;
-    if (ref($left_value)) {
-        Test::More::is_deeply($left_value, $right_value, $label);
-    }
-    else {
-        $self->test_builder->is_eq($left_value, $right_value, $label);
+    if ($operator eq '==') {
+        $self->test_builder->is_eq($left->value, $right->value, $label);
     }
 }
+
+package TestML::Context;
+use TestML::Base -base;
+
+field 'name';
+field 'value';

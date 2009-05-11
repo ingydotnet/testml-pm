@@ -15,9 +15,8 @@ use TestML::Base -base;
 field 'testml' => 0.0.1;
 field 'title' => '';
 field 'tests' => 0;
-field 'data_syntax' => 'testml';
 field 'testml_block_marker' => '===';
-field 'testml_entry_marker' => '---';
+field 'testml_point_marker' => '---';
 
 #-----------------------------------------------------------------------------
 package TestML::Document::Tests;
@@ -49,8 +48,9 @@ use TestML::Base -base;
 field 'op';
 field 'left';
 field 'right';
+field 'point_names' => [];
 
-package TestML::Document::Expr;
+package TestML::Document::Expression;
 use TestML::Base -base;
 
 field 'start';
@@ -80,7 +80,7 @@ sub peek {
     return $self->functions->[$iterator];
 }
 
-package TestML::Document::Function;
+package TestML::Document::Transform;
 use TestML::Base -base;
 
 field 'name';
@@ -115,24 +115,23 @@ package TestML::Document::Block;
 use TestML::Base -base;
 
 field 'label' => '';
-field 'notes' => '';
-field 'entries' => {};
+field 'points' => {};
 
 sub add {
     my $self = shift;
-    my $entry = shift;
-    $self->entries->{$entry->name} = $entry;
+    my $point = shift;
+    $self->points->{$point->name} = $point;
 }
 
 sub fetch {
     my $self = shift;
     my $name = shift;
-    return $self->entries->{$name};
+    return $self->points->{$name};
 }
 
-package TestML::Document::Entry;
+package TestML::Document::Point;
 use TestML::Base -base;
-
+ 
 field 'name' => '';
 field 'notes' => '';
 field 'value' => '';

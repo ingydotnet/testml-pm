@@ -1,11 +1,11 @@
 package TestMLTestBridge;
 use strict;
 use warnings;
-use base 'TestML::BridgeBase';
+use base 'TestML::Bridge';
 
 sub testml_my_thing {
-    my $text = shift;
-    return join ' - ', split "\n", $text;
+    my $self = shift;
+    return join ' - ', split "\n", $self->value;
 }
 
 1;
