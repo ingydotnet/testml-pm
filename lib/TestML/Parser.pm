@@ -33,6 +33,19 @@ sub read {
     return $content;
 }
 
+sub getline {
+    my $self = shift;
+    return unless length($self->{stream});
+    $self->{stream} =~ s/(.*\n)// or die;
+    return $1;
+}
+
+sub ungetline {
+    my $self = shift;
+    my $line = shift;
+    $self->stream("$line$self->{stream}");
+}
+
 sub parse {
     my $self = shift;
     $self->_parse_head();
@@ -43,23 +56,21 @@ sub parse {
 my $NON_SPACE = '\S';
 my $NON_BREAK = '.';
 my $space = '[\ \t]';
+my $eol = '\r?\n';
 my $keyword = '[a-z][a-z0-9_]*';
 my $value = "$NON_SPACE($NON_BREAK*$NON_SPACE)";
-my $match_meta = qr/^($keyword):$space+($value)$/;
-my $match_test = qr/^(.+?)\s+(==)\s+(.+?)\s*$/;
-my $match_include = qr/^%include$space+($NON_BREAK*$NON_SPACE)$/;
+my $match_meta = qr/^($keyword):$space+($value)$eol/;
+my $match_test = qr/^(.+?)\s+(==)\s+(.+?)\s*$eol/;
+my $match_include = qr/^%include$space+($NON_BREAK*$NON_SPACE)$eol/;
 
 sub _parse_head {
     my $self = shift;
-    my $text = $self->stream;
-    while (length $text) {
-        $text =~ s/^(.*)\n//;
-        my $line = $1;
+    while (my $line = $self->getline()) {
         if ($line =~ $match_meta) {
             my ($key, $value) = ($1, $2);
-            if ($self->document->meta->can($key)) {
-                $self->document->meta->$key($value);
-            }
+            $self->error("Invalid meta keyword '$key'\n")
+                unless $self->document->meta->has($key);
+            $self->document->meta->$key($value);
         }
         elsif ($line =~ $match_test) {
             my ($left, $op, $right) = ($1, $2, $3);
@@ -77,11 +88,11 @@ sub _parse_head {
             next;
         }
         elsif ($line =~ /^===\s+\S/) {
-            $self->stream("$line\n$text");
+            $self->ungetline($line);
             last;
         }
         else {
-            die "TestML parse failure on line:\n$line\n";
+            $self->error("TestML parse failure\n");
         }
     }
 }
@@ -182,6 +193,13 @@ sub grammar {
         statement => [qw(word colonspace value)],
         body => [qw(line*)],
     }
+}
+
+sub error {
+    require Carp;
+    my $self = shift;
+    my $msg = shift;
+    Carp::croak($msg);
 }
 
 1;

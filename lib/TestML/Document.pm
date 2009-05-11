@@ -18,6 +18,18 @@ field 'tests' => 0;
 field 'testml_block_marker' => '===';
 field 'testml_point_marker' => '---';
 
+sub has {
+    my $self = shift;
+    my $name = shift;
+    return ($name =~ /^(
+        testml |
+        title |
+        tests |
+        testml_block_marker |
+        testml_point_marker
+    )$/x);
+}
+
 #-----------------------------------------------------------------------------
 package TestML::Document::Tests;
 use TestML::Base -base;
