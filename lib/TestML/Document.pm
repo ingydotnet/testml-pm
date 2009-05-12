@@ -66,12 +66,12 @@ package TestML::Document::Expression;
 use TestML::Base -base;
 
 field 'start';
-field 'functions' => [];
+field 'transforms' => [];
 field 'iterator' => 0;
 
 sub add {
     my $self = shift;
-    push @{$self->functions}, shift;
+    push @{$self->transforms}, shift;
 }
 
 sub reset {
@@ -83,13 +83,13 @@ sub next {
     my $self = shift;
     my $iterator = $self->iterator;
     $self->iterator($iterator + 1);
-    return $self->functions->[$iterator];
+    return $self->transforms->[$iterator];
 }
 
 sub peek {
     my $self = shift;
     my $iterator = $self->iterator;
-    return $self->functions->[$iterator];
+    return $self->transforms->[$iterator];
 }
 
 package TestML::Document::Transform;
