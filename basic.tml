@@ -1,0 +1,37 @@
+# This is the TestML spec version 
+%TestML: 1.0
+%Title:  A Basic TestML File
+%Plan:   10
+
+%TestMLBlockMarker: ===
+%TestMLPointMarker: ---
+
+
+foo.list().join(' - ')          == bar;
+foo.list().reverse().item()     == baz;
+foo.list().sort().item()        == baz.list().sort().item();
+foo.list().item()               == foo;
+foo.my_thing()                  == bar;
+
+
+=== Test One
+--- foo
+a
+b
+c
+--- bar: a - b - c
+--- baz
+c
+b
+a
+
+=== Test Two
+--- foo
+I
+like
+pie!
+--- bar: I - like - pie!
+--- baz
+pie!
+like
+I
