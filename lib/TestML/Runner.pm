@@ -3,40 +3,29 @@ use strict;
 use warnings;
 use TestML::Base -base;
 
+use TestML::Document;
 use TestML::Parser;
-use Test::Builder;
 
 field 'bridge';
 field 'document';
+field 'doc', -init => '$self->parse()';
 
-field 'test_builder' => -init => 'Test::Builder->new';
+sub setup {
+    die "\nDon't use TestML::Runner directly.\nUse an appropriate subclass like TestML::Runner::TAP.\n";
+}
 
 sub run {
     my $self = shift;
-    {
-        local @INC = ('t', 't/lib', @INC);
-        my $class = $self->bridge;
-        eval "require $class";
-        die $@ if $@;
-    }
+    $self->setup();
 
-    my $parser = TestML::Parser->new();
-    $parser->open($self->document);
-    my $document = $parser->parse;
+    $self->title();
 
-    print '=== ', $document->meta->title, " ===\n";
+    $self->plan_begin();
 
-    if ($document->meta->tests) {
-        $self->test_builder->plan(tests => $document->meta->tests);
-    }
-    else {
-        $self->test_builder->no_plan();
-    }
+    while (my $test = $self->doc->tests->next) {
+        $self->doc->data->reset;
 
-    while (my $test = $document->tests->next) {
-        $document->data->reset;
-
-        while (my $block = $document->data->next) {
+        while (my $block = $self->doc->data->next) {
             $block->fetch('SKIP') and next;
             $block->fetch('LAST') and last;
             for my $point_name ($test->point_names) {
@@ -51,6 +40,8 @@ sub run {
             );
         }
     }
+
+    $self->plan_end();
 }
 
 sub evaluate_expression {
@@ -86,15 +77,17 @@ sub evaluate_expression {
     return $context;
 }
 
-sub do_test {
+sub parse {
     my $self = shift;
-    my $left = shift;
-    my $operator = shift;
-    my $right = shift;
-    my $label = shift;
-    if ($operator eq '==') {
-        $self->test_builder->is_eq($left->value, $right->value, $label);
-    }
+
+    my $builder = TestML::Document::Builder->new();
+    my $parser = TestML::Parser->new(
+        receiver => $builder,
+    );
+
+    $parser->open($self->document);
+    $parser->parse;
+    return $builder->document;
 }
 
 package TestML::Context;

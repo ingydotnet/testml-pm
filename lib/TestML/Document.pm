@@ -12,22 +12,38 @@ field 'data' => -init => 'TestML::Document::Data->new';
 package TestML::Document::Meta;
 use TestML::Base -base;
 
-field 'testml' => 0.0.1;
-field 'title' => '';
-field 'tests' => 0;
-field 'testml_block_marker' => '===';
-field 'testml_point_marker' => '---';
+field 'TestML' => 0.0.1;
+field 'Data' => [];
+field 'Title' => '';
+field 'Plan' => 0;
+field 'TestMLBlockMarker' => '===';
+field 'TestMLPointMarker' => '---';
 
 sub has {
     my $self = shift;
     my $name = shift;
     return ($name =~ /^(
-        testml |
-        title |
-        tests |
-        testml_block_marker |
-        testml_point_marker
+        TestML |
+        Data |
+        Title |
+        Plan |
+        TestMLBlockMarker |
+        TestMLPointMarker
     )$/x);
+}
+
+sub get {
+    my $self = shift;
+    my $key = shift;
+    return $self->{$key};
+}
+
+sub set {
+    my $self = shift;
+    my $key = shift;
+    my $value = shift;
+    $self->{$key} = $value;
+    return $self->{$key};
 }
 
 #-----------------------------------------------------------------------------
@@ -147,3 +163,33 @@ use TestML::Base -base;
 field 'name' => '';
 field 'notes' => '';
 field 'value' => '';
+
+package TestML::Document::Builder;
+use TestML::Base -base;
+use TestML::Document;
+
+field 'document', -init => 'TestML::Document->new()';
+
+sub hit_meta_testml_statement {
+    my $self = shift;
+    my $version = shift;
+    $self->document->meta->set('TestML', $version);
+}
+
+sub hit_meta_statement {
+    my $self = shift;
+    my $key = shift;
+    my $value = shift;
+    $self->document->meta->set($key, $value);
+}
+
+sub pre_test_statement {
+}
+sub hit_test_statement {
+}
+sub not_test_statement {
+}
+
+sub xxxpre_test_section { warn "\n\n==== test section ====\n\n\n" }
+
+

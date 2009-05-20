@@ -1,0 +1,17 @@
+== To Do List
+
++ Rename %Tests to %Plan
++ Move the Builder to Document
++ Create TestML::Runner::TAP
+  + Inherit from TestML::Runner
+- Fix the unquoted string regexp
+- Build Tests object from parse events
+- Parse Data Section
+- use TestML::Runner::TAP -run, -bridge => 'TestMLTestBridge';
+  - for tests with inline data
+- Write the evaluation runtime
+- Write the runtime spec
+
+== Ideas
+
+- write a 'testml' command line tool
