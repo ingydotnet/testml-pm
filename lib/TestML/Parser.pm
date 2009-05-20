@@ -15,8 +15,6 @@ sub parse {
     my $self = shift;
     $self->position(0);
 
-#     warn "Let the Parsing BEGIN!\n";
-
     $self->match('document');
     if ($self->position < length($self->stream)) {
         my $substr = substr($self->stream, $self->position, 50);
@@ -57,7 +55,7 @@ sub match {
         }
         
         $topic = $self->grammar->{$topic};
-        $self->callback('pre');
+        $self->callback('try');
     }
 
     my $old_position = $self->position;
@@ -76,7 +74,7 @@ sub match {
         XXX $topic;
     }
 
-    my $status = $result ? 'hit' : 'not';
+    my $status = $result ? 'got' : 'not';
     $self->callback($status);
 
     $info->{status} = $status; #XXX
@@ -91,6 +89,7 @@ sub callback {
     my $self = shift;
     my $type = shift;
     my $callback = $type . '_' . $self->{state};
+#     warn ">> $callback\n";
     if ($self->receiver->can($callback)) {
         $self->receiver->$callback(@{$self->arguments});
     }

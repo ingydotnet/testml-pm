@@ -62,8 +62,8 @@ test_section:
 ws: /(?:$SPACE|$EOL|$comment)/
 
 test_statement:
-- - test_expression
-- =: /;/
+- test_expression
+- /;/
 
 test_expression:
 - sub_expression

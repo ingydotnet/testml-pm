@@ -4,14 +4,10 @@ __DATA__
 
 %TestML: 1.0
 %Title: Ingy's Test
-%Plan: 11
+%Plan: 4
 
 foo == bar;
-
-# bar
-#     .EQ(
-#     foo
-# );
+bar == foo;
 
 === Foo for thought
 --- foo: O HAI
