@@ -58,42 +58,25 @@ test_section:
   - test_statement
   - ws
   ^: '*'
-# - /(?:$comment|$EOL)/
-
-test_statement:
-- /:
-  - test_assertion
-  - data_expression
-- =: /;/
-
-test_assertion:
-- data_expression
-- assertion_expression
-
-data_expression:
-- data_sub_expression
-- =:
-  - call_indicator
-  - data_sub_expression
-  ^: '*'
-
-call_indicator: /(?:$DOT$ws*|$ws*$DOT)/
-
-data_sub_expression:
-  /:
-  - point_name
-  - transform_call
-
-point_name:
-  /:
-  - user_point_name
-  - core_point_name
-
-user_point_name: /($LOWER$WORD*)/
-
-core_point_name: /($UPPER$WORD*)/
 
 ws: /(?:$SPACE|$EOL|$comment)/
+
+test_statement:
+- - test_expression
+- =: /;/
+
+test_expression:
+- sub_expression
+- /:
+  - assertion_expression
+  - - call-indicator
+    - test-expression
+  ^: '?'
+
+sub_expression:
+- /:
+  - transform_call
+  - data_point
 
 transform_call:
 - transform_name
@@ -103,12 +86,23 @@ transform_call:
 
 transform_name:
   /:
-  - user_transform_name
-  - core_transform_name
+  - user_transform
+  - core_transform
 
-user_transform_name: /($LOWER$WORD*)/
+user_transform: /($LOWER$WORD*)/
 
-core_transform_name: /($UPPER$WORD*)/
+core_transform: /($UPPER$WORD*)/
+
+call_indicator: /(?:$DOT$ws*|$ws*$DOT)/
+
+data_point:
+  /:
+  - user_point
+  - core_point
+
+user_point: /($LOWER$WORD*)/
+
+core_point: /($UPPER$WORD*)/
 
 argument_list:
   =:
@@ -121,25 +115,30 @@ argument_list:
 
 argument:
   /:
-  - data-expression
+  - sub_expression
   - quoted_string
 
 quoted_string:
   /:
-  - single-quoted-string
-  - double-quoted-string
+  - single_quoted_string
+  - double_quoted_string
 
 assertion_expression:
   /:
-  - inline_assertion
-  - function_assertion
+  - assertion_operation
+  - assertion_call
 
-inline_assertion:
-- /$ws+/
-- assertion_operator
-- /$ws+/
-- data_expression
+assertion_operation:
+- /$ws+$assertion_operator$ws+/
+- sub_expression
 
 assertion_operator: /==/
+
+assertion_call:
+- /$call_indicator$assertion_name\($ws*/
+- sub_expression
+- /$ws*\)/
+
+assertion_name: /EQ/
 
 data_section: /(===(?:$SPACE|$EOL)$ANY+)/

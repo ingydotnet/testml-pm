@@ -50,35 +50,16 @@ sub set {
 package TestML::Document::Tests;
 use TestML::Base -base;
 
-field 'tests' => [];
+field 'expressions' => [];
 field 'iterator' => 0;
 
-sub add {
-    my $self = shift;
-    push @{$self->tests}, shift;
-}
-
-sub reset {
-    my $self = shift;
-    $self->iterator(0);
-}
-
-sub next {
-    my $self = shift;
-    my $iterator = $self->iterator;
-    $self->iterator($iterator + 1);
-    return $self->tests->[$iterator];
-}
-
-package TestML::Document::Test;
+package TestML::Document::Expression;
 use TestML::Base -base;
 
-field 'op';
-field 'left';
-field 'right';
-field 'point_names' => [];
+field 'sub_expressions' => [];
+field 'assertion_expression';
 
-package TestML::Document::Expression;
+package TestML::Document::SubExpression;
 use TestML::Base -base;
 
 field 'start';
