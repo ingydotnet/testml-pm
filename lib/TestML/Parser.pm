@@ -10,44 +10,26 @@ field 'grammar', -init => 'TestML::Parser::Grammar->grammar()';
 field 'position';
 field 'receiver';
 field 'arguments';
+field 'stack' => [];
 
 sub parse {
     my $self = shift;
     $self->position(0);
-
     $self->match('document');
     if ($self->position < length($self->stream)) {
-        my $substr = substr($self->stream, $self->position, 50);
-        $substr =~ s/\n/\\n/;
-        XXX +{
-            __ => "Parse failed",
-            _ => $self->receiver->document,
-            state => $self->{state},
-            position => $self->position,
-            substr => $substr,
-            length => length($self->stream),
-        };
+        die "Parse document failed for some reason";
     }
 }
-
-my $stack = []; #XXX
 
 sub match {
     my $self = shift;
     my $topic = shift or die "No topic passed to match";
 
-#     warn ">>> " . (ref($topic) || $topic) . "\n";
-    my $info = {
-        _ => ref($topic) || $topic,
-        stack => $stack,
-        position => $self->position,
-    }; #XXX
-
+    my $state = undef;
     if (not ref($topic) and $topic =~ /^\w+$/) {
-        $self->{state} = $topic;
+        $state = $topic;
 
-        $info->{state} = $topic; #XXX
-        push @$stack, $topic; #XXX
+        push @{$self->stack}, $state;
 
         if (not defined $self->grammar->{$topic}) {
             die "\n\n*** No grammar support for '$topic'\n\n";
@@ -55,31 +37,31 @@ sub match {
         }
         
         $topic = $self->grammar->{$topic};
-        $self->callback('try');
+        $self->callback('try', $state);
     }
 
     my $old_position = $self->position;
-    my $result;
+    my $method;
     if (not ref $topic and $topic =~ /^\//) {
-        $info->{regexp} = $self->get_regexp($topic);
-        $result = $self->match_regexp($topic);
+        $method = 'match_regexp';
     }
     elsif (ref($topic) eq 'ARRAY') {
-        $result = $self->match_all($topic);
+        $method = 'match_all';
     }
     elsif (ref($topic) eq 'HASH') {
-        $result = $self->match_object($topic)
+        $method = 'match_object';
     }
     else {
         XXX $topic;
     }
 
+    my $result = $self->$method($topic);
     my $status = $result ? 'got' : 'not';
-    $self->callback($status);
 
-    $info->{status} = $status; #XXX
-#     $self->log($info)                    ;#   if $info->{regexp}; #XXX
-    pop @$stack if $info->{state}; #XXX
+    if ($state) {
+        $self->callback($status, $state);
+        pop @{$self->stack};
+    }
 
     $self->position($old_position) unless $result;
     return $result;
@@ -88,8 +70,9 @@ sub match {
 sub callback {
     my $self = shift;
     my $type = shift;
-    my $callback = $type . '_' . $self->{state};
-#     warn ">> $callback\n";
+    my $state = shift;
+    my $callback = $type . '_' . $state;
+    warn ">> $callback\n";
     if ($self->receiver->can($callback)) {
         $self->receiver->$callback(@{$self->arguments});
     }
@@ -136,15 +119,7 @@ sub match_one {
     my $self = shift;
     my $list = shift;
     for my $elem (@$list) {
-        if ($elem =~ /^\w+$/) {
-            $self->match($elem) and return 1;
-        }
-        elsif ($elem =~ /^\//) {
-            $self->match_regexp($elem) and return 1;
-        }
-        else {
-            XXX $elem;
-        }
+        $self->match($elem) and return 1;
     }
     return;
 }
