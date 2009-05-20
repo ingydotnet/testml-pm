@@ -80,7 +80,7 @@ sub match {
     $self->callback($status);
 
     $info->{status} = $status; #XXX
-    $self->log($info)                    ;#   if $info->{regexp}; #XXX
+#     $self->log($info)                    ;#   if $info->{regexp}; #XXX
     pop @$stack if $info->{state}; #XXX
 
     $self->position($old_position) unless $result;

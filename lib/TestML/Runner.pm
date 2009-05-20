@@ -10,6 +10,38 @@ field 'bridge';
 field 'document';
 field 'doc', -init => '$self->parse()';
 
+my $run = 0;
+my $bridge;
+
+sub import {
+    if ($_[1] eq '-base') {
+        goto &TestML::Base::import;
+    }
+
+    my $pkg = shift;
+    while (@_) {
+        my $option = shift(@_);
+        if ($option eq '-run') {
+            $run = 1;
+        }
+        elsif ($option eq '-bridge') {
+            $bridge = shift(@_);
+        }
+        else {
+            die "Unknown option '$option'";
+        }
+    }
+}
+
+sub INIT {
+    if ($run and $bridge) {
+        TestML::Runner::TAP->new(
+            document => \ *main::DATA,
+            bridge => $bridge,
+        )->run();
+    }
+}
+
 sub setup {
     die "\nDon't use TestML::Runner directly.\nUse an appropriate subclass like TestML::Runner::TAP.\n";
 }

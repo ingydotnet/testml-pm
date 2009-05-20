@@ -1,9 +1,4 @@
-use TestML::Runner::TAP;
-
-TestML::Runner::TAP->new(
-    document => \ *DATA,
-    bridge => 'TestMLTestBridge',
-)->run();
+use TestML::Runner::TAP -run, -bridge => 'TestMLTestBridge';
 
 __DATA__
 
