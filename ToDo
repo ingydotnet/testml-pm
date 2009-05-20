@@ -12,6 +12,7 @@
 - Write the evaluation runtime
 - Write the runtime spec
 - Get better parser errors
+  - Add commit points to grammar
 
 == Ideas
 

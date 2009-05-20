@@ -1,4 +1,4 @@
-use TestML::Runner::TAP -run, -bridge => 'TestMLTestBridge';
+use TestML -run, -bridge => 'TestMLTestBridge';
 
 __DATA__
 

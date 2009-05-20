@@ -7,6 +7,41 @@ use 5.006001;
 
 $TestML::VERSION = '0.02';
 
+sub import {
+    my $run;
+    my $bridge;
+
+    if ($_[1] eq '-base') {
+        goto &TestML::Base::import;
+    }
+
+    my $pkg = shift;
+    while (@_) {
+        my $option = shift(@_);
+        my $value = (@_ and $_[0] !~ /^-/) ? shift(@_) : '';
+        if ($option eq '-run') {
+            $run = $value || 'TestML::Runner::TAP';
+        }
+        elsif ($option eq '-bridge') {
+            $bridge = $value;
+        }
+        else {
+            die "Unknown option '$option'";
+        }
+    }
+
+    sub INIT {
+        no warnings;
+        if ($run and $bridge) {
+            eval "require $run; 1" or die $@;
+            $run->new(
+                document => \ *main::DATA,
+                bridge => $bridge,
+            )->run();
+        }
+    }
+}
+
 1;
 
 =encoding utf-8
