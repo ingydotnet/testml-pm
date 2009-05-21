@@ -7,15 +7,15 @@ use TestML::Parser::Grammar;
 
 field 'stream';
 field 'grammar', -init => 'TestML::Parser::Grammar->grammar()';
-field 'position';
+field 'start_token';
+field 'position' => 0;
 field 'receiver';
 field 'arguments';
 field 'stack' => [];
 
 sub parse {
     my $self = shift;
-    $self->position(0);
-    $self->match('document');
+    $self->match($self->start_token);
     if ($self->position < length($self->stream)) {
         die "Parse document failed for some reason";
     }
@@ -25,6 +25,8 @@ sub match {
     my $self = shift;
     my $topic = shift or die "No topic passed to match";
 
+    my $not = ($topic =~ s/^!//) ? 1 : 0;
+
     my $state = undef;
     if (not ref($topic) and $topic =~ /^\w+$/) {
         $state = $topic;
@@ -33,7 +35,7 @@ sub match {
 
         if (not defined $self->grammar->{$topic}) {
             die "\n\n*** No grammar support for '$topic'\n\n";
-            return;
+            return 0;
         }
         
         $topic = $self->grammar->{$topic};
@@ -68,7 +70,7 @@ sub match {
         $count++;
         last if $times eq '1' or $times eq '?';
     }
-    my $result = ($count or $times eq '?' or $times eq '*') ? 1 : 0;
+    my $result = (($count or $times eq '?' or $times eq '*') ? 1 : 0) ^ $not;
 
     my $status = $result ? 'got' : 'not';
 
@@ -85,7 +87,7 @@ sub match_all {
     my $self = shift;
     my $list = shift;
     for my $elem (@$list) {
-        $self->match($elem) or return;
+        $self->match($elem) or return 0;
     }
     return 1;
 }
@@ -96,7 +98,7 @@ sub match_one {
     for my $elem (@$list) {
         $self->match($elem) and return 1;
     }
-    return;
+    return 0;
 }
 
 sub match_regexp {
@@ -105,8 +107,10 @@ sub match_regexp {
     my $regexp = $self->get_regexp($pattern);
 
     pos($self->{stream}) = $self->position;
-    $self->{stream} =~ /$regexp/g or return;
-    $self->arguments([$1, $2, $3]);
+    $self->{stream} =~ /$regexp/g or return 0;
+    if (defined $1) {
+        $self->arguments([$1, $2, $3, $4, $5]);
+    }
     $self->position(pos($self->{stream}));
 
     return 1;

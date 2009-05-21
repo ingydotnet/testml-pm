@@ -22,7 +22,9 @@ sub run {
 
     $self->plan_begin();
 
-    for my $test (@{$self->doc->tests->expressions}) {
+#     XXX $self->doc;
+
+    for my $statement (@{$self->doc->tests->statements}) {
 #         $self->doc->data->reset;
 # 
 #         while (my $block = $self->doc->data->next) {
@@ -80,14 +82,34 @@ sub evaluate_expression {
 sub parse {
     my $self = shift;
 
-    my $builder = TestML::Document::Builder->new();
     my $parser = TestML::Parser->new(
-        receiver => $builder,
+        receiver => TestML::Document::Builder->new(),
+        start_token => 'document',
     );
 
     $parser->open($self->document);
     $parser->parse;
-    return $builder->document;
+#     $self->parse_data($parser->receiver->document);
+    return XXX $parser->receiver->document;
+}
+
+sub parse_data {
+    my $self = shift;
+    my $document = shift;
+    for my $file (@{$document->meta->get('Data')}) {
+        my $parser = TestML::Parser->new(
+            receiver => TestML::Document::Builder->new(),
+            start_token => 'data',
+        );
+        if ($file eq '_') {
+            $parser->stream($document->inline_data);
+        }
+        else {
+            die "XXX - data files not implemented yet";
+        }
+        $self->parse;
+        push @{$document->data->blocks}, @{$parser->receiver->blocks};
+    }
 }
 
 package TestML::Context;

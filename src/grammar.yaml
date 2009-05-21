@@ -55,23 +55,25 @@ unquoted_string: /[^$SPACES$BREAK$HASH](?:[^$BREAK$HASH]*[^$SPACES$BREAK$HASH])?
 
 test_section:
 - /:
-  - test_statement
   - ws
+  - test_statement
   ^: '*'
 
 ws: /(?:$SPACE|$EOL|$comment)/
 
 test_statement:
 - test_expression
+- =: assertion_expression
+  ^: '?'
 - /;/
 
 test_expression:
 - sub_expression
 - /:
-  - assertion_expression
-  - - call-indicator
-    - test-expression
-  ^: '?'
+  - - '!assertion_call_start'
+    - call_indicator
+    - sub_expression
+  ^: '*'
 
 sub_expression:
 - /:
@@ -132,14 +134,17 @@ assertion_operation:
 - /$ws+/
 - assertion_operator
 - /$ws+/
-- sub_expression
+- test_expression
 
-assertion_operator: /==/
+assertion_operator: /(==)/
 
 assertion_call:
-- /$call_indicator$assertion_name\($ws*/
-- sub_expression
+- assertion_call_start
+- test_expression
 - /$ws*\)/
+
+assertion_call_start:
+- /$call_indicator$assertion_name\($ws*/
 
 assertion_name: /EQ/
 

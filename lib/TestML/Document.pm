@@ -7,6 +7,7 @@ use TestML::Base -base;
 field 'meta' => -init => 'TestML::Document::Meta->new';
 field 'tests' => -init => 'TestML::Document::Tests->new';
 field 'data' => -init => 'TestML::Document::Data->new';
+field 'inline_data';
 
 #-----------------------------------------------------------------------------
 package TestML::Document::Meta;
@@ -39,16 +40,22 @@ sub set {
 package TestML::Document::Tests;
 use TestML::Base -base;
 
-field 'expressions' => [];
+field 'statements' => [];
 
-package TestML::Document::Expression;
+package Statement;
+use TestML::Base -base;
+
+field 'points' => [];
+field 'primary_expression' => [];
+field 'assertion_operator';
+field 'assertion_expression' => [];
+
+package Expression;
 use TestML::Base -base;
 
 field 'transforms' => [];
-field 'assertion_expression';
-field 'points' => [];
 
-package TestML::Document::Transform;
+package Transform;
 use TestML::Base -base;
 
 field 'name';
@@ -77,12 +84,34 @@ package TestML::Document::Builder;
 use TestML::Base -base;
 
 field 'document', -init => 'TestML::Document->new()';
-field 'expressions' => [];
-field 'stash' => {};
+field 'current_statement';
+field 'insert_expression_here' => [];
+field 'current_expression' => [];
 
+##############################################################################
+sub t {
+    my $name = shift;
+    for (@_) { eval "sub ${_}_$name { x }" }
+}
+
+my $c = 0;
+sub x {
+    (my $name = (caller(1))[3]) =~ s/.*:://;
+    $c++;
+#     warn "$c>> $name\n";
+}
+
+# t qw(test_statement got not);
+# t qw(ws got);
+
+
+##############################################################################
 sub got_document {
     my $self = shift;
-#     XXX $self->document;
+    my $data_files = $self->document->meta->get('Data');
+    if (not @$data_files) {
+        push @$data_files, '_';
+    }
 }
 
 sub got_meta_testml_statement {
@@ -91,54 +120,78 @@ sub got_meta_testml_statement {
     $self->document->meta->set('TestML', $version);
 }
 
-sub x {
-    (my $name = (caller(1))[3]) =~ s/.*:://;
-#     warn ">> $name\n";
-}
-
-sub got_meta_statement {x
+sub got_meta_statement {
     my $self = shift;
     my $key = shift;
     my $value = shift;
     $self->document->meta->set($key, $value);
 }
 
+##############################################################################
+sub try_test_statement {x
+    my $self = shift;
+    $self->current_statement(Statement->new());
+    push @{$self->insert_expression_here},
+        $self->current_statement->primary_expression;
+}
+sub got_test_statement {
+    my $self = shift;
+    my $statement = $self->current_statement;
+    $statement->{points} =
+        [sort keys %{+{ map {($_, 1)} @{$statement->points} }}];
+    push @{$self->document->tests->statements}, $statement;
+    delete $self->{current_statement};
+}
+sub not_test_statement {
+    my $self = shift;
+    delete $self->{current_statement};
+}
+
 sub try_test_expression {x
     my $self = shift;
-    my $exprs = $self->expressions;
-    push @$exprs, TestML::Document::Expression->new();
+    push @{$self->current_expression},
+        Expression->new();
 }
-
 sub got_test_expression {x
     my $self = shift;
-    my $exprs = $self->expressions;
-    if (@$exprs == 1) {
-        push @{$self->document->tests->expressions}, pop @$exprs;
-    }
-    else {
-        die "XXX under construction";;
-    }
+    push @{$self->insert_expression_here->[-1]},
+        pop @{$self->current_expression};
 }
-
 sub not_test_expression {x
     my $self = shift;
-    pop @{$self->expressions};
+    pop @{$self->current_expression};
 }
 
 sub got_data_point {x
     my $self = shift;
-    my $point = shift;
-    push @{$self->expressions->[0]->points}, $point;
-    push @{$self->expressions->[-1]->transforms},
-        TestML::Document::Transform->new(
-            name => $point,
+    my $name = shift;
+    push @{$self->current_statement->points}, $name;
+    push @{$self->current_expression->[-1]->transforms},
+        Transform->new(
+            name => 'Point',
+            args => [$name],
+        );
+}
+sub got_transform_call {x
+    my $self = shift;
+    my $name = shift;
+    my $args = [];
+    push @{$self->current_expression->[-1]->transforms},
+        Transform->new(
+            name => $name,
+            args => $args,
         );
 }
 
-sub try_assertion_operator {x}
-sub got_assertion_operator {x}
-sub not_assertion_operator {x}
+sub got_assertion_operator {x
+    my $self = shift;
+    push @{$self->insert_expression_here},
+        $self->current_statement->assertion_expression;
+}
 
+sub got_data_section {
+    my $self = shift;
+    $self->document->inline_data(shift);
+}
 
-
-
+1; #XXX
