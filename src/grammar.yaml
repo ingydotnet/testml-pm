@@ -129,7 +129,9 @@ assertion_expression:
   - assertion_call
 
 assertion_operation:
-- /$ws+$assertion_operator$ws+/
+- /$ws+/
+- assertion_operator
+- /$ws+/
 - sub_expression
 
 assertion_operator: /==/

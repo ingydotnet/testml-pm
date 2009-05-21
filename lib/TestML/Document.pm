@@ -21,31 +21,18 @@ field 'data' => {
     'TestMLPointMarker' => '---',
 };
 
-sub has {
-    my $self = shift;
-    my $name = shift;
-    return ($name =~ /^(
-        TestML |
-        Data |
-        Title |
-        Plan |
-        TestMLBlockMarker |
-        TestMLPointMarker
-    )$/x);
-}
-
 sub get {
     my $self = shift;
     my $key = shift;
-    return $self->{$key};
+    return $self->data->{$key};
 }
 
 sub set {
     my $self = shift;
     my $key = shift;
     my $value = shift;
-    $self->{$key} = $value;
-    return $self->{$key};
+    $self->data->{$key} = $value;
+    return $self->data->{$key};
 }
 
 #-----------------------------------------------------------------------------
@@ -57,11 +44,11 @@ field 'expressions' => [];
 package TestML::Document::Expression;
 use TestML::Base -base;
 
-field 'sub_expressions' => [];
+field 'transforms' => [];
 field 'assertion_expression';
 field 'points' => [];
 
-package TestML::Document::SubExpression;
+package TestML::Document::Transform;
 use TestML::Base -base;
 
 field 'name';
@@ -71,9 +58,7 @@ field 'args' => [];
 package TestML::Document::Data;
 use TestML::Base -base;
 
-field 'notes' => '';
 field 'blocks' => [];
-field 'iterator' => 0;
 
 package TestML::Document::Block;
 use TestML::Base -base;
@@ -85,7 +70,6 @@ package TestML::Document::Point;
 use TestML::Base -base;
  
 field 'name' => '';
-field 'notes' => '';
 field 'value' => '';
 
 #-----------------------------------------------------------------------------
@@ -96,26 +80,36 @@ field 'document', -init => 'TestML::Document->new()';
 field 'expressions' => [];
 field 'stash' => {};
 
+sub got_document {
+    my $self = shift;
+#     XXX $self->document;
+}
+
 sub got_meta_testml_statement {
     my $self = shift;
     my $version = shift;
     $self->document->meta->set('TestML', $version);
 }
 
-sub got_meta_statement {
+sub x {
+    (my $name = (caller(1))[3]) =~ s/.*:://;
+#     warn ">> $name\n";
+}
+
+sub got_meta_statement {x
     my $self = shift;
     my $key = shift;
     my $value = shift;
     $self->document->meta->set($key, $value);
 }
 
-sub try_test_expression {
+sub try_test_expression {x
     my $self = shift;
     my $exprs = $self->expressions;
     push @$exprs, TestML::Document::Expression->new();
 }
 
-sub got_test_expression {
+sub got_test_expression {x
     my $self = shift;
     my $exprs = $self->expressions;
     if (@$exprs == 1) {
@@ -126,13 +120,24 @@ sub got_test_expression {
     }
 }
 
-sub not_test_expression {
+sub not_test_expression {x
     my $self = shift;
     pop @{$self->expressions};
 }
 
+sub got_data_point {x
+    my $self = shift;
+    my $point = shift;
+    push @{$self->expressions->[0]->points}, $point;
+    push @{$self->expressions->[-1]->transforms},
+        TestML::Document::Transform->new(
+            name => $point,
+        );
+}
 
-
+sub try_assertion_operator {x}
+sub got_assertion_operator {x}
+sub not_assertion_operator {x}
 
 
 
