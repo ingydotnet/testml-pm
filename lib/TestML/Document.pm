@@ -96,11 +96,6 @@ field 'document', -init => 'TestML::Document->new()';
 field 'expressions' => [];
 field 'stash' => {};
 
-# - or_list
-# - and_list
-# - reference
-# - regexp
-
 sub got_meta_testml_statement {
     my $self = shift;
     my $version = shift;
@@ -121,9 +116,8 @@ sub try_test_expression {
 }
 
 sub got_test_expression {
-    die 42;
     my $self = shift;
-    my $exprs = $self->stash->expressions;
+    my $exprs = $self->expressions;
     if (@$exprs == 1) {
         push @{$self->document->tests->expressions}, pop @$exprs;
     }

@@ -40,8 +40,8 @@ sub match {
         $self->callback('try', $state);
     }
 
-    my $old_position = $self->position;
     my $method;
+    my $times = '1';
     if (not ref $topic and $topic =~ /^\//) {
         $method = 'match_regexp';
     }
@@ -49,13 +49,27 @@ sub match {
         $method = 'match_all';
     }
     elsif (ref($topic) eq 'HASH') {
-        $method = 'match_object';
+        $times = $topic->{'^'} if $topic->{'^'};
+        if ($topic->{'='}) {
+            $topic = $topic->{'='};
+            $method = 'match';
+        }
+        elsif ($topic->{'/'}) {
+            $topic = $topic->{'/'};
+            $method = 'match_one';
+        }
+        else { die }
     }
-    else {
-        XXX $topic;
-    }
+    else { XXX $topic }
 
-    my $result = $self->$method($topic);
+    my $position = $self->position;
+    my $count = 0;
+    while ($self->$method($topic)) {
+        $count++;
+        last if $times eq '1' or $times eq '?';
+    }
+    my $result = ($count or $times eq '?' or $times eq '*') ? 1 : 0;
+
     my $status = $result ? 'got' : 'not';
 
     if ($state) {
@@ -63,47 +77,8 @@ sub match {
         pop @{$self->stack};
     }
 
-    $self->position($old_position) unless $result;
+    $self->position($position) unless $result;
     return $result;
-}
-
-sub callback {
-    my $self = shift;
-    my $type = shift;
-    my $state = shift;
-    my $callback = $type . '_' . $state;
-    warn ">> $callback\n";
-    if ($self->receiver->can($callback)) {
-        $self->receiver->$callback(@{$self->arguments});
-    }
-}
-
-sub match_object {
-    my $self = shift;
-    my $object = shift;
-    my ($method, $topic);
-    if ($topic = $object->{'='}) {
-        $method = 'match';
-    }
-    elsif ($topic = $object->{'/'}) {
-        $method = 'match_one';
-    }
-
-    my $start = $self->position;
-    my $times = $object->{'^'} || '1';
-    my $count = 0;
-    my $match;
-    while ($match = $self->$method($topic)) {
-        $count++;
-        last if $times eq '1' or $times eq '?';
-    }
-
-    if (not($count) and ($times ne '?' and $times ne '*')) {
-        $self->position($start);
-        return;
-    }
-
-    return 1;
 }
 
 sub match_all {
@@ -150,19 +125,17 @@ sub get_regexp {
     return qr/\G$pattern/;
 }
 
-sub log {
+sub callback {
     my $self = shift;
-    my $info = shift;
-    {
-        $info->{substr} = substr($self->{stream}, $info->{position}, 40);
-        $info->{substr} =~ s/\n/\\n/g;
-        $info->{substr} = substr($info->{substr}, 0, 40);
+    my $type = shift;
+    my $state = shift;
+    my $method = $type . '_' . $state;
+#     warn ">> $method\n";
+    if ($self->receiver->can($method)) {
+        $self->receiver->$method(@{$self->arguments});
     }
-    WWW $info;
-#     <> or exit;
 }
 
-###############################################################################
 sub open {
     my $self = shift;
     my $file = shift;
