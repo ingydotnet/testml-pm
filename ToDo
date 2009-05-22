@@ -10,9 +10,17 @@
 + Build Tests object from parse events
 + Parse Data Section
 + Write the evaluation runtime
+
+- Support Marker meta directives
+- Perl code review
+- Use in YAML-Perl
+- Port to Python
+- Use in TiddlyWeb
+- Write the stdlib spec
 - Write the runtime spec
 - Get better parser errors
   - Add commit points to grammar
+  - Write error tests
 - Add Module::Install support
   - 'use_testml'
 
