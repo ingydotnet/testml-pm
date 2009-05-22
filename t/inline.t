@@ -6,7 +6,8 @@ __DATA__
 %Title: Ingy's Test
 %Plan: 4
 
-foo.mess() == bar;
+foo == bar;
+bar == foo;
 
 === Foo for thought
 --- foo: O HAI

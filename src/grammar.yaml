@@ -47,9 +47,9 @@ user_meta_keyword: /$LOWER$WORD*/
 
 meta_value: /(?:$single_quoted_string|$double_quoted_string|$unquoted_string)/
 
-single_quoted_string: /(?:$SINGLE([^$BREAK$BACK$SINGLE]|$BACK$SINGLE|$BACK$BACK)*?$SINGLE)/
+single_quoted_string: /(?:$SINGLE(([^$BREAK$BACK$SINGLE]|$BACK$SINGLE|$BACK$BACK)*?)$SINGLE)/
 
-double_quoted_string: /(?:$DOUBLE([^$BREAK$BACK$DOUBLE]|$BACK$DOUBLE|$BACK$BACK|$BACK$ESCAPE)*$DOUBLE)/
+double_quoted_string: /(?:$DOUBLE(([^$BREAK$BACK$DOUBLE]|$BACK$DOUBLE|$BACK$BACK|$BACK$ESCAPE)*?)$DOUBLE)/
 
 unquoted_string: /[^$SPACES$BREAK$HASH](?:[^$BREAK$HASH]*[^$SPACES$BREAK$HASH])?/
 
@@ -148,4 +148,58 @@ assertion_call_start:
 
 assertion_name: /EQ/
 
-data_section: /(===(?:$SPACE|$EOL)$ANY+)/
+data_section: /(===(?:$SPACE|$EOL)$ANY+|\z)/
+
+data:
+  =: data_block
+  ^: '*'
+
+data_block:
+- block_header
+- /:
+  - blank_line
+  - comment
+  ^: '*'
+- =: block_point
+  ^: '*'
+
+block_header:
+- block_marker
+- =:
+  - /$SPACE+/
+  - block_label
+  ^: '?'
+- /$SPACE*$EOL/
+
+block_marker: /===/
+
+block_label:
+- /([^$SPACES$BREAK]($NON_BREAK*[^SPACES$BREAK])?)/
+
+block_point:
+  /:
+  - lines_point
+  - phrase_point
+
+lines_point:
+- /$point_marker$SPACE+/
+- user_point_name
+- /$SPACE*$EOL/
+- point_lines
+
+user_point_name: /($LOWER$WORD*)/
+
+point_lines: /((?:(?!===|---)$line)*)/
+
+phrase_point:
+- /$point_marker$SPACE+/
+- user_point_name
+- /:$SPACE/
+- point_phrase
+- /$EOL/
+- /(?:$comment|$blank_line)*/
+
+point_phrase: /($NON_BREAK*)/
+
+
+point_marker: /---/

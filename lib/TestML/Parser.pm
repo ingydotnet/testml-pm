@@ -10,7 +10,7 @@ field 'grammar', -init => 'TestML::Parser::Grammar->grammar()';
 field 'start_token';
 field 'position' => 0;
 field 'receiver';
-field 'arguments';
+field 'arguments' => [];
 field 'stack' => [];
 
 sub parse {
@@ -129,12 +129,16 @@ sub get_regexp {
     return qr/\G$pattern/;
 }
 
+my $warn = 0;
 sub callback {
     my $self = shift;
     my $type = shift;
     my $state = shift;
     my $method = $type . '_' . $state;
-#     warn ">> $method\n";
+
+#     $warn = 1 if $state eq 'data_section';
+#     warn ">> $method\n" if $warn;
+
     if ($self->receiver->can($method)) {
         $self->receiver->$method(@{$self->arguments});
     }
@@ -165,3 +169,4 @@ sub read {
     return $content;
 }
 
+1;

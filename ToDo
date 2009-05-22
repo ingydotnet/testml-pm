@@ -7,12 +7,14 @@
 + Fix the unquoted string regexp
 + use TestML::Runner::TAP -run, -bridge => 'TestMLTestBridge';
   + for tests with inline data
-- Build Tests object from parse events
-- Parse Data Section
-- Write the evaluation runtime
++ Build Tests object from parse events
++ Parse Data Section
++ Write the evaluation runtime
 - Write the runtime spec
 - Get better parser errors
   - Add commit points to grammar
+- Add Module::Install support
+  - 'use_testml'
 
 == Ideas
 

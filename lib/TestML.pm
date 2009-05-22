@@ -48,17 +48,18 @@ sub import {
 
 =head1 NAME
 
-TestML - Generic Software Testing Meta Language
+TestML - A Generic Software Testing Meta Language
 
 =head1 SYNOPSIS
 
     # file t/testml/encode.tml
-    testml: 1.0
-    title: Tests for AcmeEncode
-    tests: 3
+    %TestML: 1.0
 
-    text.apply_rot13()  == rot13
-    text.apply_md5()    == md5
+    %Title: Tests for AcmeEncode
+    %Plan: 3
+
+    text.apply_rot13()  == rot13;
+    text.apply_md5()    == md5;
 
     === Encode some poetry
     --- text
@@ -74,18 +75,17 @@ TestML - Generic Software Testing Meta Language
     --- md5: 64002c26dcc62c1d6d0f1cb908de1435
 
 This TestML document defines 2 assertions, and defines 2 data blocks.
-The first block has 3 data entries, but the second one has only 2.
+The first block has 3 data points, but the second one has only 2.
 Therefore the rot13 assertion applies only to the first block, while the
 the md5 assertion applies to both. This results in a total of 3 tests,
-which is specified in meta statement in the document.
+which is specified in the meta Plan statement in the document.
 
 To run this test you would have a normal test file that looks like this:
 
+    use TestML::Runner::TAP;
 
-    use TestML::Runner;
-
-    TestML::Runner->new(
-        testml => 't/testml/encode.tml',
+    TestML::Runner::TAP->new(
+        document => 't/testml/encode.tml',
         bridge => 'AcmeEncode::Bridge',
     )->run();
 
