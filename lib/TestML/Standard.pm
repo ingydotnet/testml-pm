@@ -1,8 +1,11 @@
 package TestML::Standard;
-use XXX;
 use strict;
 use warnings;
 no warnings 'redefine';
+
+sub testml_Select {
+    return (shift)->value;
+}
 
 sub testml_Point {
     my $self = shift;
