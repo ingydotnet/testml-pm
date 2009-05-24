@@ -1,4 +1,10 @@
 ---
+version: 0.03
+date:    Sun May 24 09:42:06 PDT 2009
+changes:
+- Add Catch support
+- Tweaks and bug fixes
+---
 version: 0.02
 date:    Thu May 21 19:27:50 PDT 2009
 changes:
