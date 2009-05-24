@@ -24,7 +24,9 @@ document:
 
 meta_section:
 - /(?:$comment|$blank_line)*/
-- meta_testml_statement
+- /: 
+  - meta_testml_statement
+  - _: No TestML meta directive found
 - /:
   - meta_statement
   - comment

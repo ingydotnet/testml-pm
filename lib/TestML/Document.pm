@@ -168,9 +168,23 @@ sub try_transform_call {
     my $self = shift;
     $self->arguments([]);
 }
+my %ESCAPES = (
+    '\\' => '\\',
+    "'" => "'",
+    'n' => "\n",
+    't' => "\t",
+    '0' => "\0",
+);
 sub got_single_quoted_string {
     my $self = shift;
     my $value = shift;
+    $value =~ s/\\([\\\'])/$ESCAPES{$1}/g;
+    push @{$self->arguments}, $value;
+}
+sub got_double_quoted_string {
+    my $self = shift;
+    my $value = shift;
+    $value =~ s/\\([\\\"nt])/$ESCAPES{$1}/g;
     push @{$self->arguments}, $value;
 }
 sub got_transform_name {

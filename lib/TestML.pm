@@ -10,6 +10,7 @@ $TestML::VERSION = '0.02';
 sub import {
     my $run;
     my $bridge;
+    my $document;
 
     if ($_[1] eq '-base') {
         goto &TestML::Base::import;
@@ -22,6 +23,9 @@ sub import {
         if ($option eq '-run') {
             $run = $value || 'TestML::Runner::TAP';
         }
+        elsif ($option eq '-document') {
+            $document = $value;
+        }
         elsif ($option eq '-bridge') {
             $bridge = $value;
         }
@@ -32,11 +36,11 @@ sub import {
 
     sub INIT {
         no warnings;
-        if ($run and $bridge) {
+        if ($run) {
             eval "require $run; 1" or die $@;
             $run->new(
-                document => \ *main::DATA,
-                bridge => $bridge,
+                document => ($document || \ *main::DATA),
+                bridge => ($bridge || 'TestML::Bridge'),
             )->run();
         }
     }

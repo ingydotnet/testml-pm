@@ -85,8 +85,21 @@ sub evaluate_expression {
     );
 
     for my $transform (@{$expression->transforms}) {
-        my $function = $self->Bridge->get_transform_function($transform->name);
-        $topic->value(&$function($topic, @{$transform->args}));
+        my $transform_name = $transform->name;
+        next if $topic->error and $transform_name ne 'Catch';
+        my $function = $self->Bridge->get_transform_function($transform_name);
+        my $value = eval {
+            &$function($topic, @{$transform->args});
+        };
+        if ($@) {
+            $topic->error($@);
+        }
+        else {
+            $topic->value($value);
+        }
+    }
+    if ($topic->error) {
+        die $topic->error;
     }
     return $topic;
 }
@@ -132,4 +145,6 @@ use TestML::Base -base;
 
 field 'document';
 field 'block';
+field 'point';
 field 'value';
+field 'error';

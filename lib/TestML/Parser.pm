@@ -60,6 +60,9 @@ sub match {
             $topic = $topic->{'/'};
             $method = 'match_one';
         }
+        elsif ($topic->{'_'}) {
+            $self->throw_error($topic->{'_'});
+        }
         else { die }
     }
     else { XXX $topic }
@@ -167,6 +170,20 @@ sub read {
         die "File '$file' does not end with a newline.";
     }
     return $content;
+}
+
+sub throw_error {
+    my $self = shift;
+    my $msg = shift;
+    my $line = @{[substr($self->stream, 0, $self->position) =~ /(\n)/g]} + 1;
+    my $context = substr($self->stream, $self->position, 50);
+    $context =~ s/\n/\\n/g;
+    die <<"...";
+Error parsing TestML document:
+  msg: $msg
+  line: $line
+  context: "$context"
+...
 }
 
 1;
