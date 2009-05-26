@@ -1,8 +1,10 @@
-../lib/TestML/Parser/Grammar.pm: grammar.yaml grammar.pl Makefile ../lib/TestML/Parser/
+BASE=../lib/TestML/Parser
+
+$(BASE)/Grammar.pm: grammar.yaml grammar.pl Makefile $(BASE)
 	perl grammar.pl $< > $@
 
-../lib/TestML/Parser/:
-	mkdir $@
+$(BASE):
+	mkdir -p $@
 
 clean:
-	rm -fr ../lib/TestML/Parser/
+	rm -fr $(BASE)

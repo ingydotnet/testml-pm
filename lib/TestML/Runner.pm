@@ -27,11 +27,8 @@ sub run {
     my $self = shift;
 
     $self->base(($0 =~ /(.*)\//) ? $1 : '.');
-
     $self->setup();
-
     $self->title();
-
     $self->plan_begin();
 
     for my $statement (@{$self->doc->tests->statements}) {

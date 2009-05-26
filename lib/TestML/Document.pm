@@ -63,6 +63,7 @@ package TestML::Document::Builder;
 use TestML::Base -base;
 
 field 'document', -init => 'TestML::Document->new()';
+
 field 'current_statement';
 field 'insert_expression_here' => [];
 field 'current_expression' => [];
