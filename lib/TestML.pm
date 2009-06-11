@@ -34,7 +34,7 @@ sub import {
         }
     }
 
-    sub INIT {
+    sub END {
         no warnings;
         if ($run) {
             eval "require $run; 1" or die $@;
@@ -42,6 +42,9 @@ sub import {
                 document => ($document || \ *main::DATA),
                 bridge => ($bridge || 'TestML::Bridge'),
             )->run();
+        }
+        elsif ($document or $bridge) {
+            die "-document or -bridge option used without -run option\n";
         }
     }
 }

@@ -14,7 +14,7 @@ sub setup {
         local @INC = ('t', 't/lib', @INC);
         my $class = $self->bridge;
         eval "require $class";
-        die $@ if $@;
+        die "Error loading bridge class '$class': $@" if $@;
     }
 }
 
