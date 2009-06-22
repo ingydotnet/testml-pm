@@ -10,6 +10,7 @@ UPPER: '[A-Z]'    # Upper case ASCII alphabetic character
 ALPHANUM: '[A-Za-z0-9]'    # ASCII alphanumeric character
 WORD: '\w'        # ie '[A-Za-z0-9_]' - A "word" character
 DIGIT: '[0-9]'    # A numeric digit
+DOLLAR: '\$'      # A dollar sign
 DOT: '\.'         # A period character
 HASH: '#'         # An octothorpe (or hash) character
 BACK: '\'         # A backslash character
@@ -20,7 +21,9 @@ ESCAPE: '[0nt]'   # One of the escapable character IDs
 document:
 - meta_section
 - test_section
-- data_section
+- /:
+  - data_section
+  ^: '?'
 
 meta_section:
 - /(?:$comment|$blank_line)*/
@@ -44,7 +47,7 @@ testml_version: /($DIGIT$DOT$DIGIT+)/
 meta_statement: /%($meta_keyword):$SPACE+($meta_value)(?:$SPACE+$comment|$EOL)/
 
 meta_keyword: /(?:$core_meta_keyword|$user_meta_keyword)/
-core_meta_keyword: /(?:Title|Data|Plan|TestMLBlockMarker|TestMLPointMarker)/
+core_meta_keyword: /(?:Title|Data|Plan|BlockMarker|PointMarker)/
 user_meta_keyword: /$LOWER$WORD*/
 
 meta_value: /(?:$single_quoted_string|$double_quoted_string|$unquoted_string)/
@@ -83,6 +86,8 @@ sub_expression:
 - /:
   - transform_call
   - data_point
+  - quoted_string
+  - constant
 
 transform_call:
 - transform_name
@@ -101,21 +106,16 @@ core_transform: /($UPPER$WORD*)/
 
 call_indicator: /(?:$DOT$ws*|$ws*$DOT)/
 
-data_point:
-  /:
-  - user_point
-  - core_point
+data_point: /($DOLLAR$LOWER$WORD*)/
 
-user_point: /($LOWER$WORD*)/
-
-core_point: /($UPPER$WORD*)/
+constant: /($UPPER$WORD*)/
 
 argument_list:
   =:
-  - argument
+  - sub_expression
   - =:
     - /$ws*,$ws*/
-    - argument
+    - sub_expression
     ^: '*'
   ^: '?'
 
@@ -152,7 +152,7 @@ assertion_call_start:
 
 assertion_name: /EQ/
 
-data_section: /(===(?:$SPACE|$EOL)$ANY+|\Z)/
+data_section: /($block_marker(?:$SPACE|$EOL)$ANY+|\Z)/
 
 data:
   =: data_block
