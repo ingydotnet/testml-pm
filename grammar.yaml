@@ -193,7 +193,7 @@ lines_point:
 
 user_point_name: /($LOWER$WORD*)/
 
-point_lines: /((?:(?!===|---)$line)*)/
+point_lines: /((?:(?!$block_marker|$point_marker)$line)*)/
 
 phrase_point:
 - /$point_marker$SPACE+/
