@@ -108,21 +108,24 @@ sub parse {
         receiver => TestML::Document::Builder->new(),
         start_token => 'document',
     );
+    $parser->receiver->grammar($parser->grammar);
 
     $parser->open($self->document);
     $parser->parse;
 
-    $self->parse_data($parser->receiver);
+    $self->parse_data($parser);
     return $parser->receiver->document;
 }
 
 sub parse_data {
     my $self = shift;
-    my $builder = shift;
+    my $parser = shift;
+    my $builder = $parser->receiver;
     my $document = $builder->document;
     for my $file (@{$document->meta->data->{Data}}) {
         my $parser = TestML::Parser->new(
             receiver => TestML::Document::Builder->new(),
+            grammar => $parser->grammar,
             start_token => 'data',
         );
 

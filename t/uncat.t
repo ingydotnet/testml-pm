@@ -3,10 +3,10 @@ use TestML -run;
 __DATA__
 %TestML: 1.0
 
-error.Throw().bogus().Catch() == error;
-Throw('My error message').Catch() == error;
+$error.Throw().bogus().Catch() == $error;
+Throw('My error message').Catch() == $error;
 
-empty == Str("");
+$empty == Str("");
 
 === Throw/Catch
 --- error: My error message

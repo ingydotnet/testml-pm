@@ -139,9 +139,6 @@ sub callback {
     my $state = shift;
     my $method = $type . '_' . $state;
 
-#     $warn = 1 if $state eq 'data_section';
-#     warn ">> $method\n" if $warn;
-
     if ($self->receiver->can($method)) {
         $self->receiver->$method(@{$self->arguments});
     }

@@ -17,8 +17,8 @@ field 'data' => {
     'Data' => [],
     'Title' => '',
     'Plan' => 0,
-    'TestMLBlockMarker' => '===',
-    'TestMLPointMarker' => '---',
+    'BlockMarker' => '===',
+    'PointMarker' => '---',
 };
 
 #-----------------------------------------------------------------------------
@@ -63,6 +63,7 @@ package TestML::Document::Builder;
 use TestML::Base -base;
 
 field 'document', -init => 'TestML::Document->new()';
+field 'grammar';
 
 field 'current_statement';
 field 'insert_expression_here' => [];
@@ -118,6 +119,11 @@ sub got_meta_statement {
     else {
         $self->document->meta->data->{$key} = $value;
     }
+    if ($key =~ /^(Block|Point)Marker$/) {
+        $key =~ s/([a-z])?([A-Z])/$1 ? ($1 . '_' . lc($2)) : lc($2)/ge;
+        $value =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+        $self->grammar->{$key} = '/' . $value . '/';
+    }
 }
 
 ##############################################################################
@@ -158,6 +164,7 @@ sub not_test_expression {
 sub got_data_point {
     my $self = shift;
     my $name = shift;
+    $name =~ s/^\$// or die;
     push @{$self->current_statement->points}, $name;
     push @{$self->current_expression->[-1]->transforms},
         TestML::Transform->new(
@@ -246,4 +253,4 @@ sub got_point_phrase {
     $self->current_block->points->{$self->point_name} = shift;
 }
 
-1; #XXX
+1;
