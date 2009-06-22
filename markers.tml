@@ -1,0 +1,15 @@
+%TestML: 1.0
+%BlockMarker: +++
+%PointMarker: ???
+
+
+$foo == $foo;
+
+
++++ Test One
+??? foo: Hello
+
+
++++ Test Two
+??? foo
+O HAI

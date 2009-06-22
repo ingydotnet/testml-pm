@@ -4,11 +4,11 @@
 %Plan:   10
 
 # TODO First statement parses wrong!
-foo.List().Join(' - ')          == bar;
-foo.List().Reverse().Item()     == baz;
-foo.List().Sort().Item()        == baz.List().Sort().Item();
-foo.List().Item()               == foo;
-foo.my_thing()                  == bar;
+$foo.List().Join(' - ')          == $bar;
+$foo.List().Reverse().Item()     == $baz;
+$foo.List().Sort().Item()        == $baz.List().Sort().Item();
+$foo.List().Item()               == $foo;
+$foo.my_thing()                  == $bar;
 
 
 === Test One
