@@ -31,9 +31,9 @@ package TestML::Statement;
 use TestML::Base -base;
 
 field 'points' => [];
-field 'primary_expression' => [];
+field 'left_expression' => [];
 field 'assertion_operator';
-field 'assertion_expression' => [];
+field 'right_expression' => [];
 
 package TestML::Expression;
 use TestML::Base -base;
@@ -66,7 +66,7 @@ field 'document', -init => 'TestML::Document->new()';
 field 'grammar';
 
 field 'current_statement';
-field 'insert_expression_here' => [];
+field 'insert_transform_here' => [];
 field 'current_expression' => [];
 field 'inline_data';
 
@@ -130,8 +130,8 @@ sub got_meta_statement {
 sub try_test_statement {
     my $self = shift;
     $self->current_statement(TestML::Statement->new());
-    push @{$self->insert_expression_here},
-        $self->current_statement->primary_expression;
+    push @{$self->insert_transform_here},
+        $self->current_statement->left_expression;
 }
 sub got_test_statement {
     my $self = shift;
@@ -153,7 +153,7 @@ sub try_test_expression {
 }
 sub got_test_expression {
     my $self = shift;
-    push @{$self->insert_expression_here->[-1]},
+    push @{$self->insert_transform_here->[-1]},
         pop @{$self->current_expression};
 }
 sub not_test_expression {
@@ -183,6 +183,17 @@ my %ESCAPES = (
     't' => "\t",
     '0' => "\0",
 );
+sub try_argument {
+    my $self = shift;
+    push @{$self->insert_transform_here},
+        $self->current_statement->left_expression;
+}
+# sub got_argument {
+#     my $self = shift;
+#     WWW @{$self->current_expression->[-1]->transforms};
+# }
+sub not_argument {
+}
 sub got_single_quoted_string {
     my $self = shift;
     my $value = shift;
@@ -201,11 +212,15 @@ sub got_double_quoted_string {
     my $self = shift;
     my $value = shift;
     $value =~ s/\\([\\\"nt])/$ESCAPES{$1}/g;
-    push @{$self->arguments}, $value;
-#         TestML::Transform->new(
-#             name => 'String',
-#             args => [$value],
-#         );
+    push @{$self->arguments},
+        TestML::Expression->new(
+            transforms => [
+                TestML::Transform->new(
+                    name => 'String',
+                    args => [$value],
+                ),
+            ],
+        );
 }
 sub got_transform_name {
     my $self = shift;
@@ -224,8 +239,8 @@ sub got_transform_call {
 
 sub got_assertion_operator {
     my $self = shift;
-    push @{$self->insert_expression_here},
-        $self->current_statement->assertion_expression;
+    push @{$self->insert_transform_here},
+        $self->current_statement->right_expression;
 }
 
 sub got_data_section {

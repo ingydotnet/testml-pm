@@ -35,18 +35,18 @@ sub run {
         my $points = $statement->points;
         if (not @$points) {
             die 'TODO';
-            $self->evaluate_expression($statement->primary_expression->[0]);
+            $self->evaluate_expression($statement->left_expression->[0]);
             next;
         }
         my $blocks = $self->select_blocks($points);
         for my $block (@$blocks) {
             my $left = $self->evaluate_expression(
-                $statement->primary_expression->[0],
+                $statement->left_expression->[0],
                 $block,
             );
-            if (@{$statement->assertion_expression}) {
+            if (@{$statement->right_expression}) {
                 my $right = $self->evaluate_expression(
-                    $statement->assertion_expression->[0],
+                    $statement->right_expression->[0],
                     $block,
                 );
                 $self->do_test('EQ', $left, $right, $block->label);
