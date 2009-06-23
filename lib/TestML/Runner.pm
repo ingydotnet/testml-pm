@@ -34,8 +34,13 @@ sub run {
     for my $statement (@{$self->doc->tests->statements}) {
         my $points = $statement->points;
         if (not @$points) {
-            die 'TODO';
-            $self->evaluate_expression($statement->left_expression->[0]);
+            my $left = $self->evaluate_expression($statement->left_expression->[0]);
+            if (@{$statement->right_expression}) {
+                my $right = $self->evaluate_expression(
+                    $statement->right_expression->[0]
+                );
+                $self->do_test('EQ', $left, $right, undef);
+            }
             next;
         }
         my $blocks = $self->select_blocks($points);
@@ -96,7 +101,7 @@ sub evaluate_expression {
                 $context,
                 map {
                     (ref($_) eq 'TestML::Expression')
-                    ? $self->evaluate_expression($_)
+                    ? $self->evaluate_expression($_, $block)
                     : $_
                 } @{$transform->args}
             );

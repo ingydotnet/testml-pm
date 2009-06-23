@@ -145,6 +145,21 @@ sub not_test_statement {
     delete $self->{current_statement};
 }
 
+sub try_argument {
+    my $self = shift;
+    push @{$self->current_expression},
+        TestML::Expression->new();
+}
+sub got_argument {
+    my $self = shift;
+    push @{$self->arguments},
+        pop @{$self->current_expression};
+}
+sub not_argument {
+    my $self = shift;
+    pop @{$self->current_expression};
+}
+
 sub try_test_expression {
     my $self = shift;
     push @{$self->current_expression},
@@ -182,41 +197,24 @@ my %ESCAPES = (
     't' => "\t",
     '0' => "\0",
 );
-sub try_argument {
-    my $self = shift;
-}
-sub got_argument {
-    my $self = shift;
-}
-sub not_argument {
-    my $self = shift;
-}
 sub got_single_quoted_string {
     my $self = shift;
     my $value = shift;
     $value =~ s/\\([\\\'])/$ESCAPES{$1}/g;
-    push @{$self->arguments},
-        TestML::Expression->new(
-            transforms => [
-                TestML::Transform->new(
-                    name => 'String',
-                    args => [$value],
-                ),
-            ],
+    push @{$self->current_expression->[-1]->transforms},
+        TestML::Transform->new(
+            name => 'String',
+            args => [$value],
         );
 }
 sub got_double_quoted_string {
     my $self = shift;
     my $value = shift;
     $value =~ s/\\([\\\"nt])/$ESCAPES{$1}/g;
-    push @{$self->arguments},
-        TestML::Expression->new(
-            transforms => [
-                TestML::Transform->new(
-                    name => 'String',
-                    args => [$value],
-                ),
-            ],
+    push @{$self->current_expression->[-1]->transforms},
+        TestML::Transform->new(
+            name => 'String',
+            args => [$value],
         );
 }
 sub got_transform_name {
@@ -232,6 +230,7 @@ sub got_transform_call {
             name => $name,
             args => $self->arguments,
         );
+    delete $self->{arguments};
 }
 
 sub got_assertion_operator {

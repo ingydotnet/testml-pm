@@ -26,10 +26,10 @@ sub testml_msg {
     return $1;
 }
 
-use XXX;
 sub testml_combine {
     my $self = shift;
-    $self->value;
+    my $suffix = shift;
+    $self->value . ' ' . $suffix->value;
 }
 
 1;
