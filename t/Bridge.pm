@@ -1,4 +1,4 @@
-package TestMLTestBridge;
+package t::Bridge;
 use strict;
 use warnings;
 use base 'TestML::Bridge';
@@ -24,6 +24,12 @@ sub testml_msg {
     $text =~ /^\s+msg:\s+(.*)/m
       or die "Can't find the error message";
     return $1;
+}
+
+use XXX;
+sub testml_combine {
+    my $self = shift;
+    $self->value;
 }
 
 1;

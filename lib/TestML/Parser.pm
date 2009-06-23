@@ -11,7 +11,6 @@ field 'start_token';
 field 'position' => 0;
 field 'receiver';
 field 'arguments' => [];
-field 'stack' => [];
 
 sub parse {
     my $self = shift;
@@ -30,8 +29,6 @@ sub match {
     my $state = undef;
     if (not ref($topic) and $topic =~ /^\w+$/) {
         $state = $topic;
-
-        push @{$self->stack}, $state;
 
         if (not defined $self->grammar->{$topic}) {
             die "\n\n*** No grammar support for '$topic'\n\n";
@@ -79,7 +76,6 @@ sub match {
 
     if ($state) {
         $self->callback($status, $state);
-        pop @{$self->stack};
     }
 
     $self->position($position) unless $result;
