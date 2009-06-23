@@ -35,6 +35,8 @@ sub run {
         my $points = $statement->points;
         if (not @$points) {
             die 'TODO';
+            $self->evaluate_expression($statement->primary_expression->[0]);
+            next;
         }
         my $blocks = $self->select_blocks($points);
         for my $block (@$blocks) {
@@ -77,7 +79,7 @@ sub select_blocks {
 sub evaluate_expression {
     my $self = shift;
     my $expression = shift;
-    my $block = shift;
+    my $block = shift || undef;
 
     my $context = TestML::Context->new(
         document => $self->doc,
@@ -90,7 +92,14 @@ sub evaluate_expression {
         next if $context->error and $transform_name ne 'Catch';
         my $function = $self->Bridge->get_transform_function($transform_name);
         my $value = eval {
-            &$function($context, @{$transform->args});
+            &$function(
+                $context,
+                map {
+                    (ref($_) eq 'TestML::Expression')
+                    ? $self->evaluate_expression($_)
+                    : $_
+                } @{$transform->args}
+            );
         };
         if ($@) {
             $context->error($@);

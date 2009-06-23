@@ -36,7 +36,7 @@ sub testml_Catch {
 
 sub testml_Throw {
     my $self = shift;
-    my $msg = shift || $self->value
+    my $msg = @_ ? (shift)->value : $self->value
       or die "Throw called without an error msg";
     die $msg;
 }
@@ -63,8 +63,7 @@ sub testml_List {
 
 sub testml_Join {
     my $list = (shift)->value;
-    my $string = @_ ? shift : '';
-#     my $string = @_ ? (shift)->value : '';
+    my $string = @_ ? (shift)->value : '';
     return join $string, @$list;
 }
 

@@ -187,11 +187,15 @@ sub got_single_quoted_string {
     my $self = shift;
     my $value = shift;
     $value =~ s/\\([\\\'])/$ESCAPES{$1}/g;
-    push @{$self->arguments}, $value;
-#         TestML::Transform->new(
-#             name => 'String',
-#             args => [$value],
-#         );
+    push @{$self->arguments},
+        TestML::Expression->new(
+            transforms => [
+                TestML::Transform->new(
+                    name => 'String',
+                    args => [$value],
+                ),
+            ],
+        );
 }
 sub got_double_quoted_string {
     my $self = shift;
