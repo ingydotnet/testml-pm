@@ -1,0 +1,8 @@
+%TestML: 1.0
+
+$what.combine($who) == $greeting;
+
+=== Dear John
+--- what: Dear
+--- who: John
+--- greeting: Dear John

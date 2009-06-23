@@ -3,13 +3,16 @@
 %PointMarker: ???
 
 
-$foo == $foo;
+$foo == $bar;
 
 
 +++ Test One
 ??? foo: Hello
+??? bar: Hello
 
 
 +++ Test Two
 ??? foo
+O HAI
+??? bar
 O HAI
