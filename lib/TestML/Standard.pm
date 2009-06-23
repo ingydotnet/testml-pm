@@ -41,7 +41,7 @@ sub testml_Throw {
     die $msg;
 }
 
-sub testml_Str {
+sub testml_String {
     my $self = shift;
     my $string =
     (defined $self->value) ? $self->value :
@@ -64,6 +64,7 @@ sub testml_List {
 sub testml_Join {
     my $list = (shift)->value;
     my $string = @_ ? shift : '';
+#     my $string = @_ ? (shift)->value : '';
     return join $string, @$list;
 }
 

@@ -10,6 +10,7 @@
 + Build Tests object from parse events
 + Parse Data Section
 + Write the evaluation runtime
++ Change 'Topic' to 'Context'
 
 - Support Marker meta directives
 - Perl code review

@@ -6,7 +6,7 @@ __DATA__
 $error.Throw().bogus().Catch() == $error;
 Throw('My error message').Catch() == $error;
 
-$empty == Str("");
+$empty == String("");
 
 === Throw/Catch
 --- error: My error message

@@ -32,7 +32,11 @@ sub run {
     $self->plan_begin();
 
     for my $statement (@{$self->doc->tests->statements}) {
-        my $blocks = $self->select_blocks($statement->points);
+        my $points = $statement->points;
+        if (not @$points) {
+            die 'TODO';
+        }
+        my $blocks = $self->select_blocks($points);
         for my $block (@$blocks) {
             my $left = $self->evaluate_expression(
                 $statement->primary_expression->[0],
@@ -75,7 +79,7 @@ sub evaluate_expression {
     my $expression = shift;
     my $block = shift;
 
-    my $topic = TestML::Topic->new(
+    my $context = TestML::Context->new(
         document => $self->doc,
         block => $block,
         value => undef,
@@ -83,22 +87,22 @@ sub evaluate_expression {
 
     for my $transform (@{$expression->transforms}) {
         my $transform_name = $transform->name;
-        next if $topic->error and $transform_name ne 'Catch';
+        next if $context->error and $transform_name ne 'Catch';
         my $function = $self->Bridge->get_transform_function($transform_name);
         my $value = eval {
-            &$function($topic, @{$transform->args});
+            &$function($context, @{$transform->args});
         };
         if ($@) {
-            $topic->error($@);
+            $context->error($@);
         }
         else {
-            $topic->value($value);
+            $context->value($value);
         }
     }
-    if ($topic->error) {
-        die $topic->error;
+    if ($context->error) {
+        die $context->error;
     }
-    return $topic;
+    return $context;
 }
 
 sub parse {
@@ -140,7 +144,7 @@ sub parse_data {
     }
 }
 
-package TestML::Topic;
+package TestML::Context;
 use TestML::Base -base;
 
 field 'document';
