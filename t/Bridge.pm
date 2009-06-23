@@ -3,12 +3,12 @@ use strict;
 use warnings;
 use base 'TestML::Bridge';
 
-sub testml_my_thing {
+sub my_thing {
     my $self = shift;
     return join ' - ', split "\n", $self->value;
 }
 
-sub testml_parse_testml {
+sub parse_testml {
     my $self = shift;
     my $stream = $self->value;
     TestML::Parser->new(
@@ -18,7 +18,7 @@ sub testml_parse_testml {
     )->parse;
 }
 
-sub testml_msg {
+sub msg {
     my $self = shift;
     my $text = $self->value;
     $text =~ /^\s+msg:\s+(.*)/m
@@ -26,7 +26,7 @@ sub testml_msg {
     return $1;
 }
 
-sub testml_combine {
+sub combine {
     my $self = shift;
     my $suffix = shift;
     $self->value . ' ' . $suffix->value;

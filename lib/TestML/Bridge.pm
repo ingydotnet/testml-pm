@@ -4,7 +4,7 @@ use warnings;
 
 use TestML::Base -base;
 
-sub transform_classes {
+sub __transform_classes {
     my $class = shift;
     my $list = [qw(
         TestML::Standard    
@@ -15,14 +15,14 @@ sub transform_classes {
     return $list;
 }
 
-sub get_transform_function {
+sub __get_transform_function {
     my $class = shift;
     my $name = shift;
-    my $classes = $class->transform_classes();
+    my $classes = $class->__transform_classes();
     my $function;
     for my $class (@$classes) {
         eval "use $class";
-        $function = $class->can("testml_${name}") and last;
+        $function = $class->can($name) and last;
     }
     if (not $function) {
         die "Can't locate function '$name'";

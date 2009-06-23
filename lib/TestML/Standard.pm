@@ -3,11 +3,11 @@ use strict;
 use warnings;
 no warnings 'redefine';
 
-sub testml_Select {
+sub Select {
     return (shift)->value;
 }
 
-sub testml_Point {
+sub Point {
     my $self = shift;
     my $name = shift;
     $self->point($name);
@@ -18,14 +18,14 @@ sub testml_Point {
     return $value;
 }
 
-sub testml_Raw {
+sub Raw {
     my $self = shift;
     my $point = $self->point
         or die "Raw called but there is no point";
     return $self->block->points->{$point};
 }
 
-sub testml_Catch {
+sub Catch {
     my $self = shift;
     my $error = $self->error
         or die "Catch called but no TestML error found";
@@ -34,14 +34,14 @@ sub testml_Catch {
     return $error;
 }
 
-sub testml_Throw {
+sub Throw {
     my $self = shift;
     my $msg = @_ ? (shift)->value : $self->value
       or die "Throw called without an error msg";
     die $msg;
 }
 
-sub testml_String {
+sub String {
     my $self = shift;
     my $string =
     (defined $self->value) ? $self->value :
@@ -53,46 +53,51 @@ sub testml_String {
     return $string;
 }
 
-sub testml_BoolStr {
+sub BoolStr {
     return (shift)->value ? 'True' : 'False';
 }
 
-sub testml_List {
+sub List {
     return [ split /\n/, (shift)->value ];
 }
 
-sub testml_Join {
+sub Join {
     my $list = (shift)->value;
     my $string = @_ ? (shift)->value : '';
     return join $string, @$list;
 }
 
-sub testml_Reverse {
+sub Reverse {
     my $list = (shift)->value;
     return [ reverse @$list ];
 }
 
-sub testml_Sort {
+sub Sort {
     my $list = (shift)->value;
     return [ sort @$list ];
 }
 
-sub testml_Item {
+sub Item {
     my $list = (shift)->value;
     return join("\n", (@$list, ''));
 }
 
-sub testml_Union {
+sub Union {
     my $list = (shift)->value;
     # my $list2 = shift;
     my $list2 = [ @$list ];
     return [ @$list, @$list2 ];
 }
 
-sub testml_Unique {
+sub Unique {
     my $list = (shift)->value;
     # my $list2 = shift;
     my $list2 = [ @$list ];
     return [ @$list, @$list2 ];
 }
 
+sub Chomp {
+    my $string = (shift)->value;
+    chomp($string);
+    return $string;
+}

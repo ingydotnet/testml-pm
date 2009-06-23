@@ -8,14 +8,17 @@ use Test::Builder;
 
 field 'test_builder' => -init => 'Test::Builder->new';
 
-sub setup {
+sub init_bridge {
     my $self = shift;
-    {
-        local @INC = ('t', 't/lib', @INC);
-        my $class = $self->bridge;
+
+    local @INC = ('t', 't/lib', @INC);
+    my $class = $self->bridge;
+    if ($class ne 'main') {
         eval "require $class";
         die "Error loading bridge class '$class': $@" if $@;
     }
+
+    return $class->new();
 }
 
 sub title {

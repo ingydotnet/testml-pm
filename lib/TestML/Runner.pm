@@ -17,17 +17,13 @@ sub setup {
 }
 
 sub init_bridge {
-    my $self = shift;
-    my $class = $self->bridge or die "No Bridge class specified";
-    eval "require $class; 1" or die $@;
-    return $class->new();
+    die "'init_bridge' must be implemented in subclass";
 }
 
 sub run {
     my $self = shift;
 
     $self->base(($0 =~ /(.*)\//) ? $1 : '.');
-    $self->setup();
     $self->title();
     $self->plan_begin();
 
@@ -95,7 +91,7 @@ sub evaluate_expression {
     for my $transform (@{$expression->transforms}) {
         my $transform_name = $transform->name;
         next if $context->error and $transform_name ne 'Catch';
-        my $function = $self->Bridge->get_transform_function($transform_name);
+        my $function = $self->Bridge->__get_transform_function($transform_name);
         my $value = eval {
             &$function(
                 $context,
