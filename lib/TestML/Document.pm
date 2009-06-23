@@ -66,7 +66,7 @@ field 'document', -init => 'TestML::Document->new()';
 field 'grammar';
 
 field 'current_statement';
-field 'insert_transform_here' => [];
+field 'insert_expression_here';
 field 'current_expression' => [];
 field 'inline_data';
 
@@ -130,8 +130,7 @@ sub got_meta_statement {
 sub try_test_statement {
     my $self = shift;
     $self->current_statement(TestML::Statement->new());
-    push @{$self->insert_transform_here},
-        $self->current_statement->left_expression;
+    $self->insert_expression_here($self->current_statement->left_expression);
 }
 sub got_test_statement {
     my $self = shift;
@@ -153,7 +152,7 @@ sub try_test_expression {
 }
 sub got_test_expression {
     my $self = shift;
-    push @{$self->insert_transform_here->[-1]},
+    push @{$self->insert_expression_here},
         pop @{$self->current_expression};
 }
 sub not_test_expression {
@@ -185,14 +184,12 @@ my %ESCAPES = (
 );
 sub try_argument {
     my $self = shift;
-    push @{$self->insert_transform_here},
-        $self->current_statement->left_expression;
 }
-# sub got_argument {
-#     my $self = shift;
-#     WWW @{$self->current_expression->[-1]->transforms};
-# }
+sub got_argument {
+    my $self = shift;
+}
 sub not_argument {
+    my $self = shift;
 }
 sub got_single_quoted_string {
     my $self = shift;
@@ -239,8 +236,7 @@ sub got_transform_call {
 
 sub got_assertion_operator {
     my $self = shift;
-    push @{$self->insert_transform_here},
-        $self->current_statement->right_expression;
+    $self->insert_expression_here($self->current_statement->right_expression);
 }
 
 sub got_data_section {

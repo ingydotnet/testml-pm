@@ -45,7 +45,7 @@ sub testml_String {
     my $self = shift;
     my $string =
     (defined $self->value) ? $self->value :
-    @_ ? (shift) :
+    @_ ? ref($_[0]) ? (shift)->value : (shift) :
     $self->raise(
         'StandardLibraryException',
         'Str transform called but no string available'
