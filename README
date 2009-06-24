@@ -8,8 +8,8 @@ SYNOPSIS
         %Title: Tests for AcmeEncode
         %Plan: 3
 
-        text.apply_rot13()  == rot13;
-        text.apply_md5()    == md5;
+        $text.apply_rot13()  == $rot13;
+        $text.apply_md5()    == $md5;
 
         === Encode some poetry
         --- text
@@ -36,11 +36,17 @@ SYNOPSIS
 
         TestML::Runner::TAP->new(
             document => 't/testml/encode.tml',
-            bridge => 'AcmeEncode::Bridge',
+            bridge => 't::Bridge',
         )->run();
 
-    The apply_* functions are defined in a bridge class that is specified
-    outside this test.
+    or more simply:
+
+        use TestML -run,
+            -document => 't/testml/encode.tml',
+            -bridge => 't::Bridge';
+
+    The apply_* functions are defined in the bridge class that is specified
+    outside this test (t/Bridge.pm).
 
 DESCRIPTION
     TestML is a generic, programming language agnostic, meta language for
