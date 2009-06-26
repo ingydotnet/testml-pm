@@ -112,17 +112,15 @@ constant: /($UPPER$WORD*)/
 
 argument_list:
   =:
-  - sub_expression
+  - argument
   - =:
     - /$ws*,$ws*/
-    - sub_expression
+    - argument
     ^: '*'
   ^: '?'
 
 argument:
-  /:
-  - sub_expression
-  - quoted_string
+- sub_expression
 
 quoted_string:
   /:
