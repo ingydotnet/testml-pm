@@ -48,7 +48,7 @@ sub String {
     @_ ? ref($_[0]) ? (shift)->value : (shift) :
     $self->raise(
         'StandardLibraryException',
-        'Str transform called but no string available'
+        'String transform called but no string available'
     );
     return $string;
 }
