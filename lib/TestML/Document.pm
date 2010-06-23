@@ -178,7 +178,7 @@ sub not_test_expression {
 sub got_data_point {
     my $self = shift;
     my $name = shift;
-    $name =~ s/^\$// or die;
+    $name =~ s/^\*// or die;
     push @{$self->current_statement->points}, $name;
     push @{$self->current_expression->[-1]->transforms},
         TestML::Transform->new(

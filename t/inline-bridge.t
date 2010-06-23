@@ -9,7 +9,7 @@ __DATA__
 
 %TestML: 1.0
 
-$foo.upper() == $bar;
+*foo.upper() == *bar;
 
 === Foo for thought
 --- foo: o hai

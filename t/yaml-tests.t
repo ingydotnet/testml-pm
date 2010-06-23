@@ -5,7 +5,7 @@ __END__
 %TestML: 1.0
 %PointMarker: +++
 
-$perl == $perl;
+*perl == *perl;
 
 
 === Mapping in Mapping with Alias

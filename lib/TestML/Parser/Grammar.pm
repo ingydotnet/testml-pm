@@ -76,7 +76,7 @@ sub grammar {
       'core_transform'
     ]
   },
-  'data_point' => '/($DOLLAR$LOWER$WORD*)/',
+  'data_point' => '/($STAR$LOWER$WORD*)/',
   'DOLLAR' => '\\$',
   'data_section' => '/($block_marker(?:$SPACE|$EOL)$ANY+|\\Z)/',
   'single_quoted_string' => '/(?:$SINGLE(([^$BREAK$BACK$SINGLE]|$BACK$SINGLE|$BACK$BACK)*?)$SINGLE)/',
@@ -169,6 +169,7 @@ sub grammar {
       ]
     }
   ],
+  'STAR' => '\\*',
   'SPACE' => '[\\ \\t]',
   'ws' => '/(?:$SPACE|$EOL|$comment)/',
   'blank_line' => '/$SPACE*$EOL/',
@@ -176,7 +177,6 @@ sub grammar {
     '/([^$SPACES$BREAK]($NON_BREAK*[^SPACES$BREAK])?)/'
   ],
   'assertion_name' => '/EQ/',
-  'user_meta_keyword' => '/$LOWER$WORD*/',
   'phrase_point' => [
     '/$point_marker$SPACE+/',
     'user_point_name',
@@ -185,6 +185,7 @@ sub grammar {
     '/$EOL/',
     '/(?:$comment|$blank_line)*/'
   ],
+  'user_meta_keyword' => '/$LOWER$WORD*/',
   'NON_BREAK' => '.',
   'core_transform' => '/($UPPER$WORD*)/',
   'transform_call' => [

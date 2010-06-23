@@ -1,6 +1,6 @@
 %TestML: 1.0
 
-$what.combine($who) == $greeting;
+*what.combine(*who) == *greeting;
 
 === Dear John
 --- what: Dear

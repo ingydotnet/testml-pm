@@ -3,7 +3,7 @@
 %PointMarker: ???
 
 
-$foo == $bar;
+*foo == *bar;
 
 
 +++ Test One

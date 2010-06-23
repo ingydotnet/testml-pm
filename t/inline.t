@@ -6,8 +6,8 @@ __DATA__
 %Title: Ingy's Test
 %Plan: 4
 
-$foo == $bar;
-$bar == $foo;
+*foo == *bar;
+*bar == *foo;
 
 === Foo for thought
 --- foo: O HAI

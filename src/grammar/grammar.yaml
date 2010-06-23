@@ -11,6 +11,7 @@ ALPHANUM: '[A-Za-z0-9]'    # ASCII alphanumeric character
 WORD: '\w'        # ie '[A-Za-z0-9_]' - A "word" character
 DIGIT: '[0-9]'    # A numeric digit
 DOLLAR: '\$'      # A dollar sign
+STAR: '\*'        # An asterisk
 DOT: '\.'         # A period character
 HASH: '#'         # An octothorpe (or hash) character
 BACK: '\'         # A backslash character
@@ -106,7 +107,7 @@ core_transform: /($UPPER$WORD*)/
 
 call_indicator: /(?:$DOT$ws*|$ws*$DOT)/
 
-data_point: /($DOLLAR$LOWER$WORD*)/
+data_point: /($STAR$LOWER$WORD*)/
 
 constant: /($UPPER$WORD*)/
 
