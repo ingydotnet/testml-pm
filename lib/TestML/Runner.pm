@@ -30,10 +30,10 @@ sub run {
     for my $statement (@{$self->doc->tests->statements}) {
         my $points = $statement->points;
         if (not @$points) {
-            my $left = $self->evaluate_expression($statement->left_expression->[0]);
-            if (@{$statement->right_expression}) {
+            my $left = $self->evaluate_expression($statement->expression);
+            if ($statement->assertion->expression) {
                 my $right = $self->evaluate_expression(
-                    $statement->right_expression->[0]
+                    $statement->assertion->expression
                 );
                 $self->do_test('EQ', $left, $right, undef);
             }
@@ -42,12 +42,12 @@ sub run {
         my $blocks = $self->select_blocks($points);
         for my $block (@$blocks) {
             my $left = $self->evaluate_expression(
-                $statement->left_expression->[0],
+                $statement->expression,
                 $block,
             );
-            if (@{$statement->right_expression}) {
+            if ($statement->assertion->expression) {
                 my $right = $self->evaluate_expression(
-                    $statement->right_expression->[0],
+                    $statement->assertion->expression,
                     $block,
                 );
                 $self->do_test('EQ', $left, $right, $block->label);

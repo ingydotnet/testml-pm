@@ -27,19 +27,28 @@ use TestML::Base -base;
 
 field 'statements' => [];
 
+#-----------------------------------------------------------------------------
 package TestML::Statement;
 use TestML::Base -base;
 
+field 'expression', -init => 'TestML::Expression->new';
+field 'assertion';
 field 'points' => [];
-field 'left_expression' => [];
-field 'assertion_operator';
-field 'right_expression' => [];
 
+#-----------------------------------------------------------------------------
 package TestML::Expression;
 use TestML::Base -base;
 
 field 'transforms' => [];
 
+#-----------------------------------------------------------------------------
+package TestML::Assertion;
+use TestML::Base -base;
+
+field 'name';
+field 'expression', -init => 'TestML::Expression->new';
+
+#-----------------------------------------------------------------------------
 package TestML::Transform;
 use TestML::Base -base;
 
@@ -52,6 +61,7 @@ use TestML::Base -base;
 
 field 'blocks' => [];
 
+#-----------------------------------------------------------------------------
 package TestML::Block;
 use TestML::Base -base;
 
@@ -65,8 +75,8 @@ use TestML::Base -base;
 field 'document', -init => 'TestML::Document->new()';
 field 'grammar';
 
-field 'current_statement';
-field 'insert_expression_here';
+field 'statement';
+field 'insertion_stack' => [];
 field 'current_expression' => [];
 field 'inline_data';
 
@@ -94,6 +104,34 @@ sub x {
 # t qw(data_block try got not);
 # t qw(data_header try got not);
 
+##############################################################################
+my %ESCAPES = (
+    '\\' => '\\',
+    "'" => "'",
+    'n' => "\n",
+    't' => "\t",
+    '0' => "\0",
+);
+sub got_single_quoted_string {
+    my $self = shift;
+    my $value = shift;
+    $value =~ s/\\([\\\'])/$ESCAPES{$1}/g;
+    push @{$self->current_expression->[-1]->transforms},
+        TestML::Transform->new(
+            name => 'String',
+            args => [$value],
+        );
+}
+sub got_double_quoted_string {
+    my $self = shift;
+    my $value = shift;
+    $value =~ s/\\([\\\"nt])/$ESCAPES{$1}/g;
+    push @{$self->current_expression->[-1]->transforms},
+        TestML::Transform->new(
+            name => 'String',
+            args => [$value],
+        );
+}
 ##############################################################################
 sub got_document {
     my $self = shift;
@@ -129,20 +167,15 @@ sub got_meta_statement {
 ##############################################################################
 sub try_test_statement {
     my $self = shift;
-    $self->current_statement(TestML::Statement->new());
-    $self->insert_expression_here($self->current_statement->left_expression);
+    $self->statement(TestML::Statement->new());
+    push @{$self->insertion_stack}, $self->statement->expression;
 }
 sub got_test_statement {
     my $self = shift;
-    my $statement = $self->current_statement;
+    my $statement = $self->statement;
     $statement->{points} =
         [sort keys %{+{ map {($_, 1)} @{$statement->points} }}];
     push @{$self->document->tests->statements}, $statement;
-    delete $self->{current_statement};
-}
-sub not_test_statement {
-    my $self = shift;
-    delete $self->{current_statement};
 }
 
 sub try_argument {
@@ -167,7 +200,7 @@ sub try_test_expression {
 }
 sub got_test_expression {
     my $self = shift;
-    push @{$self->insert_expression_here},
+    push @{$self->insertion_stack},
         pop @{$self->current_expression};
 }
 sub not_test_expression {
@@ -179,7 +212,7 @@ sub got_data_point {
     my $self = shift;
     my $name = shift;
     $name =~ s/^\*// or die;
-    push @{$self->current_statement->points}, $name;
+    push @{$self->statement->points}, $name;
     push @{$self->current_expression->[-1]->transforms},
         TestML::Transform->new(
             name => 'Point',
@@ -189,33 +222,6 @@ sub got_data_point {
 sub try_transform_call {
     my $self = shift;
     $self->arguments([]);
-}
-my %ESCAPES = (
-    '\\' => '\\',
-    "'" => "'",
-    'n' => "\n",
-    't' => "\t",
-    '0' => "\0",
-);
-sub got_single_quoted_string {
-    my $self = shift;
-    my $value = shift;
-    $value =~ s/\\([\\\'])/$ESCAPES{$1}/g;
-    push @{$self->current_expression->[-1]->transforms},
-        TestML::Transform->new(
-            name => 'String',
-            args => [$value],
-        );
-}
-sub got_double_quoted_string {
-    my $self = shift;
-    my $value = shift;
-    $value =~ s/\\([\\\"nt])/$ESCAPES{$1}/g;
-    push @{$self->current_expression->[-1]->transforms},
-        TestML::Transform->new(
-            name => 'String',
-            args => [$value],
-        );
 }
 sub got_transform_name {
     my $self = shift;
@@ -235,7 +241,9 @@ sub got_transform_call {
 
 sub got_assertion_operator {
     my $self = shift;
-    $self->insert_expression_here($self->current_statement->right_expression);
+    pop @{$self->insertion_stack};
+    $self->statement->assertion(TestML::Assertion->new(name => 'EQ'));
+    push @{$self->insertion_stack}, $self->statement->assertion->expression;
 }
 
 sub got_data_section {
