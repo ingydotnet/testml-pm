@@ -1,3 +1,3 @@
 use TestML -run,
-    -document => 't/testml/error.tml',
+    -document => 't/testml-tml/error.tml',
     -bridge => 't::Bridge';
