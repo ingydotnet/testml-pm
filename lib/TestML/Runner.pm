@@ -17,8 +17,20 @@ sub setup {
 }
 
 sub init_bridge {
-    die "'init_bridge' must be implemented in subclass";
+    my $self = shift;
+
+    local @INC = ('t', 't/lib', @INC);
+    my $class = $self->bridge;
+    if ($class ne 'main') {
+        eval "require $class";
+        die "Error loading bridge class '$class': $@" if $@;
+    }
+
+    return $class->new();
 }
+
+sub plan_begin { }
+sub plan_end { }
 
 sub run {
     my $self = shift;
