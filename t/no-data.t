@@ -1,2 +1,2 @@
 use TestML -run,
-    -document => 't/testml-tml/no-data.tml';
+    -document => 'testml-tml/no-data.tml';

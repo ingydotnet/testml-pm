@@ -40,18 +40,9 @@ sub run {
     $self->plan_begin();
 
     for my $statement (@{$self->doc->tests->statements}) {
-        my $points = $statement->points;
-        if (not @$points) {
-            my $left = $self->evaluate_expression($statement->expression);
-            if ($statement->assertion->expression) {
-                my $right = $self->evaluate_expression(
-                    $statement->assertion->expression
-                );
-                $self->do_test('EQ', $left, $right, undef);
-            }
-            next;
-        }
-        my $blocks = $self->select_blocks($points);
+        my $blocks = @{$statement->points}
+            ? $self->select_blocks($statement->points)
+            : [TestML::Block->new()];
         for my $block (@$blocks) {
             my $left = $self->evaluate_expression(
                 $statement->expression,
@@ -136,7 +127,10 @@ sub parse {
     );
     $parser->receiver->grammar($parser->grammar);
 
-    $parser->open($self->document);
+    my $document = ref $self->document 
+        ? $self->document
+        : $self->base . '/' . $self->document;
+    $parser->open($document);
     $parser->parse;
 
     $self->parse_data($parser);
