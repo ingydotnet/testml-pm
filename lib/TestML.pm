@@ -1,5 +1,3 @@
-# To Do:
-#
 package TestML;
 use strict;
 use warnings;
@@ -65,8 +63,8 @@ TestML - A Generic Software Testing Meta Language
     %Title: Tests for AcmeEncode
     %Plan: 3
 
-    $text.apply_rot13()  == $rot13;
-    $text.apply_md5()    == $md5;
+    *text.apply_rot13()  == *rot13;
+    *text.apply_md5()    == *md5;
 
     === Encode some poetry
     --- text
@@ -92,14 +90,14 @@ To run this test you would have a normal test file that looks like this:
     use TestML::Runner::TAP;
 
     TestML::Runner::TAP->new(
-        document => 't/testml/encode.tml',
+        document => 'testml/encode.tml',
         bridge => 't::Bridge',
     )->run();
 
 or more simply:
 
     use TestML -run,
-        -document => 't/testml/encode.tml',
+        -document => 'testml/encode.tml',
         -bridge => 't::Bridge';
 
 The apply_* functions are defined in the bridge class that is specified
@@ -129,7 +127,7 @@ Ingy döt Net <ingy@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2009. Ingy döt Net.
+Copyright (c) 2009, 2010. Ingy döt Net.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
