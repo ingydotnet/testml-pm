@@ -19,6 +19,7 @@ my $testml = '
 --- output: I LOVE LUCY
 ';
 
+use XXX;
 my $match = TestML::Parser->parse($testml);
 ok $match, 'TestML string matches against TestML grammar';
 is $match->meta->data->{TestML}, '1.0', 'Version parses';
@@ -32,11 +33,12 @@ my $statement = $match->test->statements->[0];
 is join('-', @{$statement->points}), 'input-output',
     'Point list is correct';
 
-is $statement->expression->transforms->elems, 2, 'Expression has two transforms';
+is scalar(@{$statement->expression->transforms}), 2, 'Expression has two transforms';
 my $expression = $statement->expression;
 is $expression->transforms->[0]->name, 'Point', 'First sub is a Point';
 is $expression->transforms->[0]->args->[0], 'input', 'Point name is "input"';
 is $expression->transforms->[1]->name, 'uppercase', 'Second sub is "uppercase"';
+exit;
 
 is $statement->assertion->name, 'EQ', 'Assertion is "EQ"';
 
