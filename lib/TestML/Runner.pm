@@ -3,43 +3,25 @@ use strict;
 use warnings;
 use TestML::Base -base;
 
-use TestML::Document;
 use TestML::Parser;
 
 field 'bridge';
 field 'document';
-field 'base';
-field 'doc', -init => '$self->parse()';
-field 'Bridge', -init => '$self->init_bridge';
+field 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
+field 'doc', -init => '$self->parse_document()';
+field 'transform_modules' => '$self->_transform_modules';
 
-sub setup {
-    die "\nDon't use TestML::Runner directly.\nUse an appropriate subclass like TestML::Runner::TAP.\n";
-}
-
-sub init_bridge {
-    my $self = shift;
-
-    local @INC = ('t', 't/lib', @INC);
-    my $class = $self->bridge;
-    if ($class ne 'main') {
-        eval "require $class";
-        die "Error loading bridge class '$class': $@" if $@;
-    }
-
-    return $class->new();
-}
-
+sub title { }
 sub plan_begin { }
 sub plan_end { }
 
 sub run {
     my $self = shift;
 
-    $self->base(($0 =~ /(.*)\//) ? $1 : '.');
     $self->title();
     $self->plan_begin();
 
-    for my $statement (@{$self->doc->tests->statements}) {
+    for my $statement (@{$self->doc->test->statements}) {
         my $blocks = @{$statement->points}
             ? $self->select_blocks($statement->points)
             : [TestML::Block->new()];
@@ -53,7 +35,7 @@ sub run {
                     $statement->assertion->expression,
                     $block,
                 );
-                $self->do_test('EQ', $left, $right, $block->label);
+                $self->EQ($left, $right, $block->label);
             }
         }
     }
@@ -63,21 +45,22 @@ sub run {
 sub select_blocks {
     my $self = shift;
     my $points = shift;
-    my $blocks = [];
+    my $selected = [];
 
     OUTER: for my $block (@{$self->doc->data->blocks}) {
-        exists $block->points->{SKIP} and next;
-        exists $block->points->{LAST} and last;
+        my $points = $block->points;
+        next if exists $points->{SKIP};
         for my $point (@$points) {
-            next OUTER unless exists $block->points->{$point};
+            next OUTER unless exists $points->{$point};
         }
         if (exists $block->points->{ONLY}) {
-            @$blocks = ($block);
+            @$selected = ($block);
             last;
         }
-        push @$blocks, $block;
+        push @$selected, $block;
+        last if exists $points->{LAST};
     }
-    return $blocks;
+    return $selected;
 }
 
 sub evaluate_expression {
@@ -88,13 +71,12 @@ sub evaluate_expression {
     my $context = TestML::Context->new(
         document => $self->doc,
         block => $block,
-        value => undef,
     );
 
     for my $transform (@{$expression->transforms}) {
         my $transform_name = $transform->name;
         next if $context->error and $transform_name ne 'Catch';
-        my $function = $self->Bridge->__get_transform_function($transform_name);
+        my $function = $self->get_transform_function($transform_name);
         my $value = eval {
             &$function(
                 $context,
@@ -107,6 +89,7 @@ sub evaluate_expression {
         };
         if ($@) {
             $context->error($@);
+            $context->value(undef);
         }
         else {
             $context->value($value);
@@ -118,46 +101,44 @@ sub evaluate_expression {
     return $context;
 }
 
-sub parse {
+sub get_transform_function {
     my $self = shift;
-
-    my $parser = TestML::Parser->new(
-        receiver => TestML::Document::Builder->new(),
-        start_token => 'document',
-    );
-    $parser->receiver->grammar($parser->grammar);
-
-    my $document = ref $self->document 
-        ? $self->document
-        : $self->base . '/' . $self->document;
-    $parser->open($document);
-    $parser->parse;
-
-    $self->parse_data($parser);
-    return $parser->receiver->document;
+    my $name = shift;
+    my $modules = $self->transform_modules();
+    for my $module (@$modules) {
+        eval "use $module";
+        no strict 'refs';
+        my $function = &{"$module\::$name"};
+        return $function if $function;
+    }
+    die "Can't locate function '$name'";
 }
 
-sub parse_data {
+sub parse_document {
     my $self = shift;
-    my $parser = shift;
-    my $builder = $parser->receiver;
-    my $document = $builder->document;
-    for my $file (@{$document->meta->data->{Data}}) {
-        my $parser = TestML::Parser->new(
-            receiver => TestML::Document::Builder->new(),
-            grammar => $parser->grammar,
-            start_token => 'data',
-        );
+    my $path = join '/', $self->base, $self->document;
+    open IN, $path or die "Can't open $path for input";
+    my $testml = do { local $/; <IN> };
+    my $document = TestML::Parser->parse($testml)
+        or die "TestML document failed to parse";
+    return $document;
+}
 
-        if ($file eq '_') {
-            $parser->stream($builder->inline_data);
-        }
-        else {
-            $parser->open($self->base . '/' . $file);
-        }
-        $parser->parse;
-        push @{$document->data->blocks}, @{$parser->receiver->blocks};
+sub _transform_modules {
+    my $self = shift;
+    my $modules = [qw(
+        TestML::Standard    
+    )];
+    if ($self->bridge) {
+        push @$modules, $self->bridge;
     }
+    for my $module_name (@$modules) {
+        eval "use $module_name";
+        if ($@) {
+            die "Can't use $module_name:\n$@";
+        }
+    }
+    return $modules;
 }
 
 package TestML::Context;
@@ -168,3 +149,5 @@ field 'block';
 field 'point';
 field 'value';
 field 'error';
+
+1;

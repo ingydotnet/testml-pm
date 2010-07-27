@@ -25,16 +25,12 @@ sub plan_begin {
     }
 }
 
-# TODO - Refactor so that standard lib finds this comparison through EQ
-sub do_test {
+sub EQ {
     my $self = shift;
-    my $operator = shift;
     my $left = shift;
     my $right = shift;
     my $label = shift;
-    if ($operator eq 'EQ') {
-        $self->test_builder->is_eq($left->value, $right->value, $label);
-    }
+    $self->test_builder->is_eq($left->value, $right->value, $label);
 }
 
 1;

@@ -4,179 +4,269 @@ use warnings;
 use utf8;
 use TestML::Base -base;
 use TestML::Parser::Grammar;
+use TestML::Document;
+use XXX;
 
-field 'stream';
-field 'grammar', -init => 'TestML::Parser::Grammar->grammar()';
-field 'start_token';
-field 'position' => 0;
-field 'receiver';
-field 'arguments' => [];
+my $document;
+my $data;
+my $statement;
+my $transform_arguments;
+my @expression_stack;
 
 sub parse {
     my $self = shift;
-    $self->match($self->start_token);
-    if ($self->position < length($self->stream)) {
-        die "Parse document failed for some reason";
+    my $testml = shift;
+
+    $document = TestML::Document->new();
+    @expression_stack = ();
+    TestML::Parser::Grammar->new()->parse(
+        $testml,
+        rule => 'document',
+        receiver => TestML::Parser::Actions->new(),
+    ) or die "Parse TestML failed";
+#     $self->parse_data($parser);
+    return $document;
+}
+
+# TODO - No tests for external data sections yet.
+# sub parse_data {
+#     my $self = shift;
+#     my $parser = shift;
+#     my $builder = $parser->receiver;
+#     my $document = $builder->document;
+#     for my $file (@{$document->meta->data->{Data}}) {
+#         my $parser = TestML::Parser->new(
+#             receiver => TestML::Parser::Actions->new(),
+#             grammar => $parser->grammar,
+#             start_token => 'data',
+#         );
+# 
+#         if ($file eq '_') {
+#             $parser->stream($builder->inline_data);
+#         }
+#         else {
+#             $parser->open($self->base . '/' . $file);
+#         }
+#         $parser->parse;
+#         push @{$document->data->blocks}, @{$parser->receiver->blocks};
+#     }
+# }
+
+#-----------------------------------------------------------------------------
+package TestML::Parser::Actions;
+use TestML::Base -base;
+
+use TestML::Document;
+
+field 'document', -init => 'TestML::Document->new()';
+field 'grammar';
+
+field 'statement';
+field 'insertion_stack' => [];
+field 'current_expression' => [];
+field 'inline_data';
+
+field 'current_block';
+field 'blocks' => [];
+field 'point_name';
+field 'transform_name';
+field 'arguments' => [];
+
+##############################################################################
+sub t {
+    my $name = shift;
+    for (@_) { eval "sub ${_}_$name { x }" }
+}
+
+my $c = 0;
+sub x {
+    (my $name = (caller(1))[3]) =~ s/.*:://;
+    $c++;
+    warn "$c>> $name\n";
+}
+
+# t qw(test_statement got not);
+# t qw(ws got);
+# t qw(data_block try got not);
+# t qw(data_header try got not);
+
+##############################################################################
+my %ESCAPES = (
+    '\\' => '\\',
+    "'" => "'",
+    'n' => "\n",
+    't' => "\t",
+    '0' => "\0",
+);
+sub got_single_quoted_string {
+    my $self = shift;
+    my $value = shift;
+    $value =~ s/\\([\\\'])/$ESCAPES{$1}/g;
+    push @{$self->current_expression->[-1]->transforms},
+        TestML::Transform->new(
+            name => 'String',
+            args => [$value],
+        );
+}
+sub got_double_quoted_string {
+    my $self = shift;
+    my $value = shift;
+    $value =~ s/\\([\\\"nt])/$ESCAPES{$1}/g;
+    push @{$self->current_expression->[-1]->transforms},
+        TestML::Transform->new(
+            name => 'String',
+            args => [$value],
+        );
+}
+##############################################################################
+sub got_document {
+    my $self = shift;
+    my $data_files = $self->document->meta->data->{Data};
+    if (not @$data_files) {
+        push @$data_files, '_';
     }
 }
 
-sub match {
+sub got_meta_testml_statement {
     my $self = shift;
-    my $topic = shift or die "No topic passed to match";
-
-    my $not = ($topic =~ s/^!//) ? 1 : 0;
-
-    my $state = undef;
-    if (not ref($topic) and $topic =~ /^\w+$/) {
-        $state = $topic;
-
-        if (not defined $self->grammar->{$topic}) {
-            die "\n\n*** No grammar support for '$topic'\n\n";
-            return 0;
-        }
-        
-        $topic = $self->grammar->{$topic};
-        $self->callback('try', $state);
-    }
-
-    my $method;
-    my $times = '1';
-    if (not ref $topic and $topic =~ /^\//) {
-        $method = 'match_regexp';
-    }
-    elsif (ref($topic) eq 'ARRAY') {
-        $method = 'match_all';
-    }
-    elsif (ref($topic) eq 'HASH') {
-        $times = $topic->{'^'} if $topic->{'^'};
-        if ($topic->{'='}) {
-            $topic = $topic->{'='};
-            $method = 'match';
-        }
-        elsif ($topic->{'/'}) {
-            $topic = $topic->{'/'};
-            $method = 'match_one';
-        }
-        elsif ($topic->{'_'}) {
-            $self->throw_error($topic->{'_'});
-        }
-        else { die }
-    }
-    else { XXX $topic }
-
-    my $position = $self->position;
-    my $count = 0;
-    while ($self->$method($topic)) {
-        $count++;
-        last if $times eq '1' or $times eq '?';
-    }
-    my $result = (($count or $times eq '?' or $times eq '*') ? 1 : 0) ^ $not;
-
-    my $status = $result ? 'got' : 'not';
-
-    if ($state) {
-        $self->callback($status, $state);
-    }
-
-    $self->position($position) unless $result;
-    return $result;
+    my $version = shift;
+    $self->document->meta->data->{TestML} = $version;
 }
 
-sub match_all {
+sub got_meta_statement {
     my $self = shift;
-    my $list = shift;
-    for my $elem (@$list) {
-        $self->match($elem) or return 0;
-    }
-    return 1;
-}
-
-sub match_one {
-    my $self = shift;
-    my $list = shift;
-    for my $elem (@$list) {
-        $self->match($elem) and return 1;
-    }
-    return 0;
-}
-
-sub match_regexp {
-    my $self = shift;
-    my $pattern = shift;
-    my $regexp = $self->get_regexp($pattern);
-
-    pos($self->{stream}) = $self->position;
-    $self->{stream} =~ /$regexp/g or return 0;
-    if (defined $1) {
-        $self->arguments([$1, $2, $3, $4, $5]);
-    }
-    $self->position(pos($self->{stream}));
-
-    return 1;
-}
-
-sub get_regexp {
-    my $self = shift;
-    my $pattern = shift;
-    $pattern =~ s/^\/(.*)\/$/$1/;
-    while ($pattern =~ /\$(\w+)/) {
-        my $replacement = $self->grammar->{$1}
-          or die "'$1' not in grammar";
-        $replacement =~ s/^\/(.*)\/$/$1/;
-        $pattern =~ s/\$(\w+)/$replacement/;
-    }
-    return qr/\G$pattern/;
-}
-
-my $warn = 0;
-sub callback {
-    my $self = shift;
-    my $type = shift;
-    my $state = shift;
-    my $method = $type . '_' . $state;
-
-    if ($self->receiver->can($method)) {
-        $self->receiver->$method(@{$self->arguments});
-    }
-}
-
-sub open {
-    my $self = shift;
-    my $file = shift;
-    $self->stream($self->read($file));
-}
-
-sub read {
-    my $self = shift;
-    my $file = shift;
-    my $fh;
-    if (ref $file) {
-        $fh = $file;
+    my $key = shift;
+    my $value = shift;
+    if (ref($self->document->meta->data->{$key}) eq 'ARRAY') {
+        push @{$self->document->meta->data->{$key}}, $value;
     }
     else {
-        CORE::open $fh, $file
-          or die "Can't open file '$file' for input.";
+        $self->document->meta->data->{$key} = $value;
     }
-    my $content = do {local $/; <$fh>};
-    close $fh;
-    if (length $content and $content !~ /\n\z/) {
-        die "File '$file' does not end with a newline.";
+    if ($key =~ /^(Block|Point)Marker$/) {
+        $key =~ s/([a-z])?([A-Z])/$1 ? ($1 . '_' . lc($2)) : lc($2)/ge;
+        $value =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+        $self->grammar->{$key} = '/' . $value . '/';
     }
-    return $content;
 }
 
-sub throw_error {
+##############################################################################
+sub try_test_statement {
     my $self = shift;
-    my $msg = shift;
-    my $line = @{[substr($self->stream, 0, $self->position) =~ /(\n)/g]} + 1;
-    my $context = substr($self->stream, $self->position, 50);
-    $context =~ s/\n/\\n/g;
-    die <<"...";
-Error parsing TestML document:
-  msg: $msg
-  line: $line
-  context: "$context"
-...
+    $self->statement(TestML::Statement->new());
+    push @{$self->insertion_stack}, $self->statement->expression;
+}
+sub got_test_statement {
+    my $self = shift;
+    my $statement = $self->statement;
+    $statement->{points} =
+        [sort keys %{+{ map {($_, 1)} @{$statement->points} }}];
+    push @{$self->document->test->statements}, $statement;
+}
+
+sub try_argument {
+    my $self = shift;
+    push @{$self->current_expression},
+        TestML::Expression->new();
+}
+sub got_argument {
+    my $self = shift;
+    push @{$self->arguments},
+        pop @{$self->current_expression};
+}
+sub not_argument {
+    my $self = shift;
+    pop @{$self->current_expression};
+}
+
+sub try_test_expression {
+    my $self = shift;
+    push @{$self->current_expression},
+        TestML::Expression->new();
+}
+sub got_test_expression {
+    my $self = shift;
+    push @{$self->insertion_stack},
+        pop @{$self->current_expression};
+}
+sub not_test_expression {
+    my $self = shift;
+    pop @{$self->current_expression};
+}
+
+sub got_data_point {
+    my $self = shift;
+    my $name = shift;
+    $name =~ s/^\*// or die;
+    push @{$self->statement->points}, $name;
+    push @{$self->current_expression->[-1]->transforms},
+        TestML::Transform->new(
+            name => 'Point',
+            args => [$name],
+        );
+}
+sub try_transform_call {
+    my $self = shift;
+    $self->arguments([]);
+}
+sub got_transform_name {
+    my $self = shift;
+    my $name = shift;
+    $self->transform_name($name);
+}
+sub got_transform_call {
+    my $self = shift;
+    my $name = $self->transform_name;
+    push @{$self->current_expression->[-1]->transforms},
+        TestML::Transform->new(
+            name => $name,
+            args => $self->arguments,
+        );
+    delete $self->{arguments};
+}
+
+sub got_assertion_operator {
+    my $self = shift;
+    pop @{$self->insertion_stack};
+    $self->statement->assertion(TestML::Assertion->new(name => 'EQ'));
+    push @{$self->insertion_stack}, $self->statement->assertion->expression;
+}
+
+sub got_data_section {
+    my $self = shift;
+    $self->inline_data(shift);
+}
+
+###############################################################################
+
+sub try_data_block {
+    my $self = shift;
+    $self->current_block(TestML::Block->new());
+}
+
+sub got_data_block {
+    my $self = shift;
+    push @{$self->blocks}, $self->current_block;
+}
+
+sub got_block_label {
+    my $self = shift;
+    $self->current_block->label(shift);
+}
+
+sub got_user_point_name {
+    my $self = shift;
+    $self->point_name(shift);
+}
+
+sub got_point_lines {
+    my $self = shift;
+    $self->current_block->points->{$self->point_name} = shift;
+}
+
+sub got_point_phrase {
+    my $self = shift;
+    $self->current_block->points->{$self->point_name} = shift;
 }
 
 1;
