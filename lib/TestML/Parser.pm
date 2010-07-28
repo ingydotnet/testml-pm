@@ -15,33 +15,21 @@ sub parse {
         rule => 'document',
         receiver => TestML::Parser::Actions->new(document => $document),
     ) or die "Parse TestML failed";
-#     $self->parse_data($parser);
     return $document;
 }
 
-# TODO - No tests for external data sections yet.
-# sub parse_data {
-#     my $self = shift;
-#     my $parser = shift;
-#     my $builder = $parser->receiver;
-#     my $document = $builder->document;
-#     for my $file (@{$document->meta->data->{Data}}) {
-#         my $parser = TestML::Parser->new(
-#             receiver => TestML::Parser::Actions->new(),
-#             grammar => $parser->grammar,
-#             start_token => 'data',
-#         );
-# 
-#         if ($file eq '_') {
-#             $parser->stream($builder->inline_data);
-#         }
-#         else {
-#             $parser->open($self->base . '/' . $file);
-#         }
-#         $parser->parse;
-#         push @{$document->data->blocks}, @{$parser->receiver->blocks};
-#     }
-# }
+sub parse_data {
+    my $self = shift;
+    my $testml = shift;
+
+    my $document = TestML::Document->new();
+    TestML::Parser::Grammar->new()->parse(
+        $testml,
+        rule => 'data_section',
+        receiver => TestML::Parser::Actions->new(document => $document),
+    ) or die "Parse TestML data failed";
+    return $document->data->blocks;
+}
 
 #-----------------------------------------------------------------------------
 package TestML::Parser::Actions;
@@ -117,12 +105,12 @@ sub meta_statement {
     my $self = shift;
     my $meta_keyword = shift;
     my $meta_value = shift;
-#     if (ref($self->document->meta->data->{$meta_keyword}) eq 'ARRAY') {
-#         push @{$self->document->meta->data->{$meta_keyword}}, $meta_value;
-#     }
-#     else {
+    if (ref($self->document->meta->data->{$meta_keyword}) eq 'ARRAY') {
+        push @{$self->document->meta->data->{$meta_keyword}}, $meta_value;
+    }
+    else {
         $self->document->meta->data->{$meta_keyword} = $meta_value;
-#     }
+    }
 }
 
 sub test_statement_start {

@@ -117,17 +117,38 @@ sub get_transform_function {
 
 sub parse_document {
     my $self = shift;
-    my $fh;
+    my ($fh, $base);
     if (ref $self->document) {
         $fh = $self->document;
+        $base = $self->base;
     }
     else {
         my $path = join '/', $self->base, $self->document;
         open $fh, $path or die "Can't open $path for input";
+        $base = $path;
+        $base =~ s/(.*)\/.*/$1/ or die;
     }
     my $testml = do { local $/; <$fh> };
     my $document = TestML::Parser->parse($testml)
         or die "TestML document failed to parse";
+    if (@{$document->meta->data->{Data}}) {
+        my $data_files = $document->meta->data->{Data};
+        my $inline = $document->data->blocks;
+        $document->data->blocks([]);
+        for my $file (@$data_files) {
+            if ($file eq '_') {
+                push @{$document->data->blocks}, @$inline;
+            }
+            else {
+                my $path = join '/', $base, $file;
+                open IN, $path or die "Can't open $path for input";
+                my $testml = do { local $/; <IN> };
+                my $blocks = TestML::Parser->parse_data($testml)
+                    or die "TestML data document failed to parse";
+                push @{$document->data->blocks}, @$blocks;
+            }
+        }
+    }
     return $document;
 }
 
