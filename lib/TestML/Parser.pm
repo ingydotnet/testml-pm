@@ -64,7 +64,6 @@ field '_transform_name';
 field 'string';
 field 'transform_arguments' => [];
 
-##############################################################################
 my %ESCAPES = (
     '\\' => '\\',
     "'" => "'",
@@ -126,7 +125,6 @@ sub meta_statement {
 #     }
 }
 
-##############################################################################
 sub test_statement_start {
     my $self = shift;
     $self->statement(TestML::Statement->new());
@@ -229,6 +227,14 @@ sub point_lines {
 sub data_block {
     my $self = shift;
     push @{$self->document->data->blocks}, $self->current_block;
+}
+
+sub NO_META_TESTML_ERROR {
+    die 'No TestML meta directive found';
+}
+
+sub SEMICOLON_ERROR {
+    die 'You seem to be missing a semicolon';
 }
 
 1;

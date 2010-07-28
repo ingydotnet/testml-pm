@@ -8,8 +8,14 @@ sub grammar {
   'ALWAYS' => {
     '+re' => ''
   },
+  'NO_META_TESTML_ERROR' => {
+    '+rule' => 'ALWAYS'
+  },
   'SEMI' => {
     '+re' => ';'
+  },
+  'SEMICOLON_ERROR' => {
+    '+rule' => 'ALWAYS'
   },
   'assertion_call' => {
     '+any' => [
