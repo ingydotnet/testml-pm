@@ -1,23 +1,15 @@
 package TestML::Parser;
 use strict;
 use warnings;
-use utf8;
 use TestML::Base -base;
 use TestML::Parser::Grammar;
 use TestML::Document;
-
-my $document;
-my $data;
-my $statement;
-my $transform_arguments;
-my @expression_stack;
 
 sub parse {
     my $self = shift;
     my $testml = shift;
 
-    $document = TestML::Document->new();
-    @expression_stack = ();
+    my $document = TestML::Document->new();
     TestML::Parser::Grammar->new()->parse(
         $testml,
         rule => 'document',
@@ -69,70 +61,37 @@ field 'blocks' => [];
 field 'point_name';
 field '_point_name';
 field '_transform_name';
-field '_unquoted_string';
-field 'arguments' => [];
+field 'string';
+field 'transform_arguments' => [];
 
-# ##############################################################################
-# sub t {
-#     my $name = shift;
-#     for (@_) { eval "sub ${_}_$name { x }" }
-# }
-# 
-# my $c = 0;
-# sub x {
-#     (my $name = (caller(1))[3]) =~ s/.*:://;
-#     $c++;
-#     warn "$c>> $name\n";
-# }
-# 
-# # t qw(test_statement got not);
-# # t qw(ws got);
-# # t qw(data_block try got not);
-# # t qw(data_header try got not);
-# 
-# ##############################################################################
-# my %ESCAPES = (
-#     '\\' => '\\',
-#     "'" => "'",
-#     'n' => "\n",
-#     't' => "\t",
-#     '0' => "\0",
-# );
+##############################################################################
+my %ESCAPES = (
+    '\\' => '\\',
+    "'" => "'",
+    'n' => "\n",
+    't' => "\t",
+    '0' => "\0",
+);
+
+sub single_quoted_string {
+    my $self = shift;
+    my $string = shift;
+    $string =~ s/\\([\\\'])/$ESCAPES{$1}/g;
+    $self->string($string);
+}
+
+sub double_quoted_string {
+    my $self = shift;
+    my $string = shift;
+    $string =~ s/\\([\\\"nt])/$ESCAPES{$1}/g;
+    $self->string($string);
+}
 
 sub unquoted_string {
     my $self = shift;
-    my $unquoted_string = shift;
-    $self->_unquoted_string($unquoted_string);
+    my $string = shift;
+    $self->string($string);
 }
-
-# sub got_single_quoted_string {
-#     my $self = shift;
-#     my $value = shift;
-#     $value =~ s/\\([\\\'])/$ESCAPES{$1}/g;
-#     push @{$self->current_expression->[-1]->transforms},
-#         TestML::Transform->new(
-#             name => 'String',
-#             args => [$value],
-#         );
-# }
-# sub got_double_quoted_string {
-#     my $self = shift;
-#     my $value = shift;
-#     $value =~ s/\\([\\\"nt])/$ESCAPES{$1}/g;
-#     push @{$self->current_expression->[-1]->transforms},
-#         TestML::Transform->new(
-#             name => 'String',
-#             args => [$value],
-#         );
-# }
-##############################################################################
-# sub got_document {
-#     my $self = shift;
-#     my $data_files = $self->document->meta->data->{Data};
-#     if (not @$data_files) {
-#         push @$data_files, '_';
-#     }
-# }
 
 sub meta_section {
     my $self = shift;
@@ -203,10 +162,36 @@ sub transform_call {
     my $transform_name = $self->_transform_name;
     my $transform = TestML::Transform->new(
         name => $transform_name,
-        args => [], # TODO $self->arguments,
+        args => $self->transform_arguments,
     );
     push @{$self->expression_stack->[-1]->transforms}, $transform;
-    delete $self->{arguments};
+}
+
+sub transform_argument_list_start {
+    my $self = shift;
+    push @{$self->expression_stack}, TestML::Expression->new;
+    $self->transform_arguments([]);
+}
+
+sub transform_argument {
+    my $self = shift;
+    push @{$self->transform_arguments}, pop @{$self->expression_stack};
+    push @{$self->expression_stack}, TestML::Expression->new;
+}
+
+sub transform_argument_list_stop {
+    my $self = shift;
+    pop @{$self->expression_stack};
+}
+
+sub string_call {
+    my $self = shift;
+    my $string = $self->string;
+    my $transform = TestML::Transform->new(
+        name => 'String',
+        args => [ $string ],
+    );
+    push @{$self->expression_stack->[-1]->transforms}, $transform;
 }
 
 sub assertion_operator {
@@ -235,90 +220,15 @@ sub point_phrase {
     $self->current_block->points->{$self->point_name} = $point_phrase;
 }
 
+sub point_lines {
+    my $self = shift;
+    my $point_lines = shift;
+    $self->current_block->points->{$self->point_name} = $point_lines;
+}
+
 sub data_block {
     my $self = shift;
     push @{$self->document->data->blocks}, $self->current_block;
-}
-
-
-__END__
-sub try_argument {
-    my $self = shift;
-    push @{$self->current_expression},
-        TestML::Expression->new();
-}
-sub got_argument {
-    my $self = shift;
-    push @{$self->arguments},
-        pop @{$self->current_expression};
-}
-sub not_argument {
-    my $self = shift;
-    pop @{$self->current_expression};
-}
-
-sub try_test_expression {
-    my $self = shift;
-    push @{$self->current_expression},
-        TestML::Expression->new();
-}
-sub got_test_expression {
-    my $self = shift;
-    push @{$self->insertion_stack},
-        pop @{$self->current_expression};
-}
-sub not_test_expression {
-    my $self = shift;
-    pop @{$self->current_expression};
-}
-
-sub try_transform_call {
-    my $self = shift;
-    $self->arguments([]);
-}
-
-sub got_assertion_operator {
-    my $self = shift;
-    pop @{$self->insertion_stack};
-    $self->statement->assertion(TestML::Assertion->new(name => 'EQ'));
-    push @{$self->insertion_stack}, $self->statement->assertion->expression;
-}
-
-sub got_data_section {
-    my $self = shift;
-    $self->inline_data(shift);
-}
-
-###############################################################################
-
-sub try_data_block {
-    my $self = shift;
-    $self->current_block(TestML::Block->new());
-}
-
-sub got_data_block {
-    my $self = shift;
-    push @{$self->blocks}, $self->current_block;
-}
-
-sub got_block_label {
-    my $self = shift;
-    $self->current_block->label(shift);
-}
-
-sub got_user_point_name {
-    my $self = shift;
-    $self->point_name(shift);
-}
-
-sub got_point_lines {
-    my $self = shift;
-    $self->current_block->points->{$self->point_name} = shift;
-}
-
-sub got_point_phrase {
-    my $self = shift;
-    $self->current_block->points->{$self->point_name} = shift;
 }
 
 1;

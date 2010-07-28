@@ -9,7 +9,7 @@ field 'bridge';
 field 'document';
 field 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
 field 'doc', -init => '$self->parse_document()';
-field 'transform_modules' => '$self->_transform_modules';
+field 'transform_modules', -init => '$self->_transform_modules';
 
 sub title { }
 sub plan_begin { }
@@ -47,18 +47,19 @@ sub select_blocks {
     my $points = shift;
     my $selected = [];
 
+    # XXX $points an %points is very confusing here
     OUTER: for my $block (@{$self->doc->data->blocks}) {
-        my $points = $block->points;
-        next if exists $points->{SKIP};
+        my %points = %{$block->points};
+        next if exists $points{SKIP};
         for my $point (@$points) {
-            next OUTER unless exists $points->{$point};
+            next OUTER unless exists $points{$point};
         }
-        if (exists $block->points->{ONLY}) {
+        if (exists $points{ONLY}) {
             @$selected = ($block);
             last;
         }
         push @$selected, $block;
-        last if exists $points->{LAST};
+        last if exists $points{LAST};
     }
     return $selected;
 }
@@ -108,8 +109,8 @@ sub get_transform_function {
     for my $module (@$modules) {
         eval "use $module";
         no strict 'refs';
-        my $function = &{"$module\::$name"};
-        return $function if $function;
+        return \&{"$module\::$name"}
+            if defined &{"$module\::$name"};
     }
     die "Can't locate function '$name'";
 }

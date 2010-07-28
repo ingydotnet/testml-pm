@@ -148,6 +148,9 @@ sub grammar {
       }
     ]
   },
+  'double_quoted_string' => {
+    '+re' => '(?:"(([^\\n\\"]|\\"|\\\\|\\[0nt])*?)")'
+  },
   'lines_point' => {
     '+all' => [
       {
@@ -196,7 +199,7 @@ sub grammar {
     ]
   },
   'meta_statement' => {
-    '+re' => '%((?:(?:Title|Data|Plan|BlockMarker|PointMarker)|[a-z]\\w*)):[\\ \\t]+((?:(?:(?:\'(([^\\n\\\']|\\\'|\\\\)*?)\')|(?:"(([^\\n\\"]|\\"|\\\\|\\[0nt])*?)"))|([^\\ \\t\\n#](?:[^\\n#]*[^\\ \\t\\n#])?)))(?:[\\ \\t]+#.*\\r?\\n|\\r?\\n)'
+    '+re' => '%((?:(?:Title|Data|Plan|BlockMarker|PointMarker)|[a-z]\\w*)):[\\ \\t]+(([^\\ \\t\\n#](?:[^\\n#]*[^\\ \\t\\n#])?))(?:[\\ \\t]+#.*\\r?\\n|\\r?\\n)'
   },
   'meta_testml_statement' => {
     '+re' => '%TestML:[\\ \\t]+(([0-9]\\.[0-9]+))(?:[\\ \\t]+#.*\\r?\\n|\\r?\\n)'
@@ -243,7 +246,17 @@ sub grammar {
     '+re' => '(([^\\ \\t\\n#](?:[^\\n#]*[^\\ \\t\\n#])?))'
   },
   'quoted_string' => {
-    '+re' => '(?:(?:\'(([^\\n\\\']|\\\'|\\\\)*?)\')|(?:"(([^\\n\\"]|\\"|\\\\|\\[0nt])*?)"))'
+    '+any' => [
+      {
+        '+rule' => 'single_quoted_string'
+      },
+      {
+        '+rule' => 'double_quoted_string'
+      }
+    ]
+  },
+  'single_quoted_string' => {
+    '+re' => '(?:\'(([^\\n\\\']|\\\'|\\\\)*?)\')'
   },
   'string_call' => {
     '+rule' => 'quoted_string'
