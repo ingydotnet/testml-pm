@@ -67,7 +67,9 @@ field 'inline_data';
 field 'current_block';
 field 'blocks' => [];
 field 'point_name';
+field '_point_name';
 field '_transform_name';
+field '_unquoted_string';
 field 'arguments' => [];
 
 # ##############################################################################
@@ -96,6 +98,13 @@ field 'arguments' => [];
 #     't' => "\t",
 #     '0' => "\0",
 # );
+
+sub unquoted_string {
+    my $self = shift;
+    my $unquoted_string = shift;
+    $self->_unquoted_string($unquoted_string);
+}
+
 # sub got_single_quoted_string {
 #     my $self = shift;
 #     my $value = shift;
@@ -199,6 +208,38 @@ sub transform_call {
     push @{$self->expression_stack->[-1]->transforms}, $transform;
     delete $self->{arguments};
 }
+
+sub assertion_operator {
+    my $self = shift;
+    pop @{$self->expression_stack};
+    $self->statement->assertion(TestML::Assertion->new(name => 'EQ'));
+    push @{$self->expression_stack}, $self->statement->assertion->expression;
+}
+
+sub block_label {
+    my $self = shift;
+    my $block_label = shift;
+    my $block = TestML::Block->new(label => $block_label);
+    $self->current_block($block);
+}
+
+sub user_point_name {
+    my $self = shift;
+    my $point_name = shift;
+    $self->_point_name($point_name);
+}
+
+sub point_phrase {
+    my $self = shift;
+    my $point_phrase = shift;
+    $self->current_block->points->{$self->point_name} = $point_phrase;
+}
+
+sub data_block {
+    my $self = shift;
+    push @{$self->document->data->blocks}, $self->current_block;
+}
+
 
 __END__
 sub try_argument {

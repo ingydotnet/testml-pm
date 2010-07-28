@@ -38,17 +38,16 @@ my $expression = $statement->expression;
 is $expression->transforms->[0]->name, 'Point', 'First sub is a Point';
 is $expression->transforms->[0]->args->[0], 'input', 'Point name is "input"';
 is $expression->transforms->[1]->name, 'uppercase', 'Second sub is "uppercase"';
-exit;
 
 is $statement->assertion->name, 'EQ', 'Assertion is "EQ"';
 
 $expression = $statement->assertion->expression;
-is $expression->transforms->elems, 1, 'Right side has one part';
+is scalar(@{$expression->transforms}), 1, 'Right side has one part';
 is $expression->transforms->[0]->name, 'Point', 'First sub is a Point';
 is $expression->transforms->[0]->args->[0], 'output', 'Point name is "output"';
 
-is $match->data->blocks->elems, 2, 'Two data blocks';
-my ($block1, $block2) = $match->data->blocks;
+is scalar(@{$match->data->blocks}), 2, 'Two data blocks';
+my ($block1, $block2) = @{$match->data->blocks};
 is $block1->label, 'Test mixed case string', 'Block 1 label ok';
 is $block1->points->{input}, 'I Like Pie', 'Block 1, input point';
 is $block1->points->{output}, 'I LIKE PIE', 'Block 1, output point';
