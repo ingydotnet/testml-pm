@@ -161,6 +161,7 @@ sub _transform_modules {
         push @$modules, $self->bridge;
     }
     for my $module_name (@$modules) {
+        next if $module_name eq 'main';
         eval "use $module_name";
         if ($@) {
             die "Can't use $module_name:\n$@";
