@@ -3,8 +3,7 @@ use base 'TestML::Parser::Pegex';
 use strict;
 use warnings;
 
-sub grammar {
-    return +{
+our $grammar = +{
   'ALWAYS' => {
     '+re' => ''
   },
@@ -160,7 +159,10 @@ sub grammar {
   'lines_point' => {
     '+all' => [
       {
-        '+re' => '---[\\ \\t]+'
+        '+rule' => 'point_marker'
+      },
+      {
+        '+re' => '[\\ \\t]+'
       },
       {
         '+rule' => 'point_name'
@@ -213,7 +215,10 @@ sub grammar {
   'phrase_point' => {
     '+all' => [
       {
-        '+re' => '---[\\ \\t]+'
+        '+rule' => 'point_marker'
+      },
+      {
+        '+re' => '[\\ \\t]+'
       },
       {
         '+rule' => 'point_name'
@@ -237,6 +242,9 @@ sub grammar {
   },
   'point_lines' => {
     '+re' => '((?:(?!===|---).*\\r?\\n)*)'
+  },
+  'point_marker' => {
+    '+re' => '---'
   },
   'point_name' => {
     '+any' => [
@@ -421,6 +429,9 @@ sub grammar {
     '+re' => '(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)'
   }
 };
+
+sub grammar {
+    return $grammar;
 }
 
 1;

@@ -14,8 +14,10 @@ use base 'TestML::Parser::Pegex';
 use strict;
 use warnings;
 
+our \$grammar = +$hash;
+
 sub grammar {
-    return +$hash;
+    return \$grammar;
 }
 
 1;

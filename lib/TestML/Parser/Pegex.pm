@@ -18,7 +18,7 @@ sub parse {
     if ($self->position < length($self->stream)) {
         die "Parse document failed for some reason";
     }
-    return 1;
+    return $self;
 }
 
 sub match {

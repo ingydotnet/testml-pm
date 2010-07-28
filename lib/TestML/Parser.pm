@@ -90,8 +90,16 @@ sub meta_section {
 #         $self->grammar->{$meta_keyword} = '/' . $meta_value . '/';
 #     }
 
-#     $self->grammar->{BlockMarker} = $self->document->meta->data->{BlockMarker};
-#     $self->grammar->{PointMarker} = $self->document->meta->data->{PointMarker};
+    my $block_marker = $self->document->meta->data->{BlockMarker};
+    $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+    my $point_marker = $self->document->meta->data->{PointMarker};
+    $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+
+    my $grammar = TestML::Parser::Grammar->grammar;
+    $grammar->{block_marker}{'+re'} = $block_marker;
+    $grammar->{point_marker}{'+re'} = $point_marker;
+    $grammar->{point_lines}{'+re'} =~ s/===/$block_marker/;
+    $grammar->{point_lines}{'+re'} =~ s/---/$point_marker/;
 }
 
 
