@@ -38,7 +38,7 @@ sub import {
             eval "require $run; 1" or die $@;
             $run->new(
                 document => ($document || \ *main::DATA),
-                bridge => ($bridge || 'TestML::Bridge'),
+                ($bridge ? (bridge => $bridge) : ()),
             )->run();
         }
         elsif ($document or $bridge) {

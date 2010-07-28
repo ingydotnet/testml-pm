@@ -1,17 +1,16 @@
 package TestML::Standard;
 use strict;
 use warnings;
-no warnings 'redefine';
 
 sub Select {
     return (shift)->value;
 }
 
 sub Point {
-    my $self = shift;
+    my $this = shift;
     my $name = shift;
-    $self->point($name);
-    my $value = $self->block->points->{$name};
+    $this->point($name);
+    my $value = $this->block->points->{$name};
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
@@ -19,34 +18,34 @@ sub Point {
 }
 
 sub Raw {
-    my $self = shift;
-    my $point = $self->point
+    my $this = shift;
+    my $point = $this->point
         or die "Raw called but there is no point";
-    return $self->block->points->{$point};
+    return $this->block->points->{$point};
 }
 
 sub Catch {
-    my $self = shift;
-    my $error = $self->error
+    my $this = shift;
+    my $error = $this->error
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
-    $self->error(undef);
+    $this->error(undef);
     return $error;
 }
 
 sub Throw {
-    my $self = shift;
-    my $msg = @_ ? (shift)->value : $self->value
+    my $this = shift;
+    my $msg = @_ ? (shift)->value : $this->value
       or die "Throw called without an error msg";
     die $msg;
 }
 
 sub String {
-    my $self = shift;
+    my $this = shift;
     my $string =
-    (defined $self->value) ? $self->value :
+    (defined $this->value) ? $this->value :
     @_ ? ref($_[0]) ? (shift)->value : (shift) :
-    $self->raise(
+    $this->raise(
         'StandardLibraryException',
         'String transform called but no string available'
     );
@@ -101,3 +100,5 @@ sub Chomp {
     chomp($string);
     return $string;
 }
+
+1;

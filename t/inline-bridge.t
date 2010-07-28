@@ -1,5 +1,4 @@
 use TestML -run, -bridge => 'main';
-use base TestML::Bridge;
 
 sub upper {
     my $self = shift;
