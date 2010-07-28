@@ -117,9 +117,15 @@ sub get_transform_function {
 
 sub parse_document {
     my $self = shift;
-    my $path = join '/', $self->base, $self->document;
-    open IN, $path or die "Can't open $path for input";
-    my $testml = do { local $/; <IN> };
+    my $fh;
+    if (ref $self->document) {
+        $fh = $self->document;
+    }
+    else {
+        my $path = join '/', $self->base, $self->document;
+        open $fh, $path or die "Can't open $path for input";
+    }
+    my $testml = do { local $/; <$fh> };
     my $document = TestML::Parser->parse($testml)
         or die "TestML document failed to parse";
     return $document;
