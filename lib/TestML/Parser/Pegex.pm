@@ -3,8 +3,8 @@ use strict;
 use warnings;
 use TestML::Base -base;
 
+# field 'grammar', -init => '$self->{grammar_data}';
 field 'stream';
-field 'grammar', -init => '$self->{grammar_data}';
 field 'rule';
 field 'position' => 0;
 field 'receiver';
@@ -30,6 +30,7 @@ sub match {
     my $state = undef;
     if (not ref($rule) and $rule =~ /^\w+$/) {
         $state = $rule;
+        $self->callback("try_$state");
 
         if (not defined $self->grammar->{$rule}) {
             die "\n\n*** No grammar support for '$rule'\n\n";
@@ -57,7 +58,9 @@ sub match {
         $rule = $rule->{'+any'};
         $method = 'match_any';
     }
-    else { XXX $rule }
+    else {
+        die "no support for $rule";
+    }
 
     my $position = $self->position;
     my $count = 0;
@@ -67,9 +70,10 @@ sub match {
     }
     my $result = (($count or $times eq '?' or $times eq '*') ? 1 : 0) ^ $not;
 
-    if ($result and $state) {
-#         print "> $state\n";
-        $self->callback($state);
+    if ($state) {
+        $result
+            ? $self->callback("got_$state")
+            : $self->callback("not_$state");
     }
 
     $self->position($position) unless $result;
@@ -132,43 +136,18 @@ sub callback {
     }
 }
 
-# sub open {
+# sub throw_error {
 #     my $self = shift;
-#     my $file = shift;
-#     $self->stream($self->read($file));
+#     my $msg = shift;
+#     my $line = @{[substr($self->stream, 0, $self->position) =~ /(\n)/g]} + 1;
+#     my $context = substr($self->stream, $self->position, 50);
+#     $context =~ s/\n/\\n/g;
+#     die <<"...";
+# Error parsing TestML document:
+#   msg: $msg
+#   line: $line
+#   context: "$context"
+# ...
 # }
-# 
-# sub read {
-#     my $self = shift;
-#     my $file = shift;
-#     my $fh;
-#     if (ref $file) {
-#         $fh = $file;
-#     }
-#     else {
-#         CORE::open $fh, $file
-#           or die "Can't open file '$file' for input.";
-#     }
-#     my $content = do {local $/; <$fh>};
-#     close $fh;
-#     if (length $content and $content !~ /\n\z/) {
-#         die "File '$file' does not end with a newline.";
-#     }
-#     return $content;
-# }
-# 
-sub throw_error {
-    my $self = shift;
-    my $msg = shift;
-    my $line = @{[substr($self->stream, 0, $self->position) =~ /(\n)/g]} + 1;
-    my $context = substr($self->stream, $self->position, 50);
-    $context =~ s/\n/\\n/g;
-    die <<"...";
-Error parsing TestML document:
-  msg: $msg
-  line: $line
-  context: "$context"
-...
-}
 
 1;
