@@ -8,9 +8,7 @@ sub my_thing {
 }
 
 sub combine {
-    my $this = shift;
-    my $suffix = shift;
-    $this->value . ' ' . $suffix->value;
+    return join ' ', map $_->value, @_;
 }
 
 sub parse_testml {
