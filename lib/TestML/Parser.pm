@@ -71,16 +71,20 @@ sub got_unquoted_string {
 sub got_meta_section {
     my $self = shift;
 
+    my $grammar = TestML::Parser::Grammar->grammar;
+
     my $block_marker = $self->document->meta->data->{BlockMarker};
     $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+    $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
+
     my $point_marker = $self->document->meta->data->{PointMarker};
     $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+    $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
 
-    my $grammar = TestML::Parser::Grammar->grammar;
-    $grammar->{block_marker}{'+re'} = $block_marker;
-    $grammar->{point_marker}{'+re'} = $point_marker;
-    $grammar->{point_lines}{'+re'} =~ s/===/$block_marker/;
-    $grammar->{point_lines}{'+re'} =~ s/---/$point_marker/;
+    my $point_lines = $grammar->{point_lines}{'+re'};
+    $point_lines =~ s/===/$block_marker/;
+    $point_lines =~ s/---/$point_marker/;
+    $grammar->{point_lines}{'+re'} = qr/$point_lines/;
 }
 
 sub got_meta_testml_statement {

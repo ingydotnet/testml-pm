@@ -5,13 +5,13 @@ use warnings;
 
 our $grammar = +{
   'ALWAYS' => {
-    '+re' => ''
+    '+re' => qr/(?-xism:\G)/
   },
   'NO_META_TESTML_ERROR' => {
     '+rule' => 'ALWAYS'
   },
   'SEMI' => {
-    '+re' => ';'
+    '+re' => qr/(?-xism:\G;)/
   },
   'SEMICOLON_ERROR' => {
     '+rule' => 'ALWAYS'
@@ -29,29 +29,29 @@ our $grammar = +{
   'assertion_function_call' => {
     '+all' => [
       {
-        '+re' => '(?:\\.(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*|(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*\\.)EQ\\((?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*'
+        '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|#.*\r?\n)*|(?:[\ \t]|\r?\n|#.*\r?\n)*\.)EQ\((?:[\ \t]|\r?\n|#.*\r?\n)*)/
       },
       {
         '+rule' => 'test_expression'
       },
       {
-        '+re' => '(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*\\)'
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*\))/
       }
     ]
   },
   'assertion_operator' => {
-    '+re' => '(==)'
+    '+re' => qr/(?-xism:\G(==))/
   },
   'assertion_operator_call' => {
     '+all' => [
       {
-        '+re' => '(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)+'
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)+)/
       },
       {
         '+rule' => 'assertion_operator'
       },
       {
-        '+re' => '(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)+'
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)+)/
       },
       {
         '+rule' => 'test_expression'
@@ -59,7 +59,7 @@ our $grammar = +{
     ]
   },
   'blank_line' => {
-    '+re' => '[\\ \\t]*\\r?\\n'
+    '+re' => qr/(?-xism:\G[\ \t]*\r?\n)/
   },
   'block_header' => {
     '+all' => [
@@ -69,7 +69,7 @@ our $grammar = +{
       {
         '+all' => [
           {
-            '+re' => '[\\ \\t]+'
+            '+re' => qr/(?-xism:\G[\ \t]+)/
           },
           {
             '+rule' => 'block_label'
@@ -78,7 +78,7 @@ our $grammar = +{
         '<' => '?'
       },
       {
-        '+re' => '[\\ \\t]*\\r?\\n'
+        '+re' => qr/(?-xism:\G[\ \t]*\r?\n)/
       }
     ]
   },
@@ -86,7 +86,7 @@ our $grammar = +{
     '+rule' => 'unquoted_string'
   },
   'block_marker' => {
-    '+re' => '==='
+    '+re' => qr/(?-xism:\G===)/
   },
   'block_point' => {
     '+any' => [
@@ -99,19 +99,19 @@ our $grammar = +{
     ]
   },
   'call_indicator' => {
-    '+re' => '(?:\\.(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*|(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*\\.)'
+    '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|#.*\r?\n)*|(?:[\ \t]|\r?\n|#.*\r?\n)*\.))/
   },
   'comment' => {
-    '+re' => '#.*\\r?\\n'
+    '+re' => qr/(?-xism:\G#.*\r?\n)/
   },
   'constant_call' => {
-    '+re' => '([A-Z]\\w*)'
+    '+re' => qr/(?-xism:\G([A-Z]\w*))/
   },
   'core_point_name' => {
-    '+re' => '([A-Z]\\w*)'
+    '+re' => qr/(?-xism:\G([A-Z]\w*))/
   },
   'core_transform' => {
-    '+re' => '([A-Z]\\w*)'
+    '+re' => qr/(?-xism:\G([A-Z]\w*))/
   },
   'data_block' => {
     '+all' => [
@@ -154,7 +154,7 @@ our $grammar = +{
     ]
   },
   'double_quoted_string' => {
-    '+re' => '(?:"(([^\\n\\"]|\\"|\\\\|\\[0nt])*?)")'
+    '+re' => qr/(?-xism:\G(?:"(([^\n\"]|\"|\\|\[0nt])*?)"))/
   },
   'lines_point' => {
     '+all' => [
@@ -162,13 +162,13 @@ our $grammar = +{
         '+rule' => 'point_marker'
       },
       {
-        '+re' => '[\\ \\t]+'
+        '+re' => qr/(?-xism:\G[\ \t]+)/
       },
       {
         '+rule' => 'point_name'
       },
       {
-        '+re' => '[\\ \\t]*\\r?\\n'
+        '+re' => qr/(?-xism:\G[\ \t]*\r?\n)/
       },
       {
         '+rule' => 'point_lines'
@@ -178,7 +178,7 @@ our $grammar = +{
   'meta_section' => {
     '+all' => [
       {
-        '+re' => '(?:#.*\\r?\\n|[\\ \\t]*\\r?\\n)*'
+        '+re' => qr/(?-xism:\G(?:#.*\r?\n|[\ \t]*\r?\n)*)/
       },
       {
         '+any' => [
@@ -207,10 +207,10 @@ our $grammar = +{
     ]
   },
   'meta_statement' => {
-    '+re' => '%((?:(?:Title|Data|Plan|BlockMarker|PointMarker)|[a-z]\\w*)):[\\ \\t]+(([^\\ \\t\\n#](?:[^\\n#]*[^\\ \\t\\n#])?))(?:[\\ \\t]+#.*\\r?\\n|\\r?\\n)'
+    '+re' => qr/(?-xism:\G%((?:(?:Title|Data|Plan|BlockMarker|PointMarker)|[a-z]\w*)):[\ \t]+(([^\ \t\n#](?:[^\n#]*[^\ \t\n#])?))(?:[\ \t]+#.*\r?\n|\r?\n))/
   },
   'meta_testml_statement' => {
-    '+re' => '%TestML:[\\ \\t]+(([0-9]\\.[0-9]+))(?:[\\ \\t]+#.*\\r?\\n|\\r?\\n)'
+    '+re' => qr/(?-xism:\G%TestML:[\ \t]+(([0-9]\.[0-9]+))(?:[\ \t]+#.*\r?\n|\r?\n))/
   },
   'phrase_point' => {
     '+all' => [
@@ -218,33 +218,33 @@ our $grammar = +{
         '+rule' => 'point_marker'
       },
       {
-        '+re' => '[\\ \\t]+'
+        '+re' => qr/(?-xism:\G[\ \t]+)/
       },
       {
         '+rule' => 'point_name'
       },
       {
-        '+re' => ':[\\ \\t]'
+        '+re' => qr/(?-xism:\G:[\ \t])/
       },
       {
         '+rule' => 'point_phrase'
       },
       {
-        '+re' => '\\r?\\n'
+        '+re' => qr/(?-xism:\G\r?\n)/
       },
       {
-        '+re' => '(?:#.*\\r?\\n|[\\ \\t]*\\r?\\n)*'
+        '+re' => qr/(?-xism:\G(?:#.*\r?\n|[\ \t]*\r?\n)*)/
       }
     ]
   },
   'point_call' => {
-    '+re' => '(\\*[a-z]\\w*)'
+    '+re' => qr/(?-xism:\G(\*[a-z]\w*))/
   },
   'point_lines' => {
-    '+re' => '((?:(?!===|---).*\\r?\\n)*)'
+    '+re' => qr/(?-xism:\G((?:(?!===|---).*\r?\n)*))/
   },
   'point_marker' => {
-    '+re' => '---'
+    '+re' => qr/(?-xism:\G---)/
   },
   'point_name' => {
     '+any' => [
@@ -257,7 +257,7 @@ our $grammar = +{
     ]
   },
   'point_phrase' => {
-    '+re' => '(([^\\ \\t\\n#](?:[^\\n#]*[^\\ \\t\\n#])?))'
+    '+re' => qr/(?-xism:\G(([^\ \t\n#](?:[^\n#]*[^\ \t\n#])?)))/
   },
   'quoted_string' => {
     '+any' => [
@@ -270,7 +270,7 @@ our $grammar = +{
     ]
   },
   'single_quoted_string' => {
-    '+re' => '(?:\'(([^\\n\\\']|\\\'|\\\\)*?)\')'
+    '+re' => qr/(?-xism:\G(?:'(([^\n\']|\'|\\)*?)'))/
   },
   'string_call' => {
     '+rule' => 'quoted_string'
@@ -361,7 +361,7 @@ our $grammar = +{
       {
         '+all' => [
           {
-            '+re' => '(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*,(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*'
+            '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*,(?:[\ \t]|\r?\n|#.*\r?\n)*)/
           },
           {
             '+rule' => 'transform_argument'
@@ -384,25 +384,25 @@ our $grammar = +{
         '+rule' => 'transform_name'
       },
       {
-        '+re' => '\\('
+        '+re' => qr/(?-xism:\G\()/
       },
       {
         '+rule' => 'transform_argument_list_start'
       },
       {
-        '+re' => '(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*'
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*)/
       },
       {
         '+rule' => 'transform_argument_list'
       },
       {
-        '+re' => '(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)*'
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*)/
       },
       {
         '+rule' => 'transform_argument_list_stop'
       },
       {
-        '+re' => '\\)'
+        '+re' => qr/(?-xism:\G\))/
       }
     ]
   },
@@ -417,16 +417,16 @@ our $grammar = +{
     ]
   },
   'unquoted_string' => {
-    '+re' => '([^\\ \\t\\n#](?:[^\\n#]*[^\\ \\t\\n#])?)'
+    '+re' => qr/(?-xism:\G([^\ \t\n#](?:[^\n#]*[^\ \t\n#])?))/
   },
   'user_point_name' => {
-    '+re' => '([a-z]\\w*)'
+    '+re' => qr/(?-xism:\G([a-z]\w*))/
   },
   'user_transform' => {
-    '+re' => '([a-z]\\w*)'
+    '+re' => qr/(?-xism:\G([a-z]\w*))/
   },
   'ws' => {
-    '+re' => '(?:[\\ \\t]|\\r?\\n|#.*\\r?\\n)'
+    '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n))/
   }
 };
 

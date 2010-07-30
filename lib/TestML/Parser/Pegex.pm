@@ -100,8 +100,7 @@ sub match_any {
 
 sub match_regexp {
     my $self = shift;
-    my $pattern = shift;
-    my $regexp = $self->get_regexp($pattern);
+    my $regexp = shift;
 
     pos($self->{stream}) = $self->position;
     $self->{stream} =~ /$regexp/g or return 0;
@@ -111,19 +110,6 @@ sub match_regexp {
     $self->position(pos($self->{stream}));
 
     return 1;
-}
-
-sub get_regexp {
-    my $self = shift;
-    my $pattern = shift;
-    $pattern =~ s/^\/(.*)\/$/$1/;
-    while ($pattern =~ /\$(\w+)/) {
-        my $replacement = $self->grammar->{$1}
-          or die "'$1' not in grammar";
-        $replacement =~ s/^\/(.*)\/$/$1/;
-        $pattern =~ s/\$(\w+)/$replacement/;
-    }
-    return qr/\G$pattern/;
 }
 
 my $warn = 0;
