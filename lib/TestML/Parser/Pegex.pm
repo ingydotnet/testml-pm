@@ -25,7 +25,7 @@ sub match {
     my $self = shift;
     my $rule = shift or die "No rule passed to match";
 
-    my $not = ($rule =~ s/^!//) ? 1 : 0;
+    my $not = 0;
 
     my $state = undef;
     if (not ref($rule) and $rule =~ /^\w+$/) {
@@ -42,7 +42,12 @@ sub match {
 
     my $method;
     my $times = $rule->{'<'} || '1';
-    if ($rule->{'+rule'}) {
+    if ($rule->{'+not'}) {
+        $rule = $rule->{'+not'};
+        $method = 'match';
+        $not = 1;
+    }
+    elsif ($rule->{'+rule'}) {
         $rule = $rule->{'+rule'};
         $method = 'match';
     }
@@ -70,7 +75,7 @@ sub match {
     }
     my $result = (($count or $times eq '?' or $times eq '*') ? 1 : 0) ^ $not;
 
-    if ($state) {
+    if ($state and not $not) {
         $result
             ? $self->callback("got_$state")
             : $self->callback("not_$state");

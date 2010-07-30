@@ -299,7 +299,7 @@ our $grammar = +{
       {
         '+all' => [
           {
-            '+rule' => '!assertion_function_call'
+            '+not' => 'assertion_function_call'
           },
           {
             '+rule' => 'call_indicator'
