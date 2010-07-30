@@ -7,7 +7,7 @@ $TestML::VERSION = '0.03';
 
 sub import {
     my $run;
-    my $bridge;
+    my $bridge = 'main';
     my $document;
 
     if ($_[1] eq '-base') {
@@ -38,7 +38,7 @@ sub import {
             eval "require $run; 1" or die $@;
             $run->new(
                 document => ($document || \ *main::DATA),
-                ($bridge ? (bridge => $bridge) : ()),
+                bridge => $bridge,
             )->run();
         }
         elsif ($document or $bridge) {
