@@ -28,11 +28,12 @@ sub use_testml {
 
     $self->include('TestML');
     $self->include('TestML::Base');
-    $self->include('TestML::Bridge');
     $self->include('TestML::Document');
     $self->include('TestML::Parser');
     $self->include('TestML::Parser::Grammar');
+    $self->include('TestML::Parser::Pegex');
     $self->include('TestML::Runner');
+    $self->include('TestML::Runner::TAP');
     $self->include('TestML::Standard');
 }
 
