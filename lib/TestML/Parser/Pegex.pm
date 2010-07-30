@@ -30,14 +30,8 @@ sub match {
     my $state = undef;
     if (not ref($rule) and $rule =~ /^\w+$/) {
         $state = $rule;
-        $self->callback("try_$state");
-
-        if (not defined $self->grammar->{$rule}) {
-            die "\n\n*** No grammar support for '$rule'\n\n";
-            return 0;
-        }
-        
-        $rule = $self->grammar->{$rule};
+        $rule = $self->grammar->{$rule}
+            or die "\n\n*** No grammar support for '$rule'\n\n";
     }
 
     my $method;
@@ -65,6 +59,10 @@ sub match {
     }
     else {
         die "no support for $rule";
+    }
+
+    if ($state and not $not) {
+        $self->callback("try_$state");
     }
 
     my $position = $self->position;
