@@ -113,10 +113,9 @@ sub try_test_statement {
 sub got_test_statement {
     my $self = shift;
     push @{$self->document->test->statements}, $self->statement;
-    pop @{$self->expression_stack};
 }
 
-sub not_test_statement {
+sub end_test_statement {
     my $self = shift;
     pop @{$self->expression_stack};
 }
@@ -133,13 +132,9 @@ sub got_point_call {
     push @{$self->statement->points}, $point_name;
 }
 
-sub got_transform_name {
-    my $self = shift;
-    $self->transform_name(shift);
-}
-
 sub got_transform_call {
     my $self = shift;
+    pop @{$self->expression_stack};
     my $transform_name = $self->transform_name;
     my $transform = TestML::Transform->new(
         name => $transform_name,
@@ -148,8 +143,9 @@ sub got_transform_call {
     push @{$self->expression_stack->[-1]->transforms}, $transform;
 }
 
-sub try_transform_argument_list {
+sub got_transform_name {
     my $self = shift;
+    $self->transform_name(shift);
     push @{$self->expression_stack}, TestML::Expression->new;
     $self->transform_arguments([]);
 }
@@ -158,11 +154,6 @@ sub got_transform_argument {
     my $self = shift;
     push @{$self->transform_arguments}, pop @{$self->expression_stack};
     push @{$self->expression_stack}, TestML::Expression->new;
-}
-
-sub end_transform_argument_list {
-    my $self = shift;
-    pop @{$self->expression_stack};
 }
 
 sub got_string_call {
