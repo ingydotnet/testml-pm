@@ -104,9 +104,6 @@ our $grammar = +{
   'comment' => {
     '+re' => qr/(?-xism:\G#.*\r?\n)/
   },
-  'constant_call' => {
-    '+re' => qr/(?-xism:\G([A-Z]\w*))/
-  },
   'core_point_name' => {
     '+re' => qr/(?-xism:\G([A-Z]\w*))/
   },
@@ -278,16 +275,13 @@ our $grammar = +{
   'sub_expression' => {
     '+any' => [
       {
-        '+rule' => 'transform_call'
-      },
-      {
         '+rule' => 'point_call'
       },
       {
         '+rule' => 'string_call'
       },
       {
-        '+rule' => 'constant_call'
+        '+rule' => 'transform_call'
       }
     ]
   },
@@ -326,9 +320,6 @@ our $grammar = +{
   'test_statement' => {
     '+all' => [
       {
-        '+rule' => 'test_statement_start'
-      },
-      {
         '+rule' => 'test_expression'
       },
       {
@@ -347,13 +338,30 @@ our $grammar = +{
       }
     ]
   },
-  'test_statement_start' => {
-    '+rule' => 'ALWAYS'
-  },
   'transform_argument' => {
     '+rule' => 'sub_expression'
   },
   'transform_argument_list' => {
+    '+all' => [
+      {
+        '+re' => qr/(?-xism:\G\()/
+      },
+      {
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*)/
+      },
+      {
+        '+rule' => 'transform_arguments',
+        '<' => '?'
+      },
+      {
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*)/
+      },
+      {
+        '+re' => qr/(?-xism:\G\))/
+      }
+    ]
+  },
+  'transform_arguments' => {
     '+all' => [
       {
         '+rule' => 'transform_argument'
@@ -369,14 +377,7 @@ our $grammar = +{
         ],
         '<' => '*'
       }
-    ],
-    '<' => '?'
-  },
-  'transform_argument_list_start' => {
-    '+rule' => 'ALWAYS'
-  },
-  'transform_argument_list_stop' => {
-    '+rule' => 'ALWAYS'
+    ]
   },
   'transform_call' => {
     '+all' => [
@@ -384,25 +385,8 @@ our $grammar = +{
         '+rule' => 'transform_name'
       },
       {
-        '+re' => qr/(?-xism:\G\()/
-      },
-      {
-        '+rule' => 'transform_argument_list_start'
-      },
-      {
-        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*)/
-      },
-      {
-        '+rule' => 'transform_argument_list'
-      },
-      {
-        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*)/
-      },
-      {
-        '+rule' => 'transform_argument_list_stop'
-      },
-      {
-        '+re' => qr/(?-xism:\G\))/
+        '+rule' => 'transform_argument_list',
+        '<' => '?'
       }
     ]
   },

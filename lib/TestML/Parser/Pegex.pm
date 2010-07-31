@@ -77,6 +77,7 @@ sub match {
         $result
             ? $self->callback("got_$state")
             : $self->callback("not_$state");
+        $self->callback("end_$state")
     }
 
     $self->position($position) unless $result;

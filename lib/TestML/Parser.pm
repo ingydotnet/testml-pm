@@ -104,7 +104,7 @@ sub got_meta_statement {
     }
 }
 
-sub got_test_statement_start {
+sub try_test_statement {
     my $self = shift;
     $self->statement(TestML::Statement->new());
     push @{$self->expression_stack}, $self->statement->expression;
@@ -113,6 +113,11 @@ sub got_test_statement_start {
 sub got_test_statement {
     my $self = shift;
     push @{$self->document->test->statements}, $self->statement;
+    pop @{$self->expression_stack};
+}
+
+sub not_test_statement {
+    my $self = shift;
     pop @{$self->expression_stack};
 }
 
@@ -143,7 +148,7 @@ sub got_transform_call {
     push @{$self->expression_stack->[-1]->transforms}, $transform;
 }
 
-sub got_transform_argument_list_start {
+sub try_transform_argument_list {
     my $self = shift;
     push @{$self->expression_stack}, TestML::Expression->new;
     $self->transform_arguments([]);
@@ -155,7 +160,7 @@ sub got_transform_argument {
     push @{$self->expression_stack}, TestML::Expression->new;
 }
 
-sub got_transform_argument_list_stop {
+sub end_transform_argument_list {
     my $self = shift;
     pop @{$self->expression_stack};
 }
