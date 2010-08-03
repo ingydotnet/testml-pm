@@ -166,11 +166,39 @@ sub got_string_call {
     push @{$self->expression_stack->[-1]->transforms}, $transform;
 }
 
-sub got_assertion_operator {
+sub try_assertion_call {
+#     print "try_assertion_call\n";
+    my $self = shift;
+    $self->statement->assertion(TestML::Assertion->new);
+    push @{$self->expression_stack}, $self->statement->assertion->expression;
+}
+
+sub got_assertion_call {
+#     print "got_assertion_call\n";
     my $self = shift;
     pop @{$self->expression_stack};
-    $self->statement->assertion(TestML::Assertion->new(name => 'EQ'));
-    push @{$self->expression_stack}, $self->statement->assertion->expression;
+}
+
+sub not_assertion_call {
+#     print "not_assertion_call\n";
+    my $self = shift;
+    $self->statement->assertion(undef);
+    pop @{$self->expression_stack};
+}
+
+sub got_assertion_eq {
+    my $self = shift;
+    $self->statement->assertion->name('EQ');
+}
+
+sub got_assertion_ok {
+    my $self = shift;
+    $self->statement->assertion->name('OK');
+}
+
+sub got_assertion_has {
+    my $self = shift;
+    $self->statement->assertion->name('HAS');
 }
 
 sub got_block_label {
@@ -179,7 +207,7 @@ sub got_block_label {
     $self->current_block($block);
 }
 
-sub got_user_point_name {
+sub got_point_name {
     my $self = shift;
     $self->point_name(shift);
 }

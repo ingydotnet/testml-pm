@@ -18,6 +18,7 @@ sub parse {
     if ($self->position < length($self->stream)) {
         die "Parse document failed for some reason";
     }
+#     XXX $self->receiver->document;
     return $self;
 }
 
@@ -29,9 +30,10 @@ sub match {
 
     my $state = undef;
     if (not ref($rule) and $rule =~ /^\w+$/) {
+        die "\n\n*** No grammar support for '$rule'\n\n"
+            unless $self->grammar->{$rule};
         $state = $rule;
         $rule = $self->grammar->{$rule}
-            or die "\n\n*** No grammar support for '$rule'\n\n";
     }
 
     my $method;

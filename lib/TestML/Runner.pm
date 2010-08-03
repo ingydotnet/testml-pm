@@ -30,7 +30,7 @@ sub run {
                 $statement->expression,
                 $block,
             );
-            if ($statement->assertion->expression) {
+            if ($statement->assertion) {
                 my $right = $self->evaluate_expression(
                     $statement->assertion->expression,
                     $block,

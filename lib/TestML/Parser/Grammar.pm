@@ -19,39 +19,85 @@ our $grammar = +{
   'assertion_call' => {
     '+any' => [
       {
-        '+rule' => 'assertion_operator_call'
+        '+rule' => 'assertion_eq'
       },
       {
-        '+rule' => 'assertion_function_call'
+        '+rule' => 'assertion_ok'
+      },
+      {
+        '+rule' => 'assertion_has'
       }
     ]
   },
-  'assertion_function_call' => {
+  'assertion_call_test' => {
+    '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|#.*\r?\n)*|(?:[\ \t]|\r?\n|#.*\r?\n)*\.)(?:EQ|OK|HAS)\()/
+  },
+  'assertion_eq' => {
+    '+any' => [
+      {
+        '+rule' => 'assertion_operator_eq'
+      },
+      {
+        '+rule' => 'assertion_function_eq'
+      }
+    ]
+  },
+  'assertion_function_eq' => {
     '+all' => [
       {
-        '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|#.*\r?\n)*|(?:[\ \t]|\r?\n|#.*\r?\n)*\.)EQ\((?:[\ \t]|\r?\n|#.*\r?\n)*)/
+        '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|#.*\r?\n)*|(?:[\ \t]|\r?\n|#.*\r?\n)*\.)EQ\()/
       },
       {
         '+rule' => 'test_expression'
       },
       {
-        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*\))/
+        '+re' => qr/(?-xism:\G\))/
       }
     ]
   },
-  'assertion_operator' => {
-    '+re' => qr/(?-xism:\G(==))/
-  },
-  'assertion_operator_call' => {
+  'assertion_function_has' => {
     '+all' => [
       {
-        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)+)/
+        '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|#.*\r?\n)*|(?:[\ \t]|\r?\n|#.*\r?\n)*\.)HAS\()/
       },
       {
-        '+rule' => 'assertion_operator'
+        '+rule' => 'test_expression'
       },
       {
-        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)+)/
+        '+re' => qr/(?-xism:\G\))/
+      }
+    ]
+  },
+  'assertion_function_ok' => {
+    '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|#.*\r?\n)*|(?:[\ \t]|\r?\n|#.*\r?\n)*\.)OK(?:\((?:[\ \t]|\r?\n|#.*\r?\n)*\))?)/
+  },
+  'assertion_has' => {
+    '+any' => [
+      {
+        '+rule' => 'assertion_operator_has'
+      },
+      {
+        '+rule' => 'assertion_function_has'
+      }
+    ]
+  },
+  'assertion_ok' => {
+    '+rule' => 'assertion_function_ok'
+  },
+  'assertion_operator_eq' => {
+    '+all' => [
+      {
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)+==(?:[\ \t]|\r?\n|#.*\r?\n)+)/
+      },
+      {
+        '+rule' => 'test_expression'
+      }
+    ]
+  },
+  'assertion_operator_has' => {
+    '+all' => [
+      {
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)+~~(?:[\ \t]|\r?\n|#.*\r?\n)+)/
       },
       {
         '+rule' => 'test_expression'
@@ -104,9 +150,6 @@ our $grammar = +{
   'comment' => {
     '+re' => qr/(?-xism:\G#.*\r?\n)/
   },
-  'core_point_name' => {
-    '+re' => qr/(?-xism:\G([A-Z]\w*))/
-  },
   'core_transform' => {
     '+re' => qr/(?-xism:\G([A-Z]\w*))/
   },
@@ -133,8 +176,20 @@ our $grammar = +{
     ]
   },
   'data_section' => {
-    '+rule' => 'data_block',
-    '<' => '*'
+    '+any' => [
+      {
+        '+rule' => 'testml_data_section'
+      },
+      {
+        '+rule' => 'yaml_data_section'
+      },
+      {
+        '+rule' => 'json_data_section'
+      },
+      {
+        '+rule' => 'xml_data_section'
+      }
+    ]
   },
   'document' => {
     '+all' => [
@@ -151,7 +206,10 @@ our $grammar = +{
     ]
   },
   'double_quoted_string' => {
-    '+re' => qr/(?-xism:\G(?:"(([^\n\"]|\"|\\|\[0nt])*?)"))/
+    '+re' => qr/(?-xism:\G(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
+  },
+  'json_data_section' => {
+    '+re' => qr/(?-xism:\G(\[.+))/
   },
   'lines_point' => {
     '+all' => [
@@ -204,7 +262,7 @@ our $grammar = +{
     ]
   },
   'meta_statement' => {
-    '+re' => qr/(?-xism:\G%((?:(?:Title|Data|Plan|BlockMarker|PointMarker)|[a-z]\w*)):[\ \t]+(([^\ \t\n#](?:[^\n#]*[^\ \t\n#])?))(?:[\ \t]+#.*\r?\n|\r?\n))/
+    '+re' => qr/(?-xism:\G%((?:(?:Title|Data|Plan|BlockMarker|PointMarker)|[a-z]\w*)):[\ \t]+((?:(?:'(([^\n\\']|\\'|\\\\)*?)')|(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)")|([^\ \t\n#](?:[^\n#]*[^\ \t\n#])?)))(?:[\ \t]+#.*\r?\n|\r?\n))/
   },
   'meta_testml_statement' => {
     '+re' => qr/(?-xism:\G%TestML:[\ \t]+(([0-9]\.[0-9]+))(?:[\ \t]+#.*\r?\n|\r?\n))/
@@ -244,14 +302,7 @@ our $grammar = +{
     '+re' => qr/(?-xism:\G---)/
   },
   'point_name' => {
-    '+any' => [
-      {
-        '+rule' => 'core_point_name'
-      },
-      {
-        '+rule' => 'user_point_name'
-      }
-    ]
+    '+re' => qr/(?-xism:\G([a-z]\w*))/
   },
   'point_phrase' => {
     '+re' => qr/(?-xism:\G(([^\ \t\n#](?:[^\n#]*[^\ \t\n#])?)))/
@@ -267,7 +318,7 @@ our $grammar = +{
     ]
   },
   'single_quoted_string' => {
-    '+re' => qr/(?-xism:\G(?:'(([^\n\']|\'|\\)*?)'))/
+    '+re' => qr/(?-xism:\G(?:'(([^\n\\']|\\'|\\\\)*?)'))/
   },
   'string_call' => {
     '+rule' => 'quoted_string'
@@ -293,7 +344,7 @@ our $grammar = +{
       {
         '+all' => [
           {
-            '+not' => 'assertion_function_call'
+            '+not' => 'assertion_call_test'
           },
           {
             '+rule' => 'call_indicator'
@@ -338,26 +389,24 @@ our $grammar = +{
       }
     ]
   },
+  'testml_data_section' => {
+    '+rule' => 'data_block',
+    '<' => '*'
+  },
   'transform_argument' => {
     '+rule' => 'sub_expression'
   },
   'transform_argument_list' => {
     '+all' => [
       {
-        '+re' => qr/(?-xism:\G\()/
-      },
-      {
-        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*)/
+        '+re' => qr/(?-xism:\G\((?:[\ \t]|\r?\n|#.*\r?\n)*)/
       },
       {
         '+rule' => 'transform_arguments',
         '<' => '?'
       },
       {
-        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*)/
-      },
-      {
-        '+re' => qr/(?-xism:\G\))/
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n)*\))/
       }
     ]
   },
@@ -403,14 +452,17 @@ our $grammar = +{
   'unquoted_string' => {
     '+re' => qr/(?-xism:\G([^\ \t\n#](?:[^\n#]*[^\ \t\n#])?))/
   },
-  'user_point_name' => {
-    '+re' => qr/(?-xism:\G([a-z]\w*))/
-  },
   'user_transform' => {
     '+re' => qr/(?-xism:\G([a-z]\w*))/
   },
   'ws' => {
     '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|#.*\r?\n))/
+  },
+  'xml_data_section' => {
+    '+re' => qr/(?-xism:\G(<.+))/
+  },
+  'yaml_data_section' => {
+    '+re' => qr/(?-xism:\G(---[\ \t]*\r?\n.+))/
   }
 };
 
