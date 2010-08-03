@@ -1,5 +1,5 @@
 package TestML::Parser::Grammar;
-use base 'TestML::Parser::Pegex';
+use base 'Parse::Pegex';
 use strict;
 use warnings;
 

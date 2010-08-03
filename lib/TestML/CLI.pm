@@ -5,8 +5,8 @@ use TestML::Base -base;
 
 use Getopt::Long;
 
-field 'testml' => 't/testml/';
-field 'config_dir' => 't/';
+has 'testml' => 't/testml/';
+has 'config_dir' => 't/';
 
 sub run {
     my $self = shift;

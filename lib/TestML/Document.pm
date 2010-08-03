@@ -4,15 +4,15 @@ use warnings;
 
 use TestML::Base -base;
 
-field 'meta' => -init => 'TestML::Document::Meta->new';
-field 'test' => -init => 'TestML::Document::Test->new';
-field 'data' => -init => 'TestML::Document::Data->new';
+has 'meta' => -init => 'TestML::Document::Meta->new';
+has 'test' => -init => 'TestML::Document::Test->new';
+has 'data' => -init => 'TestML::Document::Data->new';
 
 #-----------------------------------------------------------------------------
 package TestML::Document::Meta;
 use TestML::Base -base;
 
-field 'data' => {
+has 'data' => {
     'TestML', '',
     'Data' => [],
     'Title' => '',
@@ -25,47 +25,47 @@ field 'data' => {
 package TestML::Document::Test;
 use TestML::Base -base;
 
-field 'statements' => [];
+has 'statements' => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Statement;
 use TestML::Base -base;
 
-field 'expression', -init => 'TestML::Expression->new';
-field 'assertion';
-field 'points' => [];
+has 'expression', -init => 'TestML::Expression->new';
+has 'assertion';
+has 'points' => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Expression;
 use TestML::Base -base;
 
-field 'transforms' => [];
+has 'transforms' => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Assertion;
 use TestML::Base -base;
 
-field 'name';
-field 'expression', -init => 'TestML::Expression->new';
+has 'name';
+has 'expression', -init => 'TestML::Expression->new';
 
 #-----------------------------------------------------------------------------
 package TestML::Transform;
 use TestML::Base -base;
 
-field 'name';
-field 'args' => [];
+has 'name';
+has 'args' => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Document::Data;
 use TestML::Base -base;
 
-field 'blocks' => [];
+has 'blocks' => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Block;
 use TestML::Base -base;
 
-field 'label' => '';
-field 'points' => {};
+has 'label' => '';
+has 'points' => {};
 
 1;

@@ -31,15 +31,15 @@ use TestML::Base -base;
 
 use TestML::Document;
 
-field 'document', -init => 'TestML::Document->new()';
+has 'document', -init => 'TestML::Document->new()';
 
-field 'statement';
-field 'expression_stack' => [];
-field 'current_block';
-field 'point_name';
-field 'transform_name';
-field 'string';
-field 'transform_arguments' => [];
+has 'statement';
+has 'expression_stack' => [];
+has 'current_block';
+has 'point_name';
+has 'transform_name';
+has 'string';
+has 'transform_arguments' => [];
 
 my %ESCAPES = (
     '\\' => '\\',

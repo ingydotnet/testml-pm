@@ -5,11 +5,11 @@ use TestML::Base -base;
 
 use TestML::Parser;
 
-field 'bridge';
-field 'document';
-field 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
-field 'doc', -init => '$self->parse_document()';
-field 'transform_modules', -init => '$self->_transform_modules';
+has 'bridge';
+has 'document';
+has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
+has 'doc', -init => '$self->parse_document()';
+has 'transform_modules', -init => '$self->_transform_modules';
 
 sub title { }
 sub plan_begin { }
@@ -173,10 +173,10 @@ sub _transform_modules {
 package TestML::Context;
 use TestML::Base -base;
 
-field 'document';
-field 'block';
-field 'point';
-field 'value';
-field 'error';
+has 'document';
+has 'block';
+has 'point';
+has 'value';
+has 'error';
 
 1;
