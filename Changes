@@ -1,4 +1,12 @@
 ---
+version: 0.04
+date:    Tue Aug  3 02:50:49 PDT 2010
+changes:
+- Major update
+- Perl6 implementation backports
+- New grammar spec
+- Uses Parse::Pegex
+---
 version: 0.03
 date:    Sun May 24 09:42:06 PDT 2009
 changes:
