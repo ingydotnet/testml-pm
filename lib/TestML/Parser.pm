@@ -167,20 +167,17 @@ sub got_string_call {
 }
 
 sub try_assertion_call {
-#     print "try_assertion_call\n";
     my $self = shift;
     $self->statement->assertion(TestML::Assertion->new);
     push @{$self->expression_stack}, $self->statement->assertion->expression;
 }
 
 sub got_assertion_call {
-#     print "got_assertion_call\n";
     my $self = shift;
     pop @{$self->expression_stack};
 }
 
 sub not_assertion_call {
-#     print "not_assertion_call\n";
     my $self = shift;
     $self->statement->assertion(undef);
     pop @{$self->expression_stack};
@@ -227,15 +224,6 @@ sub got_point_lines {
 sub got_data_block {
     my $self = shift;
     push @{$self->document->data->blocks}, $self->current_block;
-}
-
-# TODO Refactor errors...
-sub got_NO_META_TESTML_ERROR {
-    die 'No TestML meta directive found';
-}
-
-sub got_SEMICOLON_ERROR {
-    die 'You seem to be missing a semicolon';
 }
 
 1;
