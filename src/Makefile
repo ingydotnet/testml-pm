@@ -1,6 +1,6 @@
 BASE=../lib/TestML/Parser
 
-$(BASE)/Grammar.pm: grammar.yaml grammar.pl Makefile $(BASE)
+$(BASE)/Grammar.pm: testml.pgx grammar.pl Makefile $(BASE)
 	perl grammar.pl $< > $@
 
 $(BASE):
