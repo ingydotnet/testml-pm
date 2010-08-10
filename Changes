@@ -1,4 +1,15 @@
 ---
+version: 0.06
+date:    Tue Aug 10 01:56:55 PDT 2010
+changes:
+- Update Module::Install::TestML
+- Remove TestML::CLI and bin/testml
+---
+version: 0.05
+date:    Tue Aug 10 01:45:13 PDT 2010
+changes:
+- Uses Pegex (moved from Parse::Pegex)
+---
 version: 0.04
 date:    Tue Aug  3 02:50:49 PDT 2010
 changes:

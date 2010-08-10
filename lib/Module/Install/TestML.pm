@@ -6,7 +6,7 @@ use Module::Install::Base;
 
 use vars qw($VERSION @ISA);
 BEGIN {
-    $VERSION = '0.10';
+    $VERSION = '0.11';
     @ISA     = 'Module::Install::Base';
 }
 
@@ -28,13 +28,16 @@ sub use_testml {
 
     $self->include('TestML');
     $self->include('TestML::Base');
+    $self->include('TestML::Gloom');
     $self->include('TestML::Document');
     $self->include('TestML::Parser');
     $self->include('TestML::Parser::Grammar');
-    $self->include('TestML::Parser::Pegex');
     $self->include('TestML::Runner');
     $self->include('TestML::Runner::TAP');
     $self->include('TestML::Standard');
+    $self->include('Pegex::Grammar');
+    $self->include('Pegex::Base');
+    $self->include('Pegex::Gloom');
 }
 
 1;
