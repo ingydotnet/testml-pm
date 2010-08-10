@@ -5,28 +5,26 @@ use TestML::Base -base;
 use TestML::Parser::Grammar;
 use TestML::Document;
 
+our $parser;
+
 sub parse {
-    my $parser = TestML::Parser::Grammar->new(
-        rule => 'document',
-        receiver => TestML::Parser::Actions->new,
+    $parser = TestML::Parser::Grammar->new(
+        receiver => TestML::Parser::Receiver->new,
     );
-    $parser->parse($_[1])
+    $parser->parse($_[1], 'document')
         or die "Parse TestML failed";
     return $parser->receiver->document;
 }
 
 sub parse_data {
-    my $parser = TestML::Parser::Grammar->new(
-        rule => 'data_section',
-        receiver => TestML::Parser::Actions->new,
-    );
-    $parser->parse($_[1])
+    $parser->receiver(TestML::Parser::Receiver->new);
+    $parser->parse($_[1], 'data_section')
         or die "Parse TestML data failed";
     return $parser->receiver->document->data->blocks;
 }
 
 #-----------------------------------------------------------------------------
-package TestML::Parser::Actions;
+package TestML::Parser::Receiver;
 use TestML::Base -base;
 
 use TestML::Document;
@@ -71,7 +69,7 @@ sub got_unquoted_string {
 sub got_meta_section {
     my $self = shift;
 
-    my $grammar = TestML::Parser::Grammar->grammar;
+    my $grammar = $parser->grammar;
 
     my $block_marker = $self->document->meta->data->{BlockMarker};
     $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;

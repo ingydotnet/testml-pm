@@ -1,21 +1,19 @@
-use lib "$ENV{HOME}/src/parse-pegex-pm/lib";
-use Parse::Pegex::Compiler;
+use lib "$ENV{HOME}/src/pegex-pm/lib";
+use Pegex::Compiler;
 
 open IN, shift or die;
 my $testml = do {local $/; <IN>};
-my $perl = Parse::Pegex::Compiler->new()->compile($testml)->to_perl;
+my $perl = Pegex::Compiler->compile($testml)->to_perl;
 chomp($perl);
 
 print <<"...";
 package TestML::Parser::Grammar;
-use base 'Parse::Pegex';
+use base 'Pegex::Grammar';
 use strict;
 use warnings;
 
-our \$grammar = +$perl;
-
-sub grammar {
-    return \$grammar;
+sub grammar_tree {
+    return +$perl;
 }
 
 1;
