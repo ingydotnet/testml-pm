@@ -25,12 +25,29 @@ sub plan_begin {
     }
 }
 
-sub EQ {
+sub assert_EQ {
     my $self = shift;
     my $left = shift;
     my $right = shift;
-    my $label = shift;
-    $self->test_builder->is_eq($left->value, $right->value, $label);
+    my @label = grep $_, @_;
+    $self->test_builder->is_eq($left->value, $right->value, @label);
+}
+
+sub assert_HAS {
+    my $self = shift;
+    my $left = shift;
+    my $right = shift;
+    my @label = grep $_, @_;
+    my $assertion = (index $left->value, $right->value) >= 0;
+    $self->test_builder->ok($assertion, @label);
+}
+
+sub assert_OK {
+    my $self = shift;
+    my $left = shift;
+    my @label = grep $_, @_;
+    my $assertion = $left->value;
+    $self->test_builder->ok($assertion, @label);
 }
 
 1;

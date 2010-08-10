@@ -15,6 +15,8 @@ sub title { }
 sub plan_begin { }
 sub plan_end { }
 
+use XXX;
+
 sub run {
     my $self = shift;
 
@@ -30,12 +32,19 @@ sub run {
                 $statement->expression,
                 $block,
             );
-            if ($statement->assertion) {
-                my $right = $self->evaluate_expression(
-                    $statement->assertion->expression,
-                    $block,
-                );
-                $self->EQ($left, $right, $block->label);
+            if (my $assertion = $statement->assertion) {
+                my $method = 'assert_' . $assertion->name;
+                # TODO - Should check 
+                if (@{$assertion->expression->transforms}) {
+                    my $right = $self->evaluate_expression(
+                        $assertion->expression,
+                        $block,
+                    );
+                    $self->$method($left, $right, $block->label);
+                }
+                else {
+                    $self->$method($left, $block->label);
+                }
             }
         }
     }
