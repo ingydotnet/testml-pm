@@ -85,6 +85,10 @@ sub evaluate_expression {
 
     for my $transform (@{$expression->transforms}) {
         my $transform_name = $transform->name;
+        if ($transform_name eq 'Not') {
+            $context->value(not $context->value);
+            next;
+        }
         next if $context->error and $transform_name ne 'Catch';
         my $function = $self->get_transform_function($transform_name);
         my $value = eval {
@@ -187,5 +191,7 @@ has 'block';
 has 'point';
 has 'value';
 has 'error';
+has 'state' => 'none';
+has 'not' => 0;
 
 1;

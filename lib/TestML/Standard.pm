@@ -7,10 +7,10 @@ sub Select {
 }
 
 sub Point {
-    my $this = shift;
+    my $context = shift;
     my $name = shift;
-    $this->point($name);
-    my $value = $this->block->points->{$name};
+    $context->point($name);
+    my $value = $context->block->points->{$name};
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
@@ -18,46 +18,52 @@ sub Point {
 }
 
 sub Raw {
-    my $this = shift;
-    my $point = $this->point
+    my $context = shift;
+    my $point = $context->point
         or die "Raw called but there is no point";
-    return $this->block->points->{$point};
+    return $context->block->points->{$point};
 }
 
 sub Catch {
-    my $this = shift;
-    my $error = $this->error
+    my $context = shift;
+    my $error = $context->error
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
-    $this->error(undef);
+    $context->error(undef);
     return $error;
 }
 
 sub Throw {
-    my $this = shift;
-    my $msg = @_ ? (shift)->value : $this->value
+    my $context = shift;
+    my $msg = @_ ? (shift)->value : $context->value
       or die "Throw called without an error msg";
     die $msg;
 }
 
 sub String {
-    my $this = shift;
+    my $context = shift;
     my $string =
-    (defined $this->value) ? $this->value :
+    (defined $context->value) ? $context->value :
     @_ ? ref($_[0]) ? (shift)->value : (shift) :
-    $this->raise(
+    $context->raise(
         'StandardLibraryException',
         'String transform called but no string available'
     );
     return $string;
 }
 
+sub True { 1 }
+
+sub False { 0 }
+
 sub BoolStr {
     return (shift)->value ? 'True' : 'False';
 }
 
 sub List {
-    return [ split /\n/, (shift)->value ];
+    my $context = shift;
+    my $value = $context->value || '';
+    return [ split /\n/, $value ];
 }
 
 sub Join {

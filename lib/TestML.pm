@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.006001;
 
-$TestML::VERSION = '0.06';
+$TestML::VERSION = '0.07';
 
 sub import {
     my $run;
@@ -100,8 +100,8 @@ or more simply:
         -document => 'testml/encode.tml',
         -bridge => 't::Bridge';
 
-The apply_* functions are defined in the bridge class that is specified
-outside this test (t/Bridge.pm).
+The apply_* transform functions are defined in the bridge class that is
+specified outside this test (t/Bridge.pm).
 
 =head1 DESCRIPTION
 
@@ -114,8 +114,8 @@ Perl implementation.
 In a nutshell you write a bunch of data tests that have inputs and
 expected results. Using a simple syntax, you specify what functions the
 data must pass through to produce the expected results. You use a bridge
-class to write the functions that pass the data through your
-application.
+class to write the data transform functions that pass the data through
+your application.
 
 =head1 SEE ALSO
 

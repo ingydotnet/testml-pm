@@ -2,9 +2,10 @@
 version: 0.07
 date:    Tue Aug 10 14:49:21 PDT 2010
 changes:
-- The Boston.pm release
+- The Boston.pm release!! patch++
 - Add HAS/OK support.
 - Add Not support.
+- Start testing truth.
 ---
 version: 0.06
 date:    Tue Aug 10 01:56:55 PDT 2010

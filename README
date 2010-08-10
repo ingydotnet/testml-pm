@@ -45,8 +45,8 @@ SYNOPSIS
             -document => 'testml/encode.tml',
             -bridge => 't::Bridge';
 
-    The apply_* functions are defined in the bridge class that is specified
-    outside this test (t/Bridge.pm).
+    The apply_* transform functions are defined in the bridge class that is
+    specified outside this test (t/Bridge.pm).
 
 DESCRIPTION
     TestML is a generic, programming language agnostic, meta language for
@@ -58,8 +58,8 @@ DESCRIPTION
     In a nutshell you write a bunch of data tests that have inputs and
     expected results. Using a simple syntax, you specify what functions the
     data must pass through to produce the expected results. You use a bridge
-    class to write the functions that pass the data through your
-    application.
+    class to write the data transform functions that pass the data through
+    your application.
 
 SEE ALSO
     See <http://www.testml.org/> for more information on TestML.

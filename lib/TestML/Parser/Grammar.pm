@@ -6,6 +6,9 @@ use warnings;
 sub grammar_tree {
     return +{
   '_FIRST_RULE' => 'document',
+  'assertion_bareword' => {
+    '+re' => qr/(?-xism:\GOK)/
+  },
   'assertion_call' => {
     '+any' => [
       {
@@ -420,6 +423,9 @@ sub grammar_tree {
   },
   'transform_call' => {
     '+all' => [
+      {
+        '+not' => 'assertion_bareword'
+      },
       {
         '+rule' => 'transform_name'
       },
