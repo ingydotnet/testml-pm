@@ -42,7 +42,6 @@ sub assert_HAS {
     $self->test_builder->ok($assertion, @label);
 }
 
-use XXX;
 sub assert_OK {
     my $self = shift;
     my $left = shift;
