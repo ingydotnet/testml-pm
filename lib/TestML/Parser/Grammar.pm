@@ -6,9 +6,6 @@ use warnings;
 sub grammar_tree {
     return +{
   '_FIRST_RULE' => 'document',
-  'assertion_bareword' => {
-    '+re' => qr/(?-xism:\GOK)/
-  },
   'assertion_call' => {
     '+any' => [
       {
@@ -23,7 +20,7 @@ sub grammar_tree {
     ]
   },
   'assertion_call_test' => {
-    '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.)(?:EQ|OK|HAS)\()/
+    '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.)(?:EQ|OK|HAS))/
   },
   'assertion_eq' => {
     '+any' => [
@@ -423,9 +420,6 @@ sub grammar_tree {
   },
   'transform_call' => {
     '+all' => [
-      {
-        '+not' => 'assertion_bareword'
-      },
       {
         '+rule' => 'transform_name'
       },
