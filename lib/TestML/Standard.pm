@@ -2,10 +2,6 @@ package TestML::Standard;
 use strict;
 use warnings;
 
-sub Select {
-    return (shift)->value;
-}
-
 sub Point {
     my $context = shift;
     my $name = shift;
@@ -14,14 +10,7 @@ sub Point {
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
-    return $value;
-}
-
-sub Raw {
-    my $context = shift;
-    my $point = $context->point
-        or die "Raw called but there is no point";
-    return $context->block->points->{$point};
+    $context->set(String => $value);
 }
 
 sub Catch {
@@ -30,7 +19,7 @@ sub Catch {
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
     $context->error(undef);
-    return $error;
+    $context->set(String => $error);
 }
 
 sub Throw {
@@ -42,32 +31,54 @@ sub Throw {
 
 sub String {
     my $context = shift;
-    my $string =
-    (defined $context->value) ? $context->value :
-    @_ ? ref($_[0]) ? (shift)->value : (shift) :
-    $context->raise(
-        'StandardLibraryException',
-        'String transform called but no string available'
-    );
-    return $string;
-}
-
-sub True { 1 }
-
-sub False { 0 }
-
-sub BoolStr {
-    return (shift)->value ? 'True' : 'False';
+    my ($type, $value) = $context->get(@_);
+    $value = 
+        $type eq 'String' ? $value :
+        $type eq 'Number' ? "$value" :
+        $type eq 'List' ? join("\n", @$value, '') :
+        $type eq 'Boolean' ? $value ? '1' : '' :
+        $type eq 'None' ? '' :
+        $context->throw("String type error: '$type'");
+    $context->set(String => $value);
 }
 
 sub List {
     my $context = shift;
     my $value = $context->value || '';
-    return [ split /\n/, $value ];
+    $value = [ split /\n/, $value ];
+    $context->set(List => $value);
+}
+
+sub Boolean {
+    my $context = shift;
+    my $value = $context->value ? 1 : 0;
+    $context->set(Boolean => $value);
+}
+
+sub Number {
+    my $context = shift;
+    my $value = 0 + $context->value;
+    $context->set(Number => $value);
+}
+
+sub True {
+    my $context = shift;
+    $context->set(Boolean => 1);
+}
+
+sub False {
+    my $context = shift;
+    $context->set(Boolean => 0);
+}
+
+sub BoolStr {
+    my $context = shift;
+    return $context->value ? 'True' : 'False';
 }
 
 sub Join {
-    my $list = (shift)->value;
+    my $context = shift;
+    my $list = $context->value;
     my $string = @_ ? (shift)->value : '';
     return join $string, @$list;
 }
@@ -82,11 +93,15 @@ sub Sort {
     return [ sort @$list ];
 }
 
-sub Item {
-    my $list = (shift)->value;
-    return join("\n", (@$list, ''));
+sub Chomp {
+    my $string = (shift)->value;
+    chomp($string);
+    return $string;
 }
 
+1;
+
+__END__
 sub Union {
     my $list = (shift)->value;
     # my $list2 = shift;
@@ -101,10 +116,14 @@ sub Unique {
     return [ @$list, @$list2 ];
 }
 
-sub Chomp {
-    my $string = (shift)->value;
-    chomp($string);
-    return $string;
+sub Raw {
+    my $context = shift;
+    my $point = $context->point
+        or die "Raw called but there is no point";
+    return $context->block->points->{$point};
 }
 
-1;
+sub Select {
+    return (shift)->value;
+}
+

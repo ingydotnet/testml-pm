@@ -16,7 +16,6 @@ sub plan_begin { }
 sub plan_end { }
 
 use XXX;
-
 sub run {
     my $self = shift;
 
@@ -81,16 +80,19 @@ sub evaluate_expression {
     my $context = TestML::Context->new(
         document => $self->doc,
         block => $block,
+        not => 0,
+        type => 'None',
     );
 
     for my $transform (@{$expression->transforms}) {
         my $transform_name = $transform->name;
         if ($transform_name eq 'Not') {
-            $context->value(not $context->value);
+            $context->not($context->not ? 0 : 1);
             next;
         }
-        next if $context->error and $transform_name ne 'Catch';
+        next if $context->type eq 'Error' and $transform_name ne 'Catch';
         my $function = $self->get_transform_function($transform_name);
+        $context->_set(0);
         my $value = eval {
             &$function(
                 $context,
@@ -102,10 +104,11 @@ sub evaluate_expression {
             );
         };
         if ($@) {
+            $context->type('Error');
             $context->error($@);
             $context->value(undef);
         }
-        else {
+        elsif (not $context->_set) {
             $context->value($value);
         }
     }
@@ -191,7 +194,44 @@ has 'block';
 has 'point';
 has 'value';
 has 'error';
-has 'state' => 'none';
-has 'not' => 0;
+has 'type';
+has 'not';
+has '_set';
+
+sub set {
+    my $self = shift;
+    my $type = shift;
+    my $value = shift;
+    die "Invalid context type '$type'"
+        unless $type =~ /^(?:None|String|Number|Boolean|List)$/;
+    $self->type($type);
+    $self->value($value);
+    $self->_set(1);
+}
+
+sub get {
+    my $self = shift;
+
+    if (@_) {
+        if (ref $_[0]) {
+            return $_[0]->get();
+        }
+        else {
+            return (String => $_[0]);
+        }
+    }
+
+    if (defined($self->value)) {
+        return ($self->type, $self->value);
+    }
+    else {
+        return (undef, undef);
+    }
+}
+
+sub truth {
+    my $self = shift;
+    return !!$self->value;
+}
 
 1;

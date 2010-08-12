@@ -46,7 +46,7 @@ sub assert_OK {
     my $self = shift;
     my $left = shift;
     my @label = grep $_, @_;
-    my $assertion = $left->value;
+    my $assertion = $left->truth ^ $left->not;
     $self->test_builder->ok($assertion, @label);
 }
 
