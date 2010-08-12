@@ -10,7 +10,7 @@ sub Point {
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
-    $context->set(String => $value);
+    $context->set(Str => $value);
 }
 
 sub Catch {
@@ -19,7 +19,7 @@ sub Catch {
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
     $context->error(undef);
-    $context->set(String => $error);
+    $context->set(Str => $error);
 }
 
 sub Throw {
@@ -29,46 +29,36 @@ sub Throw {
     die $msg;
 }
 
-sub String {
+# sub List {
+#     my $context = shift;
+#     $context->set(List => $context->get_list);
+# }
+
+sub Str {
     my $context = shift;
-    my ($type, $value) = $context->get(@_);
-    $value = 
-        $type eq 'String' ? $value :
-        $type eq 'Number' ? "$value" :
-        $type eq 'List' ? join("\n", @$value, '') :
-        $type eq 'Boolean' ? $value ? '1' : '' :
-        $type eq 'None' ? '' :
-        $context->throw("String type error: '$type'");
-    $context->set(String => $value);
+    $context->set(Str => $context->get_string);
 }
 
-sub List {
-    my $context = shift;
-    my $value = $context->value || '';
-    $value = [ split /\n/, $value ];
-    $context->set(List => $value);
-}
-
-sub Boolean {
+sub Bool {
     my $context = shift;
     my $value = $context->value ? 1 : 0;
-    $context->set(Boolean => $value);
+    $context->set(Bool => $value);
 }
 
-sub Number {
+sub Num {
     my $context = shift;
     my $value = 0 + $context->value;
-    $context->set(Number => $value);
+    $context->set(Num => $value);
 }
 
 sub True {
     my $context = shift;
-    $context->set(Boolean => 1);
+    $context->set(Bool => 1);
 }
 
 sub False {
     my $context = shift;
-    $context->set(Boolean => 0);
+    $context->set(Bool => 0);
 }
 
 sub BoolStr {
@@ -84,19 +74,35 @@ sub Join {
 }
 
 sub Reverse {
-    my $list = (shift)->value;
-    return [ reverse @$list ];
+    my $context = shift;
+    my $value = $context->get_type('List');
+    return [ reverse @$value ];
 }
 
 sub Sort {
-    my $list = (shift)->value;
-    return [ sort @$list ];
+    my $context = shift;
+    my $value = $context->get_type('List');
+    return [ sort @$value ];
 }
 
 sub Chomp {
-    my $string = (shift)->value;
-    chomp($string);
-    return $string;
+    my $context = shift;
+    my $value = $context->get_type('Str');
+    chomp($value);
+    return $value;
+}
+
+sub Text {
+    my $context = shift;
+    my $value = $context->get_type('List');
+    $context->set(Str => join "\n", @$value, '');
+}
+
+sub Lines {
+    my $context = shift;
+    my $value = $context->value || '';
+    $value = [ split /\n/, $value ];
+    $context->set(List => $value);
 }
 
 1;

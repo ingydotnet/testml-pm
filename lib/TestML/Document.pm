@@ -56,6 +56,12 @@ has 'name';
 has 'args' => [];
 
 #-----------------------------------------------------------------------------
+package TestML::String;
+use TestML::Transform -base;
+
+has 'value' => '';
+
+#-----------------------------------------------------------------------------
 package TestML::Document::Data;
 use TestML::Base -base;
 

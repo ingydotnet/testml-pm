@@ -19,7 +19,6 @@ my $testml = '
 --- output: I LOVE LUCY
 ';
 
-use XXX;
 my $match = TestML::Parser->parse($testml);
 ok $match, 'TestML string matches against TestML grammar';
 is $match->meta->data->{TestML}, '1.0', 'Version parses';

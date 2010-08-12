@@ -2,12 +2,13 @@ use TestML -run;
 
 __DATA__
 %TestML: 1.0
+%Plan: 6
 
 Throw(*error).bogus().Catch() == *error;
 *error.Throw().bogus().Catch() == *error;
 Throw('My error message').Catch() == *error;
 
-*empty == String("");
+*empty == "".Str;
 *empty == "";
 
 "foo" == "foo";

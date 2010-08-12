@@ -157,9 +157,8 @@ sub got_transform_argument {
 sub got_string_call {
     my $self = shift;
     my $string = $self->string;
-    my $transform = TestML::Transform->new(
-        name => 'String',
-        args => [ $string ],
+    my $transform = TestML::String->new(
+        value => $string,
     );
     push @{$self->expression_stack->[-1]->transforms}, $transform;
 }

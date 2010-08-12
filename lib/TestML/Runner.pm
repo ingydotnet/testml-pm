@@ -15,7 +15,6 @@ sub title { }
 sub plan_begin { }
 sub plan_end { }
 
-use XXX;
 sub run {
     my $self = shift;
 
@@ -86,11 +85,15 @@ sub evaluate_expression {
 
     for my $transform (@{$expression->transforms}) {
         my $transform_name = $transform->name;
+        next if $context->type eq 'Error' and $transform_name ne 'Catch';
+        if (ref($transform) eq 'TestML::String') {
+            $context->set(Str => $transform->value);
+            next;
+        }
         if ($transform_name eq 'Not') {
             $context->not($context->not ? 0 : 1);
             next;
         }
-        next if $context->type eq 'Error' and $transform_name ne 'Catch';
         my $function = $self->get_transform_function($transform_name);
         $context->_set(0);
         my $value = eval {
@@ -203,35 +206,40 @@ sub set {
     my $type = shift;
     my $value = shift;
     die "Invalid context type '$type'"
-        unless $type =~ /^(?:None|String|Number|Boolean|List)$/;
+        unless $type =~ /^(?:None|Str|Num|Bool|List)$/;
     $self->type($type);
     $self->value($value);
     $self->_set(1);
 }
 
-sub get {
+sub get_type {
     my $self = shift;
+    my $type = $self->type;
+    return $self->value if grep $type eq $_, @_;
+    $self->throw("context object is type '$type', but '@_' required");
+}
 
-    if (@_) {
-        if (ref $_[0]) {
-            return $_[0]->get();
-        }
-        else {
-            return (String => $_[0]);
-        }
-    }
-
-    if (defined($self->value)) {
-        return ($self->type, $self->value);
-    }
-    else {
-        return (undef, undef);
-    }
+sub get_string {
+    my $self = shift;
+    my $type = $self->type;
+    my $value = $self->value;
+    return
+        $type eq 'Str' ? $value :
+        $type eq 'List' ? join("\n", @$value, '') :
+        $type eq 'Bool' ? ($self->truth ? '1' : '') :
+        $type eq 'Num' ? "$value" :
+        $type eq 'None' ? '' :
+        $self->throw("Str type error: '$type'");
 }
 
 sub truth {
     my $self = shift;
     return !!$self->value;
+}
+
+sub throw {
+    require Carp;
+    Carp::croak $_[1];
 }
 
 1;
