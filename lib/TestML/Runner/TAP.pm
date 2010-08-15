@@ -25,11 +25,19 @@ sub plan_begin {
     }
 }
 
+# List Str Num Bool
 sub assert_EQ {
     my $self = shift;
     my $left = shift;
     my $right = shift;
+    my $left_type = $left->type;
+    my $right_type = $right->type;
+    $self->throw(
+        "Assertion type error: left side is '$left_type' and right side is '$right_type'"
+    ) unless $left_type eq $right_type;
     my @label = grep $_, @_;
+    return $self->assert_EQ_list($left, $right, @label)
+        if $left_type eq 'List';
     $self->test_builder->is_eq($left->value, $right->value, @label);
 }
 
@@ -37,6 +45,12 @@ sub assert_HAS {
     my $self = shift;
     my $left = shift;
     my $right = shift;
+    my $left_type = $left->type;
+    my $right_type = $right->type;
+    $self->throw(
+        "HAS assertion requires left and right side types be 'Str'.\n" .
+        "Left side is '$left_type' and right side is '$right_type'"
+    ) unless $left_type eq $right_type;
     my @label = grep $_, @_;
     my $assertion = (index $left->value, $right->value) >= 0;
     $self->test_builder->ok($assertion, @label);
@@ -44,9 +58,9 @@ sub assert_HAS {
 
 sub assert_OK {
     my $self = shift;
-    my $left = shift;
+    my $context = shift;
     my @label = grep $_, @_;
-    my $assertion = $left->truth ^ $left->not;
+    my $assertion = $context->get_value_as_bool ^ $context->not;
     $self->test_builder->ok($assertion, @label);
 }
 

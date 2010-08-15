@@ -3,14 +3,14 @@ use strict;
 use warnings;
 use 5.006001;
 
-$TestML::VERSION = '0.08';
+$TestML::VERSION = '0.10';
 
 sub import {
     my $run;
     my $bridge = 'main';
     my $document;
 
-    if ($_[1] eq '-base') {
+    if (@_ > 1 and $_[1] eq '-base') {
         goto &TestML::Base::import;
     }
 
@@ -63,8 +63,8 @@ TestML - A Generic Software Testing Meta Language
     %Title: Tests for AcmeEncode
     %Plan: 3
 
-    *text.apply_rot13()  == *rot13;
-    *text.apply_md5()    == *md5;
+    *text.apply_rot13 == *rot13;
+    *text.apply_md5   == *md5;
 
     === Encode some poetry
     --- text
@@ -117,9 +117,20 @@ data must pass through to produce the expected results. You use a bridge
 class to write the data transform functions that pass the data through
 your application.
 
+In Perl 5, TestML is the evolution of the L<Test::Base> module. It has a
+superset of Test:Base's goals. The data markup syntax is currently
+exactly the same as Test::Base.
+
 =head1 SEE ALSO
 
-See L<http://www.testml.org/> for more information on TestML.
+See L<http://www.testml.org/> for more information on L<TestML>.
+
+=head1 REPOSITORY AND COMMUNITY
+
+The TestML module can be found on CPAN and on GitHub:
+L<http://github.com/ingydotnet/testml-pm>.
+
+Please join the TestML discussion on #testml on irc.freenode.net.
 
 =head1 AUTHOR
 

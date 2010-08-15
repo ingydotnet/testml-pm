@@ -15,8 +15,6 @@ sub use_testml_tap {
 
     $self->use_testml;
      
-    $self->include('TestML::Runner::TAP');
-
     $self->include('Test::More');
     $self->include('Test::Builder');
     $self->include('Test::Builder::Module');
@@ -28,7 +26,6 @@ sub use_testml {
 
     $self->include('TestML');
     $self->include('TestML::Base');
-    $self->include('TestML::Gloom');
     $self->include('TestML::Document');
     $self->include('TestML::Parser');
     $self->include('TestML::Parser::Grammar');
@@ -37,7 +34,6 @@ sub use_testml {
     $self->include('TestML::Standard');
     $self->include('Pegex::Grammar');
     $self->include('Pegex::Base');
-    $self->include('Pegex::Gloom');
 }
 
 1;
@@ -79,7 +75,7 @@ Ingy döt Net <ingy@cpan.org>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2009. Ingy döt Net.
+Copyright (c) 2009, 2010. Ingy döt Net.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

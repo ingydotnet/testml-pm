@@ -2,9 +2,14 @@ package t::Bridge;
 use strict;
 use warnings;
 
-sub my_thing {
-    my $this = shift;
-    return join ' - ', split "\n", $this->value;
+sub my_lower {
+    my $context = shift;
+    return lc($context->value);
+}
+
+sub my_upper {
+    my $context = shift;
+    return uc($context->value);
 }
 
 sub combine {
@@ -12,13 +17,13 @@ sub combine {
 }
 
 sub parse_testml {
-    my $this = shift;
-    TestML::Parser->parse($this->value);
+    my $context = shift;
+    TestML::Parser->parse($context->value);
 }
 
 sub msg {
-    my $this = shift;
-    return $this->value;
+    my $context = shift;
+    return $context->value;
 }
 
 1;

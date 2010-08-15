@@ -1,4 +1,9 @@
 ---
+version: 0.10
+date:    Sat Aug 14 17:47:26 PDT 2010
+changes:
+- Add a light type system to context variables.
+---
 version: 0.08
 date:    Tue Aug 10 17:24:07 PDT 2010
 changes:

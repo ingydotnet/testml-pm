@@ -29,26 +29,19 @@ sub Throw {
     die $msg;
 }
 
-# sub List {
-#     my $context = shift;
-#     $context->set(List => $context->get_list);
-# }
-
 sub Str {
     my $context = shift;
-    $context->set(Str => $context->get_string);
+    $context->set(Str => $context->get_value_as_str);
 }
 
 sub Bool {
     my $context = shift;
-    my $value = $context->value ? 1 : 0;
-    $context->set(Bool => $value);
+    $context->set(Bool => $context->get_value_as_bool);
 }
 
 sub Num {
     my $context = shift;
-    my $value = 0 + $context->value;
-    $context->set(Num => $value);
+    $context->set(Num => $context->get_value_as_num);
 }
 
 sub True {
@@ -68,33 +61,33 @@ sub BoolStr {
 
 sub Join {
     my $context = shift;
-    my $list = $context->value;
+    my $value = $context->get_value_if_type('List');
     my $string = @_ ? (shift)->value : '';
-    return join $string, @$list;
+    $context->set(Str => join $string, @$value);
 }
 
 sub Reverse {
     my $context = shift;
-    my $value = $context->get_type('List');
+    my $value = $context->get_value_if_type('List');
     return [ reverse @$value ];
 }
 
 sub Sort {
     my $context = shift;
-    my $value = $context->get_type('List');
+    my $value = $context->get_value_if_type('List');
     return [ sort @$value ];
 }
 
 sub Chomp {
     my $context = shift;
-    my $value = $context->get_type('Str');
+    my $value = $context->get_value_if_type('Str');
     chomp($value);
     return $value;
 }
 
 sub Text {
     my $context = shift;
-    my $value = $context->get_type('List');
+    my $value = $context->get_value_if_type('List');
     $context->set(Str => join "\n", @$value, '');
 }
 
