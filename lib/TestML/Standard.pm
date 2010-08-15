@@ -54,9 +54,27 @@ sub False {
     $context->set(Bool => 0);
 }
 
-sub BoolStr {
+sub Chomp {
     my $context = shift;
-    return $context->value ? 'True' : 'False';
+    my $value = $context->get_value_if_type('Str');
+    chomp($value);
+    return $value;
+}
+
+1;
+
+__END__
+sub Text {
+    my $context = shift;
+    my $value = $context->get_value_if_type('List');
+    $context->set(Str => join "\n", @$value, '');
+}
+
+sub Lines {
+    my $context = shift;
+    my $value = $context->value || '';
+    $value = [ split /\n/, $value ];
+    $context->set(List => $value);
 }
 
 sub Join {
@@ -78,29 +96,12 @@ sub Sort {
     return [ sort @$value ];
 }
 
-sub Chomp {
+sub BoolStr {
     my $context = shift;
-    my $value = $context->get_value_if_type('Str');
-    chomp($value);
-    return $value;
+    return $context->value ? 'True' : 'False';
 }
 
-sub Text {
-    my $context = shift;
-    my $value = $context->get_value_if_type('List');
-    $context->set(Str => join "\n", @$value, '');
-}
 
-sub Lines {
-    my $context = shift;
-    my $value = $context->value || '';
-    $value = [ split /\n/, $value ];
-    $context->set(List => $value);
-}
-
-1;
-
-__END__
 sub Union {
     my $list = (shift)->value;
     # my $list2 = shift;

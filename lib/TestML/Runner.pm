@@ -225,7 +225,7 @@ sub get_value_as_str {
     my $value = $self->value;
     return
         $type eq 'Str' ? $value :
-        $type eq 'List' ? join("\n", @$value, '') :
+        $type eq 'List' ? join("", @$value) :
         $type eq 'Bool' ? $value ? '1' : '' :
         $type eq 'Num' ? "$value" :
         $type eq 'None' ? '' :
@@ -239,7 +239,7 @@ sub get_value_as_num {
     return
         $type eq 'Str' ? $value + 0 :
         $type eq 'List' ? scalar(@$value) :
-        $type eq 'Bool' ? $value :
+        $type eq 'Bool' ? $value ? 1 : 0 :
         $type eq 'Num' ? $value :
         $type eq 'None' ? 0 :
         $self->throw("Num type error: '$type'");
