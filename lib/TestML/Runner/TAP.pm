@@ -25,7 +25,6 @@ sub plan_begin {
     }
 }
 
-# List Str Num Bool
 sub assert_EQ {
     my $self = shift;
     my $left = shift;
