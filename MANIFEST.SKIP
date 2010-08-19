@@ -1,4 +1,5 @@
 ^MANIFEST\.SKIP$
+^MANIFEST\.bak$
 ^.git/
 ^.gitignore
 ^.gitmodules
@@ -8,3 +9,4 @@
 ^blib
 ^\.vimrc$
 ^ToDo$
+^notes$

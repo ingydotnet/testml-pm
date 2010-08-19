@@ -1,4 +1,10 @@
 ---
+version: 0.11
+date:    Mon Aug 16 11:49:12 PDT 2010
+changes:
+- Had a small problem with the transmission...
+- TestML files didn't get into the MANIFEST because of symlink stuffs. Fixed.
+---
 version: 0.10
 date:    Sat Aug 14 17:47:26 PDT 2010
 changes:

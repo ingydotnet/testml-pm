@@ -292,7 +292,7 @@ sub grammar_tree {
     '+re' => qr/(?-xism:\G---)/
   },
   'point_name' => {
-    '+re' => qr/(?-xism:\G([a-z]\w*))/
+    '+re' => qr/(?-xism:\G([a-z]\w*|[A-Z]\w*))/
   },
   'point_phrase' => {
     '+re' => qr/(?-xism:\G(([^\ \t\n\#](?:[^\n\#]*[^\ \t\n\#])?)))/

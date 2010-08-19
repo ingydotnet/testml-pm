@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.006001;
 
-$TestML::VERSION = '0.10';
+$TestML::VERSION = '0.11';
 
 sub import {
     my $run;
@@ -121,16 +121,15 @@ In Perl 5, TestML is the evolution of the L<Test::Base> module. It has a
 superset of Test:Base's goals. The data markup syntax is currently
 exactly the same as Test::Base.
 
-=head1 SEE ALSO
+=head1 RESOURCES
 
-See L<http://www.testml.org/> for more information on L<TestML>.
+Web: L<http://www.testml.org/>
 
-=head1 REPOSITORY AND COMMUNITY
+CPAN: L<http://search.cpan.org/dist/TestML/>
 
-The TestML module can be found on CPAN and on GitHub:
-L<http://github.com/ingydotnet/testml-pm>.
+GitHub: L<http://github.com/ingydotnet/testml-pm>
 
-Please join the TestML discussion on #testml on irc.freenode.net.
+IRC: #testml on irc.freenode.net
 
 =head1 AUTHOR
 

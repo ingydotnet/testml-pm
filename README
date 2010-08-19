@@ -8,8 +8,8 @@ SYNOPSIS
         %Title: Tests for AcmeEncode
         %Plan: 3
 
-        *text.apply_rot13()  == *rot13;
-        *text.apply_md5()    == *md5;
+        *text.apply_rot13 == *rot13;
+        *text.apply_md5   == *md5;
 
         === Encode some poetry
         --- text
@@ -61,8 +61,18 @@ DESCRIPTION
     class to write the data transform functions that pass the data through
     your application.
 
-SEE ALSO
-    See <http://www.testml.org/> for more information on TestML.
+    In Perl 5, TestML is the evolution of the Test::Base module. It has a
+    superset of Test:Base's goals. The data markup syntax is currently
+    exactly the same as Test::Base.
+
+RESOURCES
+    Web: <http://www.testml.org/>
+
+    CPAN: <http://search.cpan.org/dist/TestML/>
+
+    GitHub: <http://github.com/ingydotnet/testml-pm>
+
+    IRC: #testml on irc.freenode.net
 
 AUTHOR
     Ingy döt Net <ingy@cpan.org>
