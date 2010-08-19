@@ -61,6 +61,39 @@ sub Chomp {
     return $value;
 }
 
+sub Context {
+    my $context = shift;
+    $context->set(None => $context);
+}
+
+sub WWW {
+    eval "use XXX";
+    my $context = shift;
+    XXX::WWW($context->value);
+    return $context->value;
+}
+
+sub XXX {
+    eval "use XXX";
+    my $context = shift;
+    XXX::XXX($context->value);
+    return $context->value;
+}
+
+sub YYY {
+    eval "use XXX";
+    my $context = shift;
+    XXX::YYY($context->value);
+    return $context->value;
+}
+
+sub ZZZ {
+    eval "use XXX";
+    my $context = shift;
+    XXX::ZZZ($context->value);
+    return $context->value;
+}
+
 1;
 
 __END__
