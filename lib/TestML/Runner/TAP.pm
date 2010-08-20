@@ -37,7 +37,7 @@ sub assert_EQ {
     my @label = grep $_, @_;
     return $self->assert_EQ_list($left, $right, @label)
         if $left_type eq 'List';
-    $self->test_builder->is_eq($left->value, $right->value, @label);
+    $self->test_builder->is_eq($left->get_value_as_str, $right->get_value_as_str, @label);
 }
 
 sub assert_HAS {
@@ -49,7 +49,7 @@ sub assert_HAS {
     $self->throw(
         "HAS assertion requires left and right side types be 'Str'.\n" .
         "Left side is '$left_type' and right side is '$right_type'"
-    ) unless $left_type eq $right_type;
+    ) unless $left_type eq 'Str' and $left_type eq $right_type;
     my @label = grep $_, @_;
     my $assertion = (index $left->value, $right->value) >= 0;
     $self->test_builder->ok($assertion, @label);
