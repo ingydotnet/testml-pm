@@ -67,28 +67,32 @@ sub Context {
 }
 
 sub WWW {
-    eval "use XXX";
+    require XXX;
+    local $XXX::DumpModule = 'YAML::XS';
     my $context = shift;
     XXX::WWW($context->value);
     return $context->value;
 }
 
 sub XXX {
-    eval "use XXX";
+    require XXX;
+    local $XXX::DumpModule = 'YAML::XS';
     my $context = shift;
     XXX::XXX($context->value);
     return $context->value;
 }
 
 sub YYY {
-    eval "use XXX";
+    require XXX;
+    local $XXX::DumpModule = 'YAML::XS';
     my $context = shift;
     XXX::YYY($context->value);
     return $context->value;
 }
 
 sub ZZZ {
-    eval "use XXX";
+    require XXX;
+    local $XXX::DumpModule = 'YAML::XS';
     my $context = shift;
     XXX::ZZZ($context->value);
     return $context->value;

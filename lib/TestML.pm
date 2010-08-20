@@ -5,6 +5,12 @@ use 5.006001;
 
 $TestML::VERSION = '0.11';
 
+@TestML::EXPORT = qw(WWW XXX YYY ZZZ);
+sub WWW { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::WWW(@_) }
+sub XXX { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::XXX(@_) }
+sub YYY { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::YYY(@_) }
+sub ZZZ { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::ZZZ(@_) }
+
 sub import {
     my $run;
     my $bridge = 'main';
@@ -45,6 +51,10 @@ sub import {
             die "-document or -bridge option used without -run option\n";
         }
     }
+
+    require Exporter;
+    @_ = ($pkg);
+    goto &Exporter::import;
 }
 
 1;
