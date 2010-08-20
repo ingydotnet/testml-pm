@@ -13,7 +13,8 @@ sub ZZZ { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::ZZZ(@_) }
 
 sub import {
     my $run;
-    my $bridge = 'main';
+    my $skipped = 0;
+    my $bridge = '';
     my $document;
 
     if (@_ > 1 and $_[1] eq '-base') {
@@ -33,6 +34,18 @@ sub import {
         elsif ($option eq '-bridge') {
             $bridge = $value;
         }
+        elsif ($option eq '-require_or_skip') {
+            my $module = $value;
+            die "-require_or_skip option requires a module argument"
+                unless $module and $module !~ /^-/;
+            eval "require $module; 1" or do {
+                $skipped = 1;
+                require Test::More;
+                Test::More::plan(
+                    skip_all => "$module failed to load"
+                );
+            } 
+        }
         else {
             die "Unknown option '$option'";
         }
@@ -40,8 +53,10 @@ sub import {
 
     sub END {
         no warnings;
+        return if $skipped;
         if ($run) {
             eval "require $run; 1" or die $@;
+            $bridge ||= 'main';
             $run->new(
                 document => ($document || \ *main::DATA),
                 bridge => $bridge,
