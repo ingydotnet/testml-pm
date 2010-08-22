@@ -6,7 +6,7 @@ sub Point {
     my $context = shift;
     my $name = shift;
     $context->point($name);
-    my $value = $context->block->points->{$name};
+    my $value = $context->runner->block->points->{$name};
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
@@ -22,14 +22,14 @@ sub GetLabel {
 sub Get {
     my $context = shift;
     my $key = shift->value;
-    $context->set(Str => $context->document->stash->{$key});
+    $context->set(Str => $context->runner->doc->stash->{$key});
 }
 
 sub Set {
     my $context = shift;
     my $key = shift;
     my $value = shift->value;
-    $context->document->stash->{$key} = $value;
+    $context->runner->doc->stash->{$key} = $value;
     return; 
 }
 
@@ -177,7 +177,7 @@ sub Raw {
     my $context = shift;
     my $point = $context->point
         or die "Raw called but there is no point";
-    return $context->block->points->{$point};
+    return $context->runner->block->points->{$point};
 }
 
 sub Select {

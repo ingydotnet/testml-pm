@@ -6,12 +6,19 @@ use TestML::Base -base;
 use TestML::Parser;
 use TestML::Context;
 
+our $self;
+
 has 'bridge';
 has 'document';
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
 has 'doc', -init => '$self->parse_document()';
 has 'transform_modules', -init => '$self->_transform_modules';
 has 'block';
+
+sub init {
+    my $self = $TestML::Runner::self = shift;
+    return $self->SUPER::init(@_);
+}
 
 sub title { }
 sub plan_begin { }
@@ -94,8 +101,6 @@ sub evaluate_expression {
     my $block = shift || undef;
 
     my $context = TestML::Context->new(
-        document => $self->doc,
-        block => $block,
         not => 0,
         type => 'None',
         runner => $self,

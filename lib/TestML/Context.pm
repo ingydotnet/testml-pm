@@ -1,15 +1,16 @@
 package TestML::Context;
 use TestML::Base -base;
 
-has 'document';
-has 'block';
 has 'point';
 has 'value';
 has 'error';
 has 'type';
 has 'not';
 has '_set';
-has 'runner';
+
+sub runner {
+    return $TestML::Runner::self;
+}
 
 sub set {
     my $self = shift;
