@@ -14,6 +14,9 @@ has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
 has 'document_object', -init => '$self->parse_document()';
 has 'transform_modules', -init => '$self->_transform_modules';
 has 'block';
+has 'stash' => {
+    'Label' => '$BlockLabel',
+};
 
 sub init {
     my $self = $TestML::Runner::self = shift;
@@ -61,7 +64,7 @@ sub run {
 
 sub get_label {
     my $self = shift;
-    my $label = $self->document_object->stash->{Label};
+    my $label = $self->stash->{Label};
     my %replace = map {
         my $v = $self->block->points->{$_};
         $v =~ s/\n.*//s;

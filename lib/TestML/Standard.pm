@@ -22,14 +22,14 @@ sub GetLabel {
 sub Get {
     my $context = shift;
     my $key = shift->value;
-    $context->set(Str => $context->runner->document_object->stash->{$key});
+    $context->set(Str => $context->runner->stash->{$key});
 }
 
 sub Set {
     my $context = shift;
     my $key = shift;
     my $value = shift->value;
-    $context->runner->document_object->stash->{$key} = $value;
+    $context->runner->stash->{$key} = $value;
     return; 
 }
 

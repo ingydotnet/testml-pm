@@ -7,9 +7,6 @@ use TestML::Base -base;
 has 'meta' => -init => 'TestML::Document::Meta->new';
 has 'test' => -init => 'TestML::Document::Test->new';
 has 'data' => -init => 'TestML::Document::Data->new';
-has 'stash' => {
-    'Label' => '$BlockLabel',
-};
 
 #-----------------------------------------------------------------------------
 package TestML::Document::Meta;
