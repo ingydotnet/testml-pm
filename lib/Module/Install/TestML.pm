@@ -26,6 +26,7 @@ sub use_testml {
 
     $self->include('TestML');
     $self->include('TestML::Base');
+    $self->include('TestML::Context');
     $self->include('TestML::Document');
     $self->include('TestML::Parser');
     $self->include('TestML::Parser::Grammar');
