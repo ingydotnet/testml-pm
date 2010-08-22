@@ -13,6 +13,26 @@ sub Point {
     $context->set(Str => $value);
 }
 
+sub GetLabel {
+    my $context = shift;
+    my $label = $context->runner->get_label;
+    $context->set(Str => $label);
+}
+
+sub Get {
+    my $context = shift;
+    my $key = shift->value;
+    $context->set(Str => $context->document->stash->{$key});
+}
+
+sub Set {
+    my $context = shift;
+    my $key = shift;
+    my $value = shift->value;
+    $context->document->stash->{$key} = $value;
+    return; 
+}
+
 sub Catch {
     my $context = shift;
     my $error = $context->error
@@ -66,7 +86,7 @@ sub Context {
     $context->set(None => $context);
 }
 
-sub WWW {
+sub Www {
     require XXX;
     local $XXX::DumpModule = 'YAML::XS';
     my $context = shift;
@@ -74,7 +94,7 @@ sub WWW {
     return $context->value;
 }
 
-sub XXX {
+sub Xxx {
     require XXX;
     local $XXX::DumpModule = 'YAML::XS';
     my $context = shift;
@@ -82,7 +102,7 @@ sub XXX {
     return $context->value;
 }
 
-sub YYY {
+sub Yyy {
     require XXX;
     local $XXX::DumpModule = 'YAML::XS';
     my $context = shift;
@@ -90,7 +110,7 @@ sub YYY {
     return $context->value;
 }
 
-sub ZZZ {
+sub Zzz {
     require XXX;
     local $XXX::DumpModule = 'YAML::XS';
     my $context = shift;

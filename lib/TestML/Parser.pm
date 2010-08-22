@@ -10,6 +10,7 @@ our $parser;
 sub parse {
     $parser = TestML::Parser::Grammar->new(
         receiver => TestML::Parser::Receiver->new,
+        debug => 0,
     );
     $parser->parse($_[1], 'document')
         or die "Parse TestML failed";
@@ -102,6 +103,37 @@ sub got_meta_statement {
     }
 }
 
+sub try_assignment_statement {
+    my $self = shift;
+    my $statement = TestML::Statement->new(
+    );
+    $self->statement($statement);
+    my $expression = $self->statement->expression;
+    $expression->transforms->[0] = TestML::Transform->new(
+        name => 'Set',
+    );
+    $statement->expression($expression);
+    push @{$self->expression_stack}, TestML::Expression->new;
+}
+
+sub got_assignment_statement {
+    my $self = shift;
+    push @{$self->document->test->statements}, $self->statement;
+    $self->statement->expression->transforms->[0]->args->[1] =
+        pop @{$self->expression_stack};
+}
+
+sub not_assignment_statement {
+    my $self = shift;
+    pop @{$self->expression_stack};
+}
+
+sub got_variable_name {
+    my $self = shift;
+    my $variable_name = shift;
+    $self->statement->expression->transforms->[0]->args->[0] = $variable_name;
+}
+
 sub try_test_statement {
     my $self = shift;
     $self->statement(TestML::Statement->new());
@@ -111,9 +143,10 @@ sub try_test_statement {
 sub got_test_statement {
     my $self = shift;
     push @{$self->document->test->statements}, $self->statement;
+    pop @{$self->expression_stack};
 }
 
-sub end_test_statement {
+sub not_test_statement {
     my $self = shift;
     pop @{$self->expression_stack};
 }

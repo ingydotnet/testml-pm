@@ -94,6 +94,22 @@ sub grammar_tree {
       }
     ]
   },
+  'assignment_statement' => {
+    '+all' => [
+      {
+        '+rule' => 'variable_name'
+      },
+      {
+        '+re' => qr/(?-xism:\G\s+=\s+)/
+      },
+      {
+        '+rule' => 'test_expression'
+      },
+      {
+        '+rule' => 'semicolon'
+      }
+    ]
+  },
   'blank_line' => {
     '+re' => qr/(?-xism:\G[\ \t]*\r?\n)/
   },
@@ -307,6 +323,16 @@ sub grammar_tree {
       }
     ]
   },
+  'semicolon' => {
+    '+any' => [
+      {
+        '+re' => qr/(?-xism:\G;)/
+      },
+      {
+        '+error' => 'You seem to be missing a semicolon'
+      }
+    ]
+  },
   'single_quoted_string' => {
     '+re' => qr/(?-xism:\G(?:'(([^\n\\']|\\'|\\\\)*?)'))/
   },
@@ -353,6 +379,9 @@ sub grammar_tree {
         '+rule' => 'ws'
       },
       {
+        '+rule' => 'assignment_statement'
+      },
+      {
         '+rule' => 'test_statement'
       }
     ],
@@ -368,14 +397,7 @@ sub grammar_tree {
         '<' => '?'
       },
       {
-        '+any' => [
-          {
-            '+re' => qr/(?-xism:\G;)/
-          },
-          {
-            '+error' => 'You seem to be missing a semicolon'
-          }
-        ]
+        '+rule' => 'semicolon'
       }
     ]
   },
@@ -444,6 +466,9 @@ sub grammar_tree {
   },
   'user_transform' => {
     '+re' => qr/(?-xism:\G([a-z]\w*))/
+  },
+  'variable_name' => {
+    '+re' => qr/(?-xism:\G([a-zA-Z]\w*))/
   },
   'ws' => {
     '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n))/
