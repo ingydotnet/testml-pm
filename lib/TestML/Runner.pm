@@ -11,7 +11,7 @@ our $self;
 has 'bridge';
 has 'document';
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
-has 'doc', -init => '$self->parse_document()';
+has 'document_object', -init => '$self->parse_document()';
 has 'transform_modules', -init => '$self->_transform_modules';
 has 'block';
 
@@ -30,7 +30,7 @@ sub run {
     $self->title();
     $self->plan_begin();
 
-    for my $statement (@{$self->doc->test->statements}) {
+    for my $statement (@{$self->document_object->test->statements}) {
         my $blocks = @{$statement->points}
             ? $self->select_blocks($statement->points)
             : [TestML::Block->new()];
@@ -61,7 +61,7 @@ sub run {
 
 sub get_label {
     my $self = shift;
-    my $label = $self->doc->stash->{Label};
+    my $label = $self->document_object->stash->{Label};
     my %replace = map {
         my $v = $self->block->points->{$_};
         $v =~ s/\n.*//s;
@@ -79,7 +79,7 @@ sub select_blocks {
     my $selected = [];
 
     # XXX $points an %points is very confusing here
-    OUTER: for my $block (@{$self->doc->data->blocks}) {
+    OUTER: for my $block (@{$self->document_object->data->blocks}) {
         my %points = %{$block->points};
         next if exists $points{SKIP};
         for my $point (@$points) {
