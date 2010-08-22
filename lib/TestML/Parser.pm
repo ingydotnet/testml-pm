@@ -1,6 +1,4 @@
 package TestML::Parser;
-use strict;
-use warnings;
 use TestML::Base -base;
 use TestML::Parser::Grammar;
 use TestML::Document;

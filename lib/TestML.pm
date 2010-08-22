@@ -18,6 +18,9 @@ sub import {
     my $testml;
     my $skipped = 0;
 
+    strict->import;
+    warnings->import;
+
     if (@_ > 1 and $_[1] eq '-base') {
         goto &TestML::Base::import;
     }

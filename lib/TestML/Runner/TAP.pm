@@ -1,7 +1,4 @@
 package TestML::Runner::TAP;
-use strict;
-use warnings;
-
 use TestML::Runner -base;
 
 use Test::Builder;

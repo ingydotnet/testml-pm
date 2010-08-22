@@ -1,6 +1,5 @@
 package TestML::Standard;
-use strict;
-use warnings;
+use TestML;
 
 sub Point {
     my $context = shift;

@@ -1,6 +1,5 @@
 package t::Bridge;
-use strict;
-use warnings;
+use TestML;
 
 sub my_lower {
     my $context = shift;

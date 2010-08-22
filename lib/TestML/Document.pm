@@ -1,7 +1,4 @@
 package TestML::Document;
-use strict;
-use warnings;
-
 use TestML::Base -base;
 
 has 'meta' => -init => 'TestML::Document::Meta->new';

@@ -1,7 +1,5 @@
 package TestML::Parser::Grammar;
 use base 'Pegex::Grammar';
-use strict;
-use warnings;
 
 sub grammar_tree {
     return +{

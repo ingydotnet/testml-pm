@@ -1,6 +1,4 @@
 package TestML::Runner;
-use strict;
-use warnings;
 use TestML::Base -base;
 
 use TestML::Parser;
