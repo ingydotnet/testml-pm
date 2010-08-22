@@ -10,14 +10,14 @@ has 'test_builder' => -init => 'Test::Builder->new';
 
 sub title {
     my $self = shift;
-    if (my $title = $self->document_object->meta->data->{Title}) {
+    if (my $title = $self->document->meta->data->{Title}) {
         $self->test_builder->note("=== $title ===\n");
     }
 }
 
 sub plan_begin {
     my $self = shift;
-    if (my $tests = $self->document_object->meta->data->{Plan}) {
+    if (my $tests = $self->document->meta->data->{Plan}) {
         $self->test_builder->plan(tests => $tests);
     }
     else {

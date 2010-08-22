@@ -6,12 +6,15 @@ use TestML::Base -base;
 use TestML::Parser;
 use TestML::Context;
 
+# Since there is only ever one test runner, it makes things a lot easier to
+# keep the reference to it in a global variable accessed by a method, than to
+# put a reference to it into every object that needs to access it.
 our $self;
 
 has 'bridge';
-has 'document';
+has 'testml';
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
-has 'document_object', -init => '$self->parse_document()';
+has 'document', -init => '$self->parse_document()';
 has 'transform_modules', -init => '$self->_transform_modules';
 has 'block';
 has 'stash' => {
@@ -33,7 +36,7 @@ sub run {
     $self->title();
     $self->plan_begin();
 
-    for my $statement (@{$self->document_object->test->statements}) {
+    for my $statement (@{$self->document->test->statements}) {
         my $blocks = @{$statement->points}
             ? $self->select_blocks($statement->points)
             : [TestML::Block->new()];
@@ -82,7 +85,7 @@ sub select_blocks {
     my $selected = [];
 
     # XXX $points an %points is very confusing here
-    OUTER: for my $block (@{$self->document_object->data->blocks}) {
+    OUTER: for my $block (@{$self->document->data->blocks}) {
         my %points = %{$block->points};
         next if exists $points{SKIP};
         for my $point (@$points) {
@@ -163,18 +166,18 @@ sub get_transform_function {
 sub parse_document {
     my $self = shift;
     my ($fh, $base);
-    if (ref $self->document) {
-        $fh = $self->document;
+    if (ref $self->testml) {
+        $fh = $self->testml;
         $base = $self->base;
     }
     else {
-        my $path = join '/', $self->base, $self->document;
+        my $path = join '/', $self->base, $self->testml;
         open $fh, $path or die "Can't open $path for input";
         $base = $path;
         $base =~ s/(.*)\/.*/$1/ or die;
     }
-    my $testml = do { local $/; <$fh> };
-    my $document = TestML::Parser->parse($testml)
+    my $text = do { local $/; <$fh> };
+    my $document = TestML::Parser->parse($text)
         or die "TestML document failed to parse";
     if (@{$document->meta->data->{Data}}) {
         my $data_files = $document->meta->data->{Data};
@@ -187,8 +190,8 @@ sub parse_document {
             else {
                 my $path = join '/', $base, $file;
                 open IN, $path or die "Can't open $path for input";
-                my $testml = do { local $/; <IN> };
-                my $blocks = TestML::Parser->parse_data($testml)
+                my $text = do { local $/; <IN> };
+                my $blocks = TestML::Parser->parse_data($text)
                     or die "TestML data document failed to parse";
                 push @{$document->data->blocks}, @$blocks;
             }

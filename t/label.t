@@ -1,5 +1,5 @@
 use TestML::Runner::TAP;
 
 TestML::Runner::TAP->new(
-    document => 'testml/label.tml',
+    testml => 'testml/label.tml',
 )->run();

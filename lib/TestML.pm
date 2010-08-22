@@ -15,7 +15,7 @@ sub import {
     my $run;
     my $skipped = 0;
     my $bridge = '';
-    my $document;
+    my $testml;
 
     if (@_ > 1 and $_[1] eq '-base') {
         goto &TestML::Base::import;
@@ -28,8 +28,12 @@ sub import {
         if ($option eq '-run') {
             $run = $value || 'TestML::Runner::TAP';
         }
+        # XXX - 2010-08-22
         elsif ($option eq '-document') {
-            $document = $value;
+            die "TestML '-document' option has been changed to '-testml'";
+        }
+        elsif ($option eq '-testml') {
+            $testml = $value;
         }
         elsif ($option eq '-bridge') {
             $bridge = $value;
@@ -58,12 +62,12 @@ sub import {
             eval "require $run; 1" or die $@;
             $bridge ||= 'main';
             $run->new(
-                document => ($document || \ *main::DATA),
+                testml => ($testml || \ *main::DATA),
                 bridge => $bridge,
             )->run();
         }
-        elsif ($document or $bridge) {
-            die "-document or -bridge option used without -run option\n";
+        elsif ($testml or $bridge) {
+            die "-testml or -bridge option used without -run option\n";
         }
     }
 
@@ -115,14 +119,14 @@ To run this test you would have a normal test file that looks like this:
     use TestML::Runner::TAP;
 
     TestML::Runner::TAP->new(
-        document => 'testml/encode.tml',
+        testml => 'testml/encode.tml',
         bridge => 't::Bridge',
     )->run();
 
 or more simply:
 
     use TestML -run,
-        -document => 'testml/encode.tml',
+        -testml => 'testml/encode.tml',
         -bridge => 't::Bridge';
 
 The apply_* transform functions are defined in the bridge class that is
