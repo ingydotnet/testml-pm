@@ -35,10 +35,10 @@ sub Set {
 
 sub Catch {
     my $context = shift;
-    my $error = $context->error
+    my $error = $context->get_error
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
-    $context->error(undef);
+    $context->clear_error;
     $context->set(Str => $error);
 }
 

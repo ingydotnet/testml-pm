@@ -16,7 +16,9 @@ has 'testml';
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
 has 'document', -init => '$self->parse_document()';
 has 'transform_modules', -init => '$self->_transform_modules';
+has 'expression';
 has 'block';
+has 'set_called';
 has 'stash' => {
     'Label' => '$BlockLabel',
 };
@@ -103,7 +105,10 @@ sub select_blocks {
 
 sub evaluate_expression {
     my $self = shift;
+    my $prev_expression = $self->expression;
+    my $prev_set_called = $self->set_called;
     my $expression = shift;
+    $self->expression($expression);
     my $block = shift || undef;
 
     my $context = TestML::Context->new(
@@ -114,7 +119,7 @@ sub evaluate_expression {
 
     for my $transform (@{$expression->transforms}) {
         my $transform_name = $transform->name;
-        next if $context->type eq 'Error' and $transform_name ne 'Catch';
+        next if $expression->error and $transform_name ne 'Catch';
         if (ref($transform) eq 'TestML::String') {
             $context->set(Str => $transform->value);
             next;
@@ -124,7 +129,7 @@ sub evaluate_expression {
             next;
         }
         my $function = $self->get_transform_function($transform_name);
-        $context->_set(0);
+        $self->set_called(0);
         my $value = eval {
             &$function(
                 $context,
@@ -136,17 +141,19 @@ sub evaluate_expression {
             );
         };
         if ($@) {
-            $context->type('Error');
-            $context->error($@);
+            $expression->error($@);
+            $context->type('None');
             $context->value(undef);
         }
-        elsif (not $context->_set) {
+        elsif (not $self->set_called) {
             $context->value($value);
         }
     }
-    if ($context->error) {
-        die $context->error;
+    if ($expression->error) {
+        die $expression->error;
     }
+    $self->expression($prev_expression);
+    $self->set_called($prev_set_called);
     return $context;
 }
 

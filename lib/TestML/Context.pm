@@ -1,12 +1,12 @@
 package TestML::Context;
 use TestML::Base -base;
 
-has 'point';
-has 'value';
-has 'error';
 has 'type';
+has 'value';
+has 'point';
+
+# XXX Move into expression object.
 has 'not';
-has '_set';
 
 sub runner {
     return $TestML::Runner::self;
@@ -20,7 +20,7 @@ sub set {
         unless $type =~ /^(?:None|Str|Num|Bool|List)$/;
     $self->type($type);
     $self->value($value);
-    $self->_set(1);
+    $self->runner->set_called(1);
 }
 
 sub get_value_if_type {
@@ -67,6 +67,16 @@ sub get_value_as_bool {
         $type eq 'Num' ? $value == 0 ? 0 : 1 :
         $type eq 'None' ? 0 :
         $self->throw("Bool type error: '$type'");
+}
+
+sub get_error {
+    my $self = shift;
+    return $self->runner->expression->error;
+}
+
+sub clear_error {
+    my $self = shift;
+    return $self->runner->expression->error(undef);
 }
 
 sub throw {

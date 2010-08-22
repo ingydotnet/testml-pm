@@ -40,6 +40,7 @@ package TestML::Expression;
 use TestML::Base -base;
 
 has 'transforms' => [];
+has 'error';
 
 #-----------------------------------------------------------------------------
 package TestML::Assertion;
