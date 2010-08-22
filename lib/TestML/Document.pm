@@ -41,6 +41,7 @@ use TestML::Base -base;
 
 has 'transforms' => [];
 has 'error';
+has 'set_called';
 
 #-----------------------------------------------------------------------------
 package TestML::Assertion;

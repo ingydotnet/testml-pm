@@ -20,7 +20,7 @@ sub set {
         unless $type =~ /^(?:None|Str|Num|Bool|List)$/;
     $self->type($type);
     $self->value($value);
-    $self->runner->set_called(1);
+    $self->runner->expression->set_called(1);
 }
 
 sub get_value_if_type {
