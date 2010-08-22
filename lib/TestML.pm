@@ -5,17 +5,18 @@ use 5.006001;
 
 $TestML::VERSION = '0.11';
 
-@TestML::EXPORT = qw(WWW XXX YYY ZZZ);
-sub WWW { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::WWW(@_) }
-sub XXX { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::XXX(@_) }
-sub YYY { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::YYY(@_) }
-sub ZZZ { require XXX; local $XXX::DumpModule = 'YAML::XS'; XXX::ZZZ(@_) }
+our @EXPORT = qw(WWW XXX YYY ZZZ);
+our $DumpModule = 'YAML::XS';
+sub WWW { require XXX; local $XXX::DumpModule = $DumpModule; XXX::WWW(@_) }
+sub XXX { require XXX; local $XXX::DumpModule = $DumpModule; XXX::XXX(@_) }
+sub YYY { require XXX; local $XXX::DumpModule = $DumpModule; XXX::YYY(@_) }
+sub ZZZ { require XXX; local $XXX::DumpModule = $DumpModule; XXX::ZZZ(@_) }
 
 sub import {
     my $run;
-    my $skipped = 0;
     my $bridge = '';
     my $testml;
+    my $skipped = 0;
 
     if (@_ > 1 and $_[1] eq '-base') {
         goto &TestML::Base::import;
