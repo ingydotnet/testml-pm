@@ -57,8 +57,7 @@ sub assert_HAS {
 sub assert_OK {
     my $self = shift;
     my $context = shift;
-    my $assertion = $context->get_value_as_bool ^ $context->not;
-    $self->test_builder->ok($assertion, $self->get_label);
+    $self->test_builder->ok($context->get_value_as_bool, $self->get_label);
 }
 
 1;

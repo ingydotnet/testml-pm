@@ -5,9 +5,6 @@ has 'type';
 has 'value';
 has 'point';
 
-# XXX Move into expression object.
-has 'not';
-
 sub runner {
     return $TestML::Runner::self;
 }

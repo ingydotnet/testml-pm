@@ -108,7 +108,6 @@ sub evaluate_expression {
     my $block = shift || undef;
 
     my $context = TestML::Context->new(
-        not => 0,
         type => 'None',
         runner => $self,
     );
@@ -118,10 +117,6 @@ sub evaluate_expression {
         next if $expression->error and $transform_name ne 'Catch';
         if (ref($transform) eq 'TestML::String') {
             $context->set(Str => $transform->value);
-            next;
-        }
-        if ($transform_name eq 'Not') {
-            $context->not($context->not ? 0 : 1);
             next;
         }
         my $function = $self->get_transform_function($transform_name);

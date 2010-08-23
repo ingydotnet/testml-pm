@@ -68,6 +68,11 @@ sub True {
     $context->set(Bool => 1);
 }
 
+sub Not {
+    my $context = shift;
+    $context->set(Bool => $context->get_value_as_bool ? 0 : 1);
+}
+
 sub False {
     my $context = shift;
     $context->set(Bool => 0);
