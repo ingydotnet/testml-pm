@@ -30,6 +30,7 @@ sub use_testml {
     $self->include('TestML::Object');
     $self->include('TestML::Parser');
     $self->include('TestML::Parser::Grammar');
+    $self->include('TestML::Runner::TAP');
     $self->include('TestML::Runtime');
     $self->include('TestML::Runtime::TAP');
     $self->include('TestML::Standard');
