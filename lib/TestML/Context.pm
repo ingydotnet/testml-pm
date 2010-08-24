@@ -3,7 +3,6 @@ use TestML::Base -base;
 
 has 'type';
 has 'value';
-has 'point';
 
 sub runner {
     return $TestML::Runner::self;

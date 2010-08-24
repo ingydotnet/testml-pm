@@ -4,7 +4,6 @@ use TestML;
 sub Point {
     my $context = shift;
     my $name = shift;
-    $context->point($name);
     my $value = $context->runner->block->points->{$name};
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
