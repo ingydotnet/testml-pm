@@ -1,10 +1,10 @@
-package TestML::Runner;
+package TestML::Runtime;
 use TestML::Base -base;
 
 use TestML::Parser;
 use TestML::Object;
 
-# Since there is only ever one test runner, it makes things a lot easier to
+# Since there is only ever one test runtime, it makes things a lot easier to
 # keep the reference to it in a global variable accessed by a method, than to
 # put a reference to it into every object that needs to access it.
 our $self;
@@ -21,7 +21,7 @@ has 'stash' => {
 };
 
 sub init {
-    my $self = $TestML::Runner::self = shift;
+    my $self = $TestML::Runtime::self = shift;
     return $self->SUPER::init(@_);
 }
 
@@ -107,10 +107,7 @@ sub evaluate_expression {
     $self->expression($expression);
     my $block = shift || undef;
 
-    my $context = TestML::Context->new(
-        type => 'None',
-        runner => $self,
-    );
+    my $context = TestML::Context->new();
 
     for my $transform (@{$expression->transforms}) {
         my $transform_name = $transform->name;

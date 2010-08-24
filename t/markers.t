@@ -1,5 +1,5 @@
-use TestML::Runner::TAP;
+use TestML::Runtime::TAP;
 
-TestML::Runner::TAP->new(
+TestML::Runtime::TAP->new(
     testml => 'testml/markers.tml',
 )->run();

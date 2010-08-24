@@ -30,7 +30,7 @@ sub import {
         my $option = shift(@_);
         my $value = (@_ and $_[0] !~ /^-/) ? shift(@_) : '';
         if ($option eq '-run') {
-            $run = $value || 'TestML::Runner::TAP';
+            $run = $value || 'TestML::Runtime::TAP';
         }
         # XXX - 2010-08-22
         elsif ($option eq '-document') {
@@ -120,9 +120,9 @@ which is specified in the meta Plan statement in the document.
 
 To run this test you would have a normal test file that looks like this:
 
-    use TestML::Runner::TAP;
+    use TestML::Runtime::TAP;
 
-    TestML::Runner::TAP->new(
+    TestML::Runtime::TAP->new(
         testml => 'testml/encode.tml',
         bridge => 't::Bridge',
     )->run();

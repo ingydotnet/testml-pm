@@ -1,6 +1,6 @@
-use TestML::Runner::TAP;
+use TestML::Runtime::TAP;
 
-TestML::Runner::TAP->new(
+TestML::Runtime::TAP->new(
     testml => 'testml/basic.tml',
     bridge => 't::Bridge',
 )->run();

@@ -1,4 +1,5 @@
-use TestML -run, -bridge => 't::Bridge';
+use TestML -run,
+    -bridge => 't::Bridge';
 
 __DATA__
 

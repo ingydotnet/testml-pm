@@ -4,7 +4,7 @@ use TestML;
 sub Point {
     my $context = shift;
     my $name = shift;
-    my $value = $context->runner->block->points->{$name};
+    my $value = $context->runtime->block->points->{$name};
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
@@ -13,37 +13,37 @@ sub Point {
 
 sub GetLabel {
     my $context = shift;
-    my $label = $context->runner->get_label;
+    my $label = $context->runtime->get_label;
     $context->set(Str => $label);
 }
 
 sub Get {
     my $context = shift;
     my $key = shift->value;
-    $context->set(Str => $context->runner->stash->{$key});
+    $context->set(Str => $context->runtime->stash->{$key});
 }
 
 sub Set {
     my $context = shift;
     my $key = shift;
     my $value = shift->value;
-    $context->runner->stash->{$key} = $value;
+    $context->runtime->stash->{$key} = $value;
     return; 
 }
 
 sub Catch {
     my $context = shift;
-    my $error = $context->runner->get_error
+    my $error = $context->runtime->get_error
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
-    $context->runner->clear_error;
+    $context->runtime->clear_error;
     $context->set(Str => $error);
 }
 
 sub Throw {
     my $context = shift;
     my $msg = @_ ? (shift)->value : $context->value
-      or $context->runner->throw("Throw called without an error msg");
+      or $context->runtime->throw("Throw called without an error msg");
     die $msg;
 }
 
@@ -180,7 +180,7 @@ sub Raw {
     my $context = shift;
     my $point = $context->point
         or die "Raw called but there is no point";
-    return $context->runner->block->points->{$point};
+    return $context->runtime->block->points->{$point};
 }
 
 sub Select {
