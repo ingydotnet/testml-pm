@@ -15,14 +15,14 @@ sub set {
     $self->runtime->expression->set_called(1);
 }
 
-sub get_value_if_type {
+sub assert_type {
     my $self = shift;
     my $type = $self->type;
     return $self->value if grep $type eq $_, @_;
     $self->runtime->throw("context object is type '$type', but '@_' required");
 }
 
-sub get_value_as_str {
+sub as_str {
     my $self = shift;
     my $type = $self->type;
     my $value = $self->value;
@@ -35,7 +35,7 @@ sub get_value_as_str {
         $self->runtime->throw("Str type error: '$type'");
 }
 
-sub get_value_as_num {
+sub as_num {
     my $self = shift;
     my $type = $self->type;
     my $value = $self->value;
@@ -48,7 +48,7 @@ sub get_value_as_num {
         $self->runtime->throw("Num type error: '$type'");
 }
 
-sub get_value_as_bool {
+sub as_bool {
     my $self = shift;
     my $type = $self->type;
     my $value = $self->value;

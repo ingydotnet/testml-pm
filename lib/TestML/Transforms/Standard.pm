@@ -49,17 +49,17 @@ sub Throw {
 
 sub Str {
     my $context = shift;
-    $context->set(Str => $context->get_value_as_str);
+    $context->set(Str => $context->as_str);
 }
 
 sub Bool {
     my $context = shift;
-    $context->set(Bool => $context->get_value_as_bool);
+    $context->set(Bool => $context->as_bool);
 }
 
 sub Num {
     my $context = shift;
-    $context->set(Num => $context->get_value_as_num);
+    $context->set(Num => $context->as_num);
 }
 
 sub True {
@@ -69,7 +69,7 @@ sub True {
 
 sub Not {
     my $context = shift;
-    $context->set(Bool => $context->get_value_as_bool ? 0 : 1);
+    $context->set(Bool => $context->as_bool ? 0 : 1);
 }
 
 sub False {
@@ -79,7 +79,7 @@ sub False {
 
 sub Chomp {
     my $context = shift;
-    my $value = $context->get_value_if_type('Str');
+    my $value = $context->assert_type('Str');
     chomp($value);
     return $value;
 }
@@ -94,7 +94,7 @@ sub Context {
 __END__
 sub Text {
     my $context = shift;
-    my $value = $context->get_value_if_type('List');
+    my $value = $context->assert_type('List');
     $context->set(Str => join "\n", @$value, '');
 }
 
@@ -107,20 +107,20 @@ sub Lines {
 
 sub Join {
     my $context = shift;
-    my $value = $context->get_value_if_type('List');
+    my $value = $context->assert_type('List');
     my $string = @_ ? (shift)->value : '';
     $context->set(Str => join $string, @$value);
 }
 
 sub Reverse {
     my $context = shift;
-    my $value = $context->get_value_if_type('List');
+    my $value = $context->assert_type('List');
     return [ reverse @$value ];
 }
 
 sub Sort {
     my $context = shift;
-    my $value = $context->get_value_if_type('List');
+    my $value = $context->assert_type('List');
     return [ sort @$value ];
 }
 

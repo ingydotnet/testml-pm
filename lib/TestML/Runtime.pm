@@ -48,27 +48,45 @@ sub run {
             : [TestML::Block->new()];
         for my $block (@$blocks) {
             $self->block($block);
-            my $left = $self->evaluate_expression(
+            my $context = $self->evaluate_expression(
                 $statement->expression,
                 $block,
             );
             if (my $assertion = $statement->assertion) {
-                my $method = 'assert_' . $assertion->name;
-                # TODO - Should check 
-                if (@{$assertion->expression->transforms}) {
-                    my $right = $self->evaluate_expression(
-                        $assertion->expression,
-                        $block,
-                    );
-                    $self->$method($left, $right);
-                }
-                else {
-                    $self->$method($left);
-                }
+                $self->run_assertion($context, $block, $assertion);
             }
         }
     }
     $self->plan_end();
+}
+
+sub run_assertion {
+    my $self = shift;
+    my $left = shift;
+    my $block = shift;
+    my $assertion = shift;
+    my $method = 'assert_' . $assertion->name;
+    # TODO - Should check 
+    my $results = ($left->type eq 'List')
+        ? $left->value
+        : [ $left ];
+    for my $result (@$results) {
+        if (@{$assertion->expression->transforms}) {
+            my $right = $self->evaluate_expression(
+                $assertion->expression,
+                $block,
+            );
+            my $matches = ($right->type eq 'List')
+                ? $right->value
+                : [ $right ];
+            for my $match (@$matches) {
+                $self->$method($result, $match);
+            }
+        }
+        else {
+            $self->$method($result);
+        }
+    }
 }
 
 sub select_blocks {
