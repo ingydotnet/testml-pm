@@ -1,18 +1,14 @@
-package TestML::Context;
+package TestML::Object;
 use TestML::Base -base;
 
 has 'type';
 has 'value';
 
-sub runner {
-    return $TestML::Runner::self;
-}
-
 sub set {
     my $self = shift;
     my $type = shift;
     my $value = shift;
-    $self->throw("Invalid context type '$type'")
+    $self->runner->throw("Invalid context type '$type'")
         unless $type =~ /^(?:None|Str|Num|Bool|List)$/;
     $self->type($type);
     $self->value($value);
@@ -23,7 +19,7 @@ sub get_value_if_type {
     my $self = shift;
     my $type = $self->type;
     return $self->value if grep $type eq $_, @_;
-    $self->throw("context object is type '$type', but '@_' required");
+    $self->runner->throw("context object is type '$type', but '@_' required");
 }
 
 sub get_value_as_str {
@@ -36,7 +32,7 @@ sub get_value_as_str {
         $type eq 'Bool' ? $value ? '1' : '' :
         $type eq 'Num' ? "$value" :
         $type eq 'None' ? '' :
-        $self->throw("Str type error: '$type'");
+        $self->runner->throw("Str type error: '$type'");
 }
 
 sub get_value_as_num {
@@ -49,7 +45,7 @@ sub get_value_as_num {
         $type eq 'Bool' ? $value ? 1 : 0 :
         $type eq 'Num' ? $value :
         $type eq 'None' ? 0 :
-        $self->throw("Num type error: '$type'");
+        $self->runner->throw("Num type error: '$type'");
 }
 
 sub get_value_as_bool {
@@ -62,20 +58,13 @@ sub get_value_as_bool {
         $type eq 'Bool' ? $value :
         $type eq 'Num' ? $value == 0 ? 0 : 1 :
         $type eq 'None' ? 0 :
-        $self->throw("Bool type error: '$type'");
+        $self->runner->throw("Bool type error: '$type'");
 }
 
-sub get_error {
-    my $self = shift;
-    return $self->runner->expression->error;
+package TestML::Context;
+use TestML::Object -base;
+
+sub runner {
+    return $TestML::Runner::self;
 }
 
-sub clear_error {
-    my $self = shift;
-    return $self->runner->expression->error(undef);
-}
-
-sub throw {
-    require Carp;
-    Carp::croak $_[1];
-}

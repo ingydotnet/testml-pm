@@ -2,7 +2,7 @@ package TestML::Runner;
 use TestML::Base -base;
 
 use TestML::Parser;
-use TestML::Context;
+use TestML::Object;
 
 # Since there is only ever one test runner, it makes things a lot easier to
 # keep the reference to it in a global variable accessed by a method, than to
@@ -195,6 +195,21 @@ sub parse_document {
         }
     }
     return $document;
+}
+
+sub get_error {
+    my $self = shift;
+    return $self->expression->error;
+}
+
+sub clear_error {
+    my $self = shift;
+    return $self->expression->error(undef);
+}
+
+sub throw {
+    require Carp;
+    Carp::croak $_[1];
 }
 
 sub _transform_modules {

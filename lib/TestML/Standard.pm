@@ -33,17 +33,17 @@ sub Set {
 
 sub Catch {
     my $context = shift;
-    my $error = $context->get_error
+    my $error = $context->runner->get_error
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
-    $context->clear_error;
+    $context->runner->clear_error;
     $context->set(Str => $error);
 }
 
 sub Throw {
     my $context = shift;
     my $msg = @_ ? (shift)->value : $context->value
-      or die "Throw called without an error msg";
+      or $context->runner->throw("Throw called without an error msg");
     die $msg;
 }
 
