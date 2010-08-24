@@ -24,6 +24,9 @@ sub use_testml_tap {
 sub use_testml {
     my $self = shift;
 
+    $self->include('Pegex::Grammar');
+    $self->include('Pegex::Base');
+
     $self->include('TestML');
     $self->include('TestML::Base');
     $self->include('TestML::Document');
@@ -33,9 +36,8 @@ sub use_testml {
     $self->include('TestML::Runner::TAP');
     $self->include('TestML::Runtime');
     $self->include('TestML::Runtime::TAP');
-    $self->include('TestML::Standard');
-    $self->include('Pegex::Grammar');
-    $self->include('Pegex::Base');
+    $self->include('TestML::Transforms::Debug');
+    $self->include('TestML::Transforms::Standard');
 }
 
 1;

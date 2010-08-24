@@ -11,18 +11,25 @@ our $self;
 
 has 'bridge';
 has 'testml';
+has 'transforms';
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
 has 'document', -init => '$self->parse_document()';
-has 'transform_modules', -init => '$self->_transform_modules';
 has 'expression';
 has 'block';
-has 'stash' => {
+has 'variables' => {
     'Label' => '$BlockLabel',
 };
 
 sub init {
     my $self = $TestML::Runtime::self = shift;
-    return $self->SUPER::init(@_);
+    $self->SUPER::init(@_);
+    $self->transforms([
+        'TestML::Transforms::Standard',
+        'TestML::Transforms::Debug',
+        $self->bridge || (),
+    ]);
+    $self->load_transform_modules;
+    return $self;
 }
 
 sub title { }
@@ -64,30 +71,15 @@ sub run {
     $self->plan_end();
 }
 
-sub get_label {
-    my $self = shift;
-    my $label = $self->stash->{Label};
-    my %replace = map {
-        my $v = $self->block->points->{$_};
-        $v =~ s/\n.*//s;
-        $v =~ s/^\s*(.*?)\s*$/$1/;
-        ($_, $v);
-    } keys %{$self->block->points};
-    $replace{BlockLabel} = $self->block->label;
-    $label =~ s/\$(\w+)/$replace{$1}/ge;
-    return $label;
-}
-
 sub select_blocks {
     my $self = shift;
-    my $points = shift;
+    my $wanted = shift;
     my $selected = [];
 
-    # XXX $points an %points is very confusing here
     OUTER: for my $block (@{$self->document->data->blocks}) {
         my %points = %{$block->points};
         next if exists $points{SKIP};
-        for my $point (@$points) {
+        for my $point (@$wanted) {
             next OUTER unless exists $points{$point};
         }
         if (exists $points{ONLY}) {
@@ -144,10 +136,19 @@ sub evaluate_expression {
     return $context;
 }
 
+sub load_transform_modules {
+    my $self = shift;
+    for my $module_name (@{$self->transforms}) {
+        next if $module_name eq 'main';
+        eval "require $module_name; 1"
+            or die "Can't use $module_name:\n$@";
+    }
+}
+
 sub get_transform_function {
     my $self = shift;
     my $name = shift;
-    my $modules = $self->transform_modules();
+    my $modules = $self->transforms();
     for my $module (@$modules) {
         eval "use $module";
         no strict 'refs';
@@ -194,6 +195,20 @@ sub parse_document {
     return $document;
 }
 
+sub get_label {
+    my $self = shift;
+    my $label = $self->variables->{Label};
+    my %replace = map {
+        my $v = $self->block->points->{$_};
+        $v =~ s/\n.*//s;
+        $v =~ s/^\s*(.*?)\s*$/$1/;
+        ($_, $v);
+    } keys %{$self->block->points};
+    $replace{BlockLabel} = $self->block->label;
+    $label =~ s/\$(\w+)/$replace{$1}/ge;
+    return $label;
+}
+
 sub get_error {
     my $self = shift;
     return $self->expression->error;
@@ -207,22 +222,4 @@ sub clear_error {
 sub throw {
     require Carp;
     Carp::croak $_[1];
-}
-
-sub _transform_modules {
-    my $self = shift;
-    my $modules = [qw(
-        TestML::Standard    
-    )];
-    if ($self->bridge) {
-        push @$modules, $self->bridge;
-    }
-    for my $module_name (@$modules) {
-        next if $module_name eq 'main';
-        eval "use $module_name";
-        if ($@) {
-            die "Can't use $module_name:\n$@";
-        }
-    }
-    return $modules;
 }

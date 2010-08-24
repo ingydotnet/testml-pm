@@ -1,4 +1,4 @@
-package TestML::Standard;
+package TestML::Transforms::Standard;
 use TestML;
 
 sub Point {
@@ -20,14 +20,14 @@ sub GetLabel {
 sub Get {
     my $context = shift;
     my $key = shift->value;
-    $context->set(Str => $context->runtime->stash->{$key});
+    $context->set(Str => $context->runtime->variables->{$key});
 }
 
 sub Set {
     my $context = shift;
     my $key = shift;
     my $value = shift->value;
-    $context->runtime->stash->{$key} = $value;
+    $context->runtime->variables->{$key} = $value;
     return; 
 }
 
@@ -87,38 +87,6 @@ sub Chomp {
 sub Context {
     my $context = shift;
     $context->set(None => $context);
-}
-
-sub Www {
-    require XXX;
-    local $XXX::DumpModule = 'YAML::XS';
-    my $context = shift;
-    XXX::WWW($context->value);
-    return $context->value;
-}
-
-sub Xxx {
-    require XXX;
-    local $XXX::DumpModule = 'YAML::XS';
-    my $context = shift;
-    XXX::XXX($context->value);
-    return $context->value;
-}
-
-sub Yyy {
-    require XXX;
-    local $XXX::DumpModule = 'YAML::XS';
-    my $context = shift;
-    XXX::YYY($context->value);
-    return $context->value;
-}
-
-sub Zzz {
-    require XXX;
-    local $XXX::DumpModule = 'YAML::XS';
-    my $context = shift;
-    XXX::ZZZ($context->value);
-    return $context->value;
 }
 
 1;
