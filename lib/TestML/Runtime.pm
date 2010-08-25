@@ -19,6 +19,7 @@ has 'block';
 has 'variables' => {
     'Label' => '$BlockLabel',
 };
+has 'planned' => 0;
 
 sub init {
     my $self = $TestML::Runtime::self = shift;
@@ -39,9 +40,6 @@ sub plan_end { }
 sub run {
     my $self = shift;
 
-    $self->title();
-    $self->plan_begin();
-
     for my $statement (@{$self->document->test->statements}) {
         my $blocks = @{$statement->points}
             ? $self->select_blocks($statement->points)
@@ -61,6 +59,12 @@ sub run {
 }
 
 sub run_assertion {
+    if (! $self->planned) {
+        $self->title();
+        $self->plan_begin();
+        $self->planned(1);
+    }
+
     my $self = shift;
     my $left = shift;
     my $block = shift;

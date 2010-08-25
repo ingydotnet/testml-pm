@@ -212,6 +212,9 @@ sub grammar_tree {
   'double_quoted_string' => {
     '+re' => qr/(?-xism:\G(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
   },
+  'integer_call' => {
+    '+re' => qr/(?-xism:\G([0-9]+))/
+  },
   'json_data_section' => {
     '+re' => qr/(?-xism:\G(\[.+))/
   },
@@ -344,6 +347,9 @@ sub grammar_tree {
       },
       {
         '+rule' => 'string_call'
+      },
+      {
+        '+rule' => 'integer_call'
       },
       {
         '+rule' => 'transform_call'

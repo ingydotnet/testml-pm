@@ -7,14 +7,14 @@ has 'test_builder' => -init => 'Test::Builder->new';
 
 sub title {
     my $self = shift;
-    if (my $title = $self->document->meta->data->{Title}) {
+    if (my $title = $self->variables->{Title}) {
         $self->test_builder->note("=== $title ===\n");
     }
 }
 
 sub plan_begin {
     my $self = shift;
-    if (my $tests = $self->document->meta->data->{Plan}) {
+    if (defined (my $tests = $self->variables->{Plan})) {
         $self->test_builder->plan(tests => $tests);
     }
     else {
