@@ -212,9 +212,6 @@ sub grammar_tree {
   'double_quoted_string' => {
     '+re' => qr/(?-xism:\G(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
   },
-  'integer_call' => {
-    '+re' => qr/(?-xism:\G([0-9]+))/
-  },
   'json_data_section' => {
     '+re' => qr/(?-xism:\G(\[.+))/
   },
@@ -269,10 +266,16 @@ sub grammar_tree {
     ]
   },
   'meta_statement' => {
-    '+re' => qr/(?-xism:\G%((?:(?:Title|Data|Plan|BlockMarker|PointMarker)|[a-z]\w*)):[\ \t]+((?:(?:'(([^\n\\']|\\'|\\\\)*?)')|(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)")|([^\ \t\n\#](?:[^\n\#]*[^\ \t\n\#])?)))(?:[\ \t]+\#.*\r?\n|\r?\n))/
+    '+re' => qr/(?-xism:\G%((?:(?:Data|BlockMarker|PointMarker)|[a-z]\w*)):[\ \t]+((?:(?:'(([^\n\\']|\\'|\\\\)*?)')|(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)")|([^\ \t\n\#](?:[^\n\#]*[^\ \t\n\#])?)))(?:[\ \t]+\#.*\r?\n|\r?\n))/
   },
   'meta_testml_statement' => {
     '+re' => qr/(?-xism:\G%TestML:[\ \t]+(([0-9]\.[0-9]+))(?:[\ \t]+\#.*\r?\n|\r?\n))/
+  },
+  'number' => {
+    '+re' => qr/(?-xism:\G([0-9]+))/
+  },
+  'number_call' => {
+    '+rule' => 'number'
   },
   'phrase_point' => {
     '+all' => [
@@ -349,7 +352,7 @@ sub grammar_tree {
         '+rule' => 'string_call'
       },
       {
-        '+rule' => 'integer_call'
+        '+rule' => 'number_call'
       },
       {
         '+rule' => 'transform_call'

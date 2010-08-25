@@ -194,6 +194,15 @@ sub got_string_call {
     push @{$self->expression_stack->[-1]->transforms}, $transform;
 }
 
+sub got_number_call {
+    my $self = shift;
+    my $number = shift;
+    my $transform = TestML::Number->new(
+        value => $number,
+    );
+    push @{$self->expression_stack->[-1]->transforms}, $transform;
+}
+
 sub try_assertion_call {
     my $self = shift;
     $self->statement->assertion(TestML::Assertion->new);

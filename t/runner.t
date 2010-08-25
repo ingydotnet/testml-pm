@@ -11,7 +11,8 @@ TestML::Runner::TAP->new(
 
 __DATA__
 %TestML: 1.0
-%Plan: 1
+
+Plan = 1;
 
 Label = 'TestML::Runner::TAP still works';
 

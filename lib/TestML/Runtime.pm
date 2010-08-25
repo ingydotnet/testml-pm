@@ -130,6 +130,10 @@ sub evaluate_expression {
             $context->set(Str => $transform->value);
             next;
         }
+        elsif (ref($transform) eq 'TestML::Number') {
+            $context->set(Num => $transform->value);
+            next;
+        }
         my $function = $self->get_transform_function($transform_name);
         $expression->set_called(0);
         my $value = eval {

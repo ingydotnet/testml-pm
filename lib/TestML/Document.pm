@@ -61,6 +61,12 @@ use TestML::Transform -base;
 has 'value' => '';
 
 #-----------------------------------------------------------------------------
+package TestML::Number;
+use TestML::Transform -base;
+
+has 'value' => '';
+
+#-----------------------------------------------------------------------------
 package TestML::Document::Data;
 use TestML::Base -base;
 

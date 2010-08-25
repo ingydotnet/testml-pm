@@ -5,8 +5,9 @@ use TestML::Parser;
 my $testml = '
 # A comment
 %TestML: 1.0                #A line comment
-%Plan: 2
-%Title: O HAI TEST
+
+Plan = 2;
+Title = "O HAI TEST";
 
 *input.uppercase() == *output;
 
@@ -22,13 +23,13 @@ my $testml = '
 my $match = TestML::Parser->parse($testml);
 ok $match, 'TestML string matches against TestML grammar';
 is $match->meta->data->{TestML}, '1.0', 'Version parses';
-is $match->meta->data->{Plan}, '2', 'Plan parses';
-is $match->meta->data->{Title}, 'O HAI TEST', 'Title parses';
+is $match->test->statements->[0]->expression->transforms->[0]->args->[1]->transforms->[0]->value, '2', 'Plan parses';
+is $match->test->statements->[1]->expression->transforms->[0]->args->[1]->transforms->[0]->value, 'O HAI TEST', 'Title parses';
 is $match->meta->data->{BlockMarker}, '===', 'BlockMarker defaults';
 is $match->meta->data->{PointMarker}, '---', 'PointMarker defaults';
 
-is scalar(@{$match->test->statements}), 1, 'One test statement';
-my $statement = $match->test->statements->[0];
+is scalar(@{$match->test->statements}), 3, 'Three test statements';
+my $statement = $match->test->statements->[2];
 is join('-', @{$statement->points}), 'input-output',
     'Point list is correct';
 

@@ -4,8 +4,9 @@ use TestML -run,
 __DATA__
 
 %TestML: 1.0
-%Plan: 4
 %Data: external2.tml
 %Data: external1.tml
+
+Plan = 4;
 
 *foo == *bar;
