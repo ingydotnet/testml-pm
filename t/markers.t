@@ -1,5 +1,3 @@
-use TestML::Runtime::TAP;
-
-TestML::Runtime::TAP->new(
-    testml => 'testml/markers.tml',
-)->run();
+use TestML -run,
+    -testml => 'testml/markers.tml',
+    -bridge => 't::Bridge';

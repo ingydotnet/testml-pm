@@ -1,5 +1,3 @@
-use TestML::Runtime::TAP;
-
-TestML::Runtime::TAP->new(
-    testml => 'testml/label.tml',
-)->run();
+use TestML -run,
+    -testml => 'testml/label.tml',
+    -bridge => 't::Bridge';

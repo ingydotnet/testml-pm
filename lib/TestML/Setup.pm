@@ -19,7 +19,14 @@ sub setup {
     load_config(@ARGV);
     my $template = get_template();
     for my $file (get_tml_files()) {
-        print "> $file\n";
+        my %data = %$config;
+        my $name = $data{test_file} = $file->filename;
+        $name =~ s/\.tml$// or next;
+        next if grep {$name eq $_} @{$config->{skip} || []};
+        my $filename = "$name.t";
+        print "Generating $filename\n";
+        my $output = tt->render(\$template, \%data);
+        io($filename)->print($output);
     }
 }
 
@@ -58,6 +65,18 @@ use TestML -run,
 ...
 }
 
+sub template_pm6 {
+    return <<'...';
+use v6;
+use TestML::Runner::TAP;
+
+TestML::Runner::TAP.new(
+    document => '[% src %]/[% test_file %]',
+    bridge => '[% bridge %]',
+).run();
+...
+}
+
 1;
 
 =head1 NAME
@@ -76,4 +95,3 @@ and runs it.
 
 This module does that for you. By providing a small YAML file, this
 module will generate all your testml runtime programs for you.
-

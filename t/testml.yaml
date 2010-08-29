@@ -1,5 +1,9 @@
 src: testml
 lang: pm5
 skip:
-- comments.tml
+- comments
+- data
+- standard
+- syntax
+- topic
 bridge: t::Bridge
