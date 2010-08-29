@@ -1,0 +1,5 @@
+src: testml
+lang: pm5
+skip:
+- comments.tml
+bridge: t::Bridge
