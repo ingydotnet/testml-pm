@@ -9,7 +9,6 @@ our @EXPORT = 'setup';
 use YAML::XS;
 use IO::All;
 use Template::Toolkit::Simple;
-use XXX;
 
 my $config_file = 'testml.yaml';
 my $config = {};
