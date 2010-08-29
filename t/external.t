@@ -3,9 +3,9 @@ use TestML -run,
 
 __DATA__
 
-%TestML: 1.0
-%Data: external2.tml
-%Data: external1.tml
+%TestML 1.0
+%Data external2.tml
+%Data external1.tml
 
 Plan = 4;
 

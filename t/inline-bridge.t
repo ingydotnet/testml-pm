@@ -5,8 +5,7 @@ sub upper {
     return uc($self->value);
 }
 __DATA__
-
-%TestML: 1.0
+%TestML 1.0
 
 *foo.upper() == *bar;
 

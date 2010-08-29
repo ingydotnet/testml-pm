@@ -2,8 +2,8 @@ use TestML -run;
 
 
 __END__
-%TestML: 1.0
-%PointMarker: +++
+%TestML 1.0
+%PointMarker +++
 
 *perl == *perl;
 

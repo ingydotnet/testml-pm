@@ -10,7 +10,7 @@ TestML::Runner::TAP->new(
 )->run;
 
 __DATA__
-%TestML: 1.0
+%TestML 1.0
 
 Plan = 1;
 

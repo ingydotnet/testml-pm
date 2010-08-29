@@ -4,7 +4,7 @@ use TestML::Parser;
 
 my $testml = '
 # A comment
-%TestML: 1.0                #A line comment
+%TestML 1.0                #A line comment
 
 Plan = 2;
 Title = "O HAI TEST";
