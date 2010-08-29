@@ -3,6 +3,8 @@ lang: pm5
 skip:
 - comments
 - data
+- external1
+- external2
 - standard
 - syntax
 - topic
