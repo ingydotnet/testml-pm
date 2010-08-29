@@ -1,0 +1,23 @@
++ Clean up assert_* functions
++ Meta data goes in global variable stash.
+
+- Title, Plan and Data can become variables
+- True, False and None are constant variables
+- Add functions to document
+- Make current parse create a top level function
+- Allow quotes for line points
+
+- Split standard
+- Block -> DataBlock
+- Point -> DataPoint
+
+== Tests
+- List assertions
+- Standard string transforms
+- Standard list transforms
+- Functions
+
+- from glossary
+- from test::base
+- from yaml::xs
+- from perl6 tests
