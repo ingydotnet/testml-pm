@@ -93,7 +93,7 @@ TestML - A Generic Software Testing Meta Language
     # file t/testml/encode.tml
     %TestML 1.0
 
-    Title = Tests for AcmeEncode;
+    Title = 'Tests for AcmeEncode';
     Plan = 3;
 
     *text.apply_rot13 == *rot13;
