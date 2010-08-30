@@ -42,6 +42,16 @@ sub import {
         elsif ($option eq '-bridge') {
             $bridge = $value;
         }
+        elsif ($option eq '-skip_all') {
+            my $reason = $value;
+            die "-skip_all option requires a reason argument"
+                unless $reason;
+            $skipped = 1;
+            require Test::More;
+            Test::More::plan(
+                skip_all => $reason,
+            );
+        }
         elsif ($option eq '-require_or_skip') {
             my $module = $value;
             die "-require_or_skip option requires a module argument"
