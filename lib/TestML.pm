@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.006001;
 
-$TestML::VERSION = '0.11';
+$TestML::VERSION = '0.20';
 
 our @EXPORT = qw(WWW XXX YYY ZZZ);
 our $DumpModule = 'YAML::XS';

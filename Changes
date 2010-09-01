@@ -1,4 +1,11 @@
 ---
+version: 0.20
+date:    Wed Sep  1 09:12:42 PDT 2010
+changes:
+- Total language rewrite.
+- Added functions.
+- Added scoped variables.
+---
 version: 0.11
 date:    Mon Aug 16 11:49:12 PDT 2010
 changes:
