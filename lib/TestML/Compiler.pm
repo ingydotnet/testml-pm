@@ -1,7 +1,29 @@
 package TestML::Compiler;
 use TestML::Base -base;
 
+has 'base';
+
 sub compile {
+    my $self = shift;
+    my $file = shift;
+    if (not ref $file and $file !~ /\n/) {
+        $file =~ s/(.*)\/(.*)/$2/ or die;
+        $self->base($1);
+    }
+    my $input = (not ref($file) and $file =~ /\n/)
+        ? $file
+        : $self->slurp($file);
+
+    my $text = $self->preprocess($input);
+
+    my ($code, $data) = $self->split_text($text);
+
+    my $function = TestML::Parser->parse($code)
+        or die "TestML document failed to parse";
+    return $function;
+}
+
+sub compile_code {
     my $self = shift;
     my $text = shift;
     my $function = TestML::Parser->parse($text)
@@ -18,7 +40,58 @@ sub compile_data {
 }
 
 sub preprocess {
+    my $self = shift;
+    my $text = shift;
+
+    my @parts = split /^(%\w+.*)\n/m, $text;
+
+    $text = '';
+
+    for my $part (@parts) {
+        if ($part =~ /^%(\w+)\s*(.*?)\s*$/) {
+            my ($directive, $value) = ($1, $2);
+            if ($directive eq 'Include') {
+                $text .= $self->preprocess($self->slurp($value));
+            }
+            elsif ($directive =~ /^(TestML|BlockMarker|PointMarker)$/) {
+                $text .= "%$directive $value\n";
+            }
+            else {
+                die "Unknown TestML directive '$directive'";
+            }
+        }
+        else {
+            $text .= $part;
+        }
+    }
+
+    $text =~ s/^\\(\\*%)/$1/gm;
+    return $text;
 }
+
+sub split_text {
+    my $self = shift;
+    my $text = shift;
+
+    return ($text, undef);
+}
+
+sub slurp {
+    my $self = shift;
+    my $file = shift;
+    my $fh;
+    if (ref($file)) {
+        $fh = $file;
+    }
+    else {
+        my $path = join '/', $self->base, $file;
+        open $fh, $path
+            or die "Can't open '$path' for input: $!";
+    }
+    local $/;
+    return <$fh>;
+}
+
 
 package TestML::Parser;
 use TestML::Base -base;

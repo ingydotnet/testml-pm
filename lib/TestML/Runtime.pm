@@ -185,38 +185,11 @@ sub get_transform_function {
 
 sub compile_testml {
     my $self = shift;
-    my ($fh, $base);
-    if (ref $self->testml) {
-        $fh = $self->testml;
-        $base = $self->base;
-    }
-    else {
-        my $path = join '/', $self->base, $self->testml;
-        open $fh, $path or die "Can't open $path for input";
-        $base = $path;
-        $base =~ s/(.*)\/.*/$1/ or die;
-    }
-    my $text = do { local $/; <$fh> };
-    my $function = TestML::Compiler->new->compile($text)
+    my $path = ref($self->testml)
+        ? $self->testml
+        : join '/', $self->base, $self->testml;
+    my $function = TestML::Compiler->new(base => $self->base)->compile($path)
         or die "TestML document failed to compile";
-    if (@{$function->meta->data->{Data}}) {
-        my $data_files = $function->meta->data->{Data};
-        my $inline = $function->data->blocks;
-        $function->data->blocks([]);
-        for my $file (@$data_files) {
-            if ($file eq '_') {
-                push @{$function->data->blocks}, @$inline;
-            }
-            else {
-                my $path = join '/', $base, $file;
-                open IN, $path or die "Can't open $path for input";
-                my $text = do { local $/; <IN> };
-                my $blocks = TestML::Compiler->compile_data($text)
-                    or die "TestML data document failed to compile";
-                push @{$function->data->blocks}, @$blocks;
-            }
-        }
-    }
     return $function;
 }
 
