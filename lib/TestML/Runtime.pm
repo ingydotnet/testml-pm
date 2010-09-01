@@ -12,7 +12,7 @@ has 'bridge';
 has 'testml';
 has 'transforms';
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
-has 'function', -init => '$self->parse_testml()';
+has 'function', -init => '$self->compile_testml()';
 has 'current_expression';
 has 'block';
 has 'namespace' => {
@@ -183,7 +183,7 @@ sub get_transform_function {
     die "Can't locate function '$name'";
 }
 
-sub parse_testml {
+sub compile_testml {
     my $self = shift;
     my ($fh, $base);
     if (ref $self->testml) {

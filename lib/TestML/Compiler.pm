@@ -23,7 +23,6 @@ sub preprocess {
 package TestML::Parser;
 use TestML::Base -base;
 use TestML::Parser::Grammar;
-use TestML::Document;
 
 our $parser;
 
@@ -48,7 +47,7 @@ sub parse_data {
 package TestML::Parser::Receiver;
 use TestML::Base -base;
 
-use TestML::Document;
+use TestML::AST;
 
 has 'document', -init => 'TestML::Document->new()';
 
