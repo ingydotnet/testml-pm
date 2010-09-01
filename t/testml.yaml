@@ -1,4 +1,5 @@
-src: testml
+testml: ../../testml-tml
+local: testml
 lang: pm5
 bridge: t::Bridge
 skip:

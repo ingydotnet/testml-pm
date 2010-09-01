@@ -40,6 +40,19 @@ sub use_testml {
     $self->include('TestML::Transforms::Standard');
 }
 
+sub testml_setup {
+    my $self = shift;
+    return unless $self->admin;
+    my $config = shift;
+    die "setup_config requires a yaml file argument"
+        unless $config;
+    die "'$config' is not an existing file"
+        unless -f $config;
+    print "Updating testml files...\n";
+    require TestML::Setup;
+    TestML::Setup::testml_setup($config);
+}
+
 1;
 
 =encoding utf8

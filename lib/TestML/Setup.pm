@@ -2,64 +2,66 @@ package TestML::Setup;
 use strict;
 use warnings;
 
-use base 'Exporter';
-
-our @EXPORT = 'setup';
-
 use YAML::XS;
 use IO::All;
 use Template::Toolkit::Simple;
 
 my $config_file = 'testml.yaml';
+my $base;
 my $config = {};
-my $path = '.';
+my $template;
+my $testml;
+my $local;
+my $lang;
+my $skip;
 
-sub setup {
-    load_config(@ARGV);
-    my $template = get_template();
-    for my $file (get_tml_files()) {
-        my %data = %$config;
-        my $name = $data{test_file} = $file->filename;
+sub testml_setup {
+    init(@_);
+    my %data = %$config;
+    $data{testml_dir} = $local;
+    for my $file (io("$base/$testml")->all_files) {
+        my $testml_file = $data{testml_file} = $file->filename;
+        my $name = $testml_file;
         $name =~ s/\.tml$// or next;
-        next if grep {$name eq $_} @{$config->{skip} || []};
+
+        my $src = "$base/$testml/$testml_file";
+        my $dest = "$base/$local/$testml_file";
+        system("cp -f $src $dest") == 0
+            or die "copy $src to $dest failed";
+
+        next if grep {$name eq $_} @$skip;
         my $filename = "$name.t";
         print "Generating $filename\n";
         my $output = tt->render(\$template, \%data);
-        io($filename)->print($output);
+        io("$base/$filename")->print($output);
     }
 }
 
-sub load_config {
-    $config_file = shift(@ARGV)
-        or die 'Setup requires a yaml file';
-    $path = $config_file;
-    $path =~ s/(.+)\/.+/$1/
-        or $path = '.';
-    $config = YAML::XS::LoadFile($config_file);
-}
-
-sub get_template {
+sub init {
+    $config_file = shift;
+    $config_file =~ /(.*)\//;
+    $base = $1 || '.';
+    $config = YAML::XS::LoadFile("$config_file");
+    die "Missing or invalid 'testml' directory in $config_file"
+        unless $config->{testml} and -d "$base/$config->{testml}";
+    die "Missing or invalid 'local' directory in $config_file"
+        unless $config->{local} and -d "$base/$config->{local}";
+    die "Missing 'lang' in $config_file"
+        unless $config->{lang};
+    die "'lang' must be 'pm5' or 'pm6' in $config_file"
+        unless $config->{lang} =~ /^(pm5|pm6)$/;
+    ($testml, $local, $lang, $skip) =
+        @{$config}{qw(testml local lang skip)};
+    $skip ||= [];
+    $config->{bridge} ||= '';
     no strict 'refs';
-    if (my $template = $config->{template}) {
-        return io("$path/$template")->all;
-    }
-    my $lang = $config->{lang}
-        or die "Config must define 'template' or 'lang'";
-    $lang =~ /^(pm5|pm6)$/
-        or die "'lang' must be 'pm5' or 'pm6'";
-    return &{"template_$lang"}();
-}
-
-sub get_tml_files {
-    my $dir = $config->{src}
-        or die "No 'src' directory in '$config_file'";
-    return io($dir)->all_files;
+    $template = &{"template_$lang"}();
 }
 
 sub template_pm5 {
     return <<'...';
 use TestML -run,
-    -testml => '[% src %]/[% test_file %]',
+    -testml => '[% testml_dir %]/[% testml_file %]',
     -bridge => '[% bridge %]';
 ...
 }
@@ -70,7 +72,7 @@ use v6;
 use TestML::Runner::TAP;
 
 TestML::Runner::TAP.new(
-    document => '[% src %]/[% test_file %]',
+    document => '[% testml_dir %]/[% testml_file %]',
     bridge => '[% bridge %]',
 ).run();
 ...
