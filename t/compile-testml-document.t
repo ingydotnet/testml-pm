@@ -1,6 +1,6 @@
 use Test::More tests => 23;
 
-use TestML::Parser;
+use TestML::Compiler;
 
 my $testml = '
 # A comment
@@ -20,7 +20,7 @@ Title = "O HAI TEST";
 --- output: I LOVE LUCY
 ';
 
-my $match = TestML::Parser->parse($testml);
+my $match = TestML::Compiler->compile($testml);
 ok $match, 'TestML string matches against TestML grammar';
 is $match->meta->data->{TestML}, '1.0', 'Version parses';
 is $match->test->statements->[0]->expression->transforms->[0]->args->[1]->transforms->[0]->value, '2', 'Plan parses';
