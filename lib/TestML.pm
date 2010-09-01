@@ -42,6 +42,7 @@ sub import {
         elsif ($option eq '-bridge') {
             $bridge = $value;
         }
+        # XXX skip_all should call skip_all() from runner subclass
         elsif ($option eq '-skip_all') {
             my $reason = $value;
             die "-skip_all option requires a reason argument"

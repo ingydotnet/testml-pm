@@ -20,14 +20,14 @@ sub GetLabel {
 sub Get {
     my $context = shift;
     my $key = shift->value;
-    $context->set(Str => $context->runtime->variables->{$key});
+    $context->set(Str => $context->runtime->namespace->{$key});
 }
 
 sub Set {
     my $context = shift;
     my $key = shift;
     my $value = shift->value;
-    $context->runtime->variables->{$key} = $value;
+    $context->runtime->namespace->{$key} = $value;
     return; 
 }
 

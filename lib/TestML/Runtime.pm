@@ -13,10 +13,10 @@ has 'bridge';
 has 'testml';
 has 'transforms';
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
-has 'document', -init => '$self->parse_document()';
-has 'expression';
+has 'function', -init => '$self->parse_testml()';
+has 'current_expression';
 has 'block';
-has 'variables' => {
+has 'namespace' => {
     'Label' => '$BlockLabel',
 };
 has 'planned' => 0;
@@ -40,7 +40,7 @@ sub plan_end { }
 sub run {
     my $self = shift;
 
-    for my $statement (@{$self->document->test->statements}) {
+    for my $statement (@{$self->function->test->statements}) {
         my $blocks = @{$statement->points}
             ? $self->select_blocks($statement->points)
             : [TestML::Block->new()];
@@ -98,7 +98,7 @@ sub select_blocks {
     my $wanted = shift;
     my $selected = [];
 
-    OUTER: for my $block (@{$self->document->data->blocks}) {
+    OUTER: for my $block (@{$self->function->data->blocks}) {
         my %points = %{$block->points};
         next if exists $points{SKIP};
         for my $point (@$wanted) {
@@ -116,9 +116,9 @@ sub select_blocks {
 
 sub evaluate_expression {
     my $self = shift;
-    my $prev_expression = $self->expression;
+    my $prev_expression = $self->current_expression;
     my $expression = shift;
-    $self->expression($expression);
+    $self->current_expression($expression);
     my $block = shift || undef;
 
     my $context = TestML::Context->new();
@@ -158,7 +158,7 @@ sub evaluate_expression {
     if ($expression->error) {
         die $expression->error;
     }
-    $self->expression($prev_expression);
+    $self->current_expression($prev_expression);
     return $context;
 }
 
@@ -184,7 +184,7 @@ sub get_transform_function {
     die "Can't locate function '$name'";
 }
 
-sub parse_document {
+sub parse_testml {
     my $self = shift;
     my ($fh, $base);
     if (ref $self->testml) {
@@ -198,15 +198,15 @@ sub parse_document {
         $base =~ s/(.*)\/.*/$1/ or die;
     }
     my $text = do { local $/; <$fh> };
-    my $document = TestML::Parser->parse($text)
+    my $function = TestML::Parser->parse($text)
         or die "TestML document failed to parse";
-    if (@{$document->meta->data->{Data}}) {
-        my $data_files = $document->meta->data->{Data};
-        my $inline = $document->data->blocks;
-        $document->data->blocks([]);
+    if (@{$function->meta->data->{Data}}) {
+        my $data_files = $function->meta->data->{Data};
+        my $inline = $function->data->blocks;
+        $function->data->blocks([]);
         for my $file (@$data_files) {
             if ($file eq '_') {
-                push @{$document->data->blocks}, @$inline;
+                push @{$function->data->blocks}, @$inline;
             }
             else {
                 my $path = join '/', $base, $file;
@@ -214,16 +214,16 @@ sub parse_document {
                 my $text = do { local $/; <IN> };
                 my $blocks = TestML::Parser->parse_data($text)
                     or die "TestML data document failed to parse";
-                push @{$document->data->blocks}, @$blocks;
+                push @{$function->data->blocks}, @$blocks;
             }
         }
     }
-    return $document;
+    return $function;
 }
 
 sub get_label {
     my $self = shift;
-    my $label = $self->variables->{Label};
+    my $label = $self->namespace->{Label};
     my %replace = map {
         my $v = $self->block->points->{$_};
         $v =~ s/\n.*//s;
@@ -237,12 +237,12 @@ sub get_label {
 
 sub get_error {
     my $self = shift;
-    return $self->expression->error;
+    return $self->current_expression->error;
 }
 
 sub clear_error {
     my $self = shift;
-    return $self->expression->error(undef);
+    return $self->current_expression->error(undef);
 }
 
 sub throw {

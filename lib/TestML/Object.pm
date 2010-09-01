@@ -12,7 +12,7 @@ sub set {
         unless $type =~ /^(?:None|Str|Num|Bool|List)$/;
     $self->type($type);
     $self->value($value);
-    $self->runtime->expression->set_called(1);
+    $self->runtime->current_expression->set_called(1);
 }
 
 sub assert_type {
