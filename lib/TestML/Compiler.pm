@@ -361,5 +361,3 @@ sub got_data_block {
     $self->function->namespace->{DataBlocks} ||= [];
     push @{$self->function->namespace->{DataBlocks}}, $self->current_block;
 }
-
-1;

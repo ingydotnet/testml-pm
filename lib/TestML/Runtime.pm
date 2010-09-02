@@ -171,7 +171,8 @@ sub run_expression {
             }
         }
         else {
-            die;
+            $context->type($object->type);
+            $context->value($object->value);
         }
     }
     if ($expression->error) {
@@ -205,10 +206,16 @@ sub load_transform_module {
     }
     no strict 'refs';
     for my $key (sort keys %{"$module\::"}) {
-        if (my $function = *{${"$module\::"}{$key}}{CODE}) {
+        my $glob = ${"$module\::"}{$key};
+        if (my $function = *$glob{CODE}) {
             $self->function->namespace->{$key} = TestML::Function->new(
                 value => $function,
             );
+        }
+        elsif (my $object = *$glob{SCALAR}) {
+            if ($$object) {
+                $self->function->namespace->{$key} = $$object;
+            }
         }
     }
 }

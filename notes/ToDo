@@ -12,6 +12,7 @@
 
 - True, False and None are constant variables
 - Allow quotes for line points
+- Support Native objects
 
 - Redo grammar to match current terminology. like get rid of meta section, for
   example.

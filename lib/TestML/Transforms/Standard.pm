@@ -1,5 +1,9 @@
 package TestML::Transforms::Standard;
 use TestML;
+use TestML::AST;
+
+our $True = TestML::Boolean->new(value => 1);
+our $False = TestML::Boolean->new(value => 0);
 
 sub Point {
     my $context = shift;
@@ -62,19 +66,9 @@ sub Num {
     $context->set(Num => $context->as_num);
 }
 
-sub True {
-    my $context = shift;
-    $context->set(Bool => 1);
-}
-
 sub Not {
     my $context = shift;
     $context->set(Bool => $context->as_bool ? 0 : 1);
-}
-
-sub False {
-    my $context = shift;
-    $context->set(Bool => 0);
 }
 
 sub Chomp {
@@ -88,8 +82,6 @@ sub Context {
     my $context = shift;
     $context->set(None => $context);
 }
-
-1;
 
 __END__
 sub Text {
