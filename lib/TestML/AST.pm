@@ -4,16 +4,10 @@ package TestML::AST;
 package TestML::Function;
 use TestML::Base -base;
 
+has 'namespace' => {};
 has 'statements' => [];
 has 'expression';
 has 'block';
-
-has 'namespace' => {
-    'TestML', '',
-    'Label' => '$BlockLabel',
-    'BlockMarker' => '===',
-    'PointMarker' => '---',
-};
 
 #-----------------------------------------------------------------------------
 package TestML::Statement;

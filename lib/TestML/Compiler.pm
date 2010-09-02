@@ -163,18 +163,22 @@ sub got_meta_section {
     my $self = shift;
 
     my $grammar = $parser->grammar;
+    my $point_lines = $grammar->{point_lines}{'+re'};
 
     my $block_marker = $self->function->namespace->{BlockMarker};
-    $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-    $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
+    if ($block_marker) {
+        $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+        $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
+        $point_lines =~ s/===/$block_marker/;
+    }
 
     my $point_marker = $self->function->namespace->{PointMarker};
-    $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-    $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
+    if ($point_marker) {
+        $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+        $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
+        $point_lines =~ s/---/$point_marker/;
+    }
 
-    my $point_lines = $grammar->{point_lines}{'+re'};
-    $point_lines =~ s/===/$block_marker/;
-    $point_lines =~ s/---/$point_marker/;
     $grammar->{point_lines}{'+re'} = qr/$point_lines/;
 }
 

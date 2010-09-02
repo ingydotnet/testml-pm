@@ -208,6 +208,9 @@ sub compile_testml {
         : join '/', $self->base, $self->testml;
     my $function = TestML::Compiler->new(base => $self->base)->compile($path)
         or die "TestML document failed to compile";
+
+    $function->namespace->{Label} = '$BlockLabel';
+
     return $function;
 }
 

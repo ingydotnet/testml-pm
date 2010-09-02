@@ -1,4 +1,4 @@
-use Test::More tests => 23;
+use Test::More tests => 21;
 
 use TestML::Compiler;
 
@@ -25,8 +25,6 @@ ok $func, 'TestML string matches against TestML grammar';
 is $func->namespace->{TestML}, '1.0', 'Version parses';
 is $func->statements->[0]->expression->transforms->[0]->args->[1]->transforms->[0]->value, '2', 'Plan parses';
 is $func->statements->[1]->expression->transforms->[0]->args->[1]->transforms->[0]->value, 'O HAI TEST', 'Title parses';
-is $func->namespace->{BlockMarker}, '===', 'BlockMarker defaults';
-is $func->namespace->{PointMarker}, '---', 'PointMarker defaults';
 
 is scalar(@{$func->statements}), 3, 'Three test statements';
 my $statement = $func->statements->[2];
