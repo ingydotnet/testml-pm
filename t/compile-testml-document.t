@@ -22,11 +22,11 @@ Title = "O HAI TEST";
 
 my $func = TestML::Compiler->compile($testml);
 ok $func, 'TestML string matches against TestML grammar';
-is $func->meta->data->{TestML}, '1.0', 'Version parses';
+is $func->namespace->{TestML}, '1.0', 'Version parses';
 is $func->statements->[0]->expression->transforms->[0]->args->[1]->transforms->[0]->value, '2', 'Plan parses';
 is $func->statements->[1]->expression->transforms->[0]->args->[1]->transforms->[0]->value, 'O HAI TEST', 'Title parses';
-is $func->meta->data->{BlockMarker}, '===', 'BlockMarker defaults';
-is $func->meta->data->{PointMarker}, '---', 'PointMarker defaults';
+is $func->namespace->{BlockMarker}, '===', 'BlockMarker defaults';
+is $func->namespace->{PointMarker}, '---', 'PointMarker defaults';
 
 is scalar(@{$func->statements}), 3, 'Three test statements';
 my $statement = $func->statements->[2];

@@ -164,11 +164,11 @@ sub got_meta_section {
 
     my $grammar = $parser->grammar;
 
-    my $block_marker = $self->function->meta->data->{BlockMarker};
+    my $block_marker = $self->function->namespace->{BlockMarker};
     $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
     $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
 
-    my $point_marker = $self->function->meta->data->{PointMarker};
+    my $point_marker = $self->function->namespace->{PointMarker};
     $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
     $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
 
@@ -180,18 +180,18 @@ sub got_meta_section {
 
 sub got_meta_testml_statement {
     my $self = shift;
-    $self->function->meta->data->{TestML} = shift;
+    $self->function->namespace->{TestML} = shift;
 }
 
 sub got_meta_statement {
     my $self = shift;
     my $meta_keyword = shift;
     my $meta_value = shift;
-    if (ref($self->function->meta->data->{$meta_keyword}) eq 'ARRAY') {
-        push @{$self->function->meta->data->{$meta_keyword}}, $meta_value;
+    if (ref($self->function->namespace->{$meta_keyword}) eq 'ARRAY') {
+        push @{$self->function->namespace->{$meta_keyword}}, $meta_value;
     }
     else {
-        $self->function->meta->data->{$meta_keyword} = $meta_value;
+        $self->function->namespace->{$meta_keyword} = $meta_value;
     }
 }
 

@@ -42,5 +42,3 @@ sub assert_OK {
     my $context = shift;
     $self->test_builder->ok($context->as_bool, $self->get_label);
 }
-
-1;

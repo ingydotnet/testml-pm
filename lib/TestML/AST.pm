@@ -4,7 +4,6 @@ package TestML::AST;
 package TestML::Function;
 use TestML::Base -base;
 
-has 'meta' => -init => 'TestML::Document::Meta->new';
 has 'data' => -init => 'TestML::Document::Data->new';
 
 has 'statements' => [];
@@ -12,19 +11,8 @@ has 'expression';
 has 'block';
 
 has 'namespace' => {
-    'Label' => '$BlockLabel',
-};
-
-#-----------------------------------------------------------------------------
-package TestML::Document::Meta;
-use TestML::Base -base;
-
-# XXX Put above in 'namespace'.
-has 'data' => {
     'TestML', '',
-    'Data' => [],
-    'Title' => '',
-    'Plan' => 0,
+    'Label' => '$BlockLabel',
     'BlockMarker' => '===',
     'PointMarker' => '---',
 };
