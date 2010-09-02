@@ -8,8 +8,7 @@ has 'meta' => -init => 'TestML::Document::Meta->new';
 has 'data' => -init => 'TestML::Document::Data->new';
 
 has 'statements' => [];
-
-has 'current_expression';
+has 'expression';
 has 'block';
 
 has 'namespace' => {
