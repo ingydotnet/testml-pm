@@ -4,6 +4,7 @@ use TestML::AST;
 
 our $True = TestML::Boolean->new(value => 1);
 our $False = TestML::Boolean->new(value => 0);
+our $None = TestML::Object->new;
 
 sub Point {
     my $context = shift;
@@ -78,12 +79,12 @@ sub Chomp {
     return $value;
 }
 
+__END__
 sub Context {
     my $context = shift;
     $context->set(None => $context);
 }
 
-__END__
 sub Text {
     my $context = shift;
     my $value = $context->assert_type('List');

@@ -9,17 +9,14 @@
 + Make current parse create a top level function
 + Move functions and vars into namespace
 + Make functions into objects of type -> Func.
++ True, False and None are constant variables
 
-- True, False and None are constant variables
 - Allow quotes for line points
 - Support Native objects
 
 - Redo grammar to match current terminology. like get rid of meta section, for
   example.
 - Fix M:I:T to use new module set.
-
-- Block -> DataBlock
-- Point -> DataPoint
 
 == Tests
 - List assertions
