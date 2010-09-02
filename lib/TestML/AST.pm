@@ -4,10 +4,23 @@ package TestML::AST;
 package TestML::Function;
 use TestML::Base -base;
 
+has 'parent';
 has 'namespace' => {};
 has 'statements' => [];
 has 'expression';
 has 'block';
+
+sub fetch {
+    my $self = shift;
+    my $name = shift;
+    while ($self) {
+        if (my $object = $self->namespace->{$name}) {
+            return $object;
+        }
+        $self = $self->parent;
+    }
+    return;
+}
 
 #-----------------------------------------------------------------------------
 package TestML::Statement;

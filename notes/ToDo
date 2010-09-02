@@ -7,14 +7,15 @@
 + Move Object into AST
 + Add functions to document
 + Make current parse create a top level function
++ Move functions and vars into namespace
 
-- Move functions and vars into namespace
 - True, False and None are constant variables
 - Make functions into objects of type -> Func.
 - Allow quotes for line points
 
 - Redo grammar to match current terminology. like get rid of meta section, for
   example.
+- Fix M:I:T to use new module set.
 
 - Block -> DataBlock
 - Point -> DataPoint

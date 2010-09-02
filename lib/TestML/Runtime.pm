@@ -10,10 +10,7 @@ our $self;
 
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
 has 'testml';
-
-# XXX these two should be combined and called something else.
 has 'bridge';
-has 'transforms';
 
 has 'function';
 has 'planned' => 0;
@@ -21,12 +18,13 @@ has 'planned' => 0;
 sub init {
     my $self = $TestML::Runtime::self = shift;
     $self->SUPER::init(@_);
-    $self->transforms([
-        'TestML::Transforms::Standard',
-        'TestML::Transforms::Debug',
-        $self->bridge || (),
-    ]);
-    $self->load_transform_modules;
+    $self->function($self->compile_testml);
+    $self->load_variables;
+    $self->load_transform_module('TestML::Transforms::Standard');
+    $self->load_transform_module('TestML::Transforms::Debug');
+    if ($self->bridge) {
+        $self->load_transform_module($self->bridge);
+    }
     return $self;
 }
 
@@ -37,8 +35,7 @@ sub plan_end { }
 sub run {
     my $self = shift;
 
-    my $function = $self->compile_testml();
-    $self->run_function($function);
+    $self->run_function($self->function);
 
     $self->plan_end();
 }
@@ -151,7 +148,8 @@ sub run_expression {
             $context->set(Num => $transform->value);
             next;
         }
-        my $function = $self->get_transform_function($transform_name);
+        my $function = $self->function->fetch($transform_name)
+            or die "Can't find transform '$transform_name'";
         $expression->set_called(0);
         my $value = eval {
             &$function(
@@ -179,28 +177,6 @@ sub run_expression {
     return $context;
 }
 
-sub load_transform_modules {
-    my $self = shift;
-    for my $module_name (@{$self->transforms}) {
-        next if $module_name eq 'main';
-        eval "require $module_name; 1"
-            or die "Can't use $module_name:\n$@";
-    }
-}
-
-sub get_transform_function {
-    my $self = shift;
-    my $name = shift;
-    my $modules = $self->transforms();
-    for my $module (@$modules) {
-        eval "use $module";
-        no strict 'refs';
-        return \&{"$module\::$name"}
-            if defined &{"$module\::$name"};
-    }
-    die "Can't locate function '$name'";
-}
-
 sub compile_testml {
     my $self = shift;
     my $path = ref($self->testml)
@@ -208,10 +184,27 @@ sub compile_testml {
         : join '/', $self->base, $self->testml;
     my $function = TestML::Compiler->new(base => $self->base)->compile($path)
         or die "TestML document failed to compile";
-
-    $function->namespace->{Label} = '$BlockLabel';
-
     return $function;
+}
+
+sub load_variables {
+    my $self = shift;
+    $self->function->namespace->{Label} = '$BlockLabel';
+}
+
+sub load_transform_module {
+    my $self = shift;
+    my $module = shift;
+    if ($module ne 'main') {
+        eval "require $module; 1"
+            or die "Can't use $module:\n$@";
+    }
+    no strict 'refs';
+    for my $key (sort keys %{"$module\::"}) {
+        if (my $function = *{${"$module\::"}{$key}}{CODE}) {
+            $self->function->namespace->{$key} = $function;
+        }
+    }
 }
 
 sub get_label {
