@@ -46,8 +46,8 @@ is scalar(@{$expression->transforms}), 1, 'Right side has one part';
 is $expression->transforms->[0]->name, 'Point', 'First sub is a Point';
 is $expression->transforms->[0]->args->[0], 'output', 'Point name is "output"';
 
-is scalar(@{$func->data->blocks}), 2, 'Two data blocks';
-my ($block1, $block2) = @{$func->data->blocks};
+is scalar(@{$func->namespace->{DataBlocks}}), 2, 'Two data blocks';
+my ($block1, $block2) = @{$func->namespace->{DataBlocks}};
 is $block1->label, 'Test mixed case string', 'Block 1 label ok';
 is $block1->points->{input}, 'I Like Pie', 'Block 1, input point';
 is $block1->points->{output}, 'I LIKE PIE', 'Block 1, output point';

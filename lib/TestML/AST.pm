@@ -4,8 +4,6 @@ package TestML::AST;
 package TestML::Function;
 use TestML::Base -base;
 
-has 'data' => -init => 'TestML::Document::Data->new';
-
 has 'statements' => [];
 has 'expression';
 has 'block';
@@ -58,12 +56,6 @@ package TestML::Number;
 use TestML::Transform -base;
 
 has 'value' => '';
-
-#-----------------------------------------------------------------------------
-package TestML::Document::Data;
-use TestML::Base -base;
-
-has 'blocks' => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Block;

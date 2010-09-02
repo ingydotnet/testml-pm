@@ -3,12 +3,17 @@
 + Title, Plan and Data can become variables
 + Split standard
 + Move TestML setup into M:I:T
++ Remove Data from AST
 
+- Move Object into AST
 - Move functions and vars into a namespace
 - True, False and None are constant variables
 - Add functions to document
 - Make current parse create a top level function
 - Allow quotes for line points
+
+- Redo grammar to match current terminology. like get rud of meta section, for
+  example.
 
 - Block -> DataBlock
 - Point -> DataPoint

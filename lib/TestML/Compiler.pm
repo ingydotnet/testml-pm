@@ -354,7 +354,8 @@ sub got_point_lines {
 
 sub got_data_block {
     my $self = shift;
-    push @{$self->function->data->blocks}, $self->current_block;
+    $self->function->namespace->{DataBlocks} ||= [];
+    push @{$self->function->namespace->{DataBlocks}}, $self->current_block;
 }
 
 1;

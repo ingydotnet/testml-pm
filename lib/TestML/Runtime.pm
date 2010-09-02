@@ -115,7 +115,7 @@ sub select_blocks {
     my $wanted = shift;
     my $selected = [];
 
-    OUTER: for my $block (@{$self->function->data->blocks}) {
+    OUTER: for my $block (@{$self->function->namespace->{DataBlocks}}) {
         my %points = %{$block->points};
         next if exists $points{SKIP};
         for my $point (@$wanted) {
