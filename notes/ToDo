@@ -8,9 +8,9 @@
 + Add functions to document
 + Make current parse create a top level function
 + Move functions and vars into namespace
++ Make functions into objects of type -> Func.
 
 - True, False and None are constant variables
-- Make functions into objects of type -> Func.
 - Allow quotes for line points
 
 - Redo grammar to match current terminology. like get rid of meta section, for

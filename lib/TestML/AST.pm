@@ -53,18 +53,6 @@ has 'name';
 has 'args' => [];
 
 #-----------------------------------------------------------------------------
-package TestML::String;
-use TestML::Transform -base;
-
-has 'value' => '';
-
-#-----------------------------------------------------------------------------
-package TestML::Number;
-use TestML::Transform -base;
-
-has 'value' => '';
-
-#-----------------------------------------------------------------------------
 package TestML::Block;
 use TestML::Base -base;
 
@@ -77,6 +65,10 @@ use TestML::Base -base;
 
 has 'type' => 'None';
 has 'value';
+
+sub runtime {
+    return $TestML::Runtime::self;
+}
 
 sub set {
     my $self = shift;
@@ -136,10 +128,26 @@ sub as_bool {
 }
 
 #-----------------------------------------------------------------------------
-package TestML::Context;
+package TestML::String;
 use TestML::Object -base;
 
-sub runtime {
-    return $TestML::Runtime::self;
-}
+has 'type' => 'Str';
+
+#-----------------------------------------------------------------------------
+package TestML::Number;
+use TestML::Object -base;
+
+has 'type' => 'Num';
+
+#-----------------------------------------------------------------------------
+package TestML::Boolean;
+use TestML::Object -base;
+
+has 'type' => 'Bool';
+
+#-----------------------------------------------------------------------------
+package TestML::Function;
+use TestML::Object -base;
+
+has 'type' => 'Func';
 

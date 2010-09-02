@@ -135,39 +135,43 @@ sub run_expression {
     $self->function->expression($expression);
     my $block = shift || undef;
 
-    my $context = TestML::Context->new();
+    my $context = TestML::Object->new();
 
     for my $transform (@{$expression->transforms}) {
-        my $transform_name = $transform->name;
-        next if $expression->error and $transform_name ne 'Catch';
-        if (ref($transform) eq 'TestML::String') {
-            $context->set(Str => $transform->value);
+        next if $expression->error and (
+            not $transform->isa('TestML::Transform') or
+            $transform->name ne 'Catch'
+        );
+        if ($transform->isa('TestML::Object')) {
+            $context->set($transform->type => $transform->value);
             next;
         }
-        elsif (ref($transform) eq 'TestML::Number') {
-            $context->set(Num => $transform->value);
-            next;
+        my $object = $self->function->fetch($transform->name)
+            or die "Can't find transform '${\$transform->name}'";
+        if ($object->isa('TestML::Function')) {
+            my $function = $object->value;
+            $expression->set_called(0);
+            my $value = eval {
+                &$function(
+                    $context,
+                    map {
+                        (ref($_) eq 'TestML::Expression')
+                        ? $self->run_expression($_, $block)
+                        : $_
+                    } @{$transform->args}
+                );
+            };
+            if ($@) {
+                $expression->error($@);
+                $context->type('None');
+                $context->value(undef);
+            }
+            elsif (not $expression->set_called) {
+                $context->value($value);
+            }
         }
-        my $function = $self->function->fetch($transform_name)
-            or die "Can't find transform '$transform_name'";
-        $expression->set_called(0);
-        my $value = eval {
-            &$function(
-                $context,
-                map {
-                    (ref($_) eq 'TestML::Expression')
-                    ? $self->run_expression($_, $block)
-                    : $_
-                } @{$transform->args}
-            );
-        };
-        if ($@) {
-            $expression->error($@);
-            $context->type('None');
-            $context->value(undef);
-        }
-        elsif (not $expression->set_called) {
-            $context->value($value);
+        else {
+            die;
         }
     }
     if ($expression->error) {
@@ -202,7 +206,9 @@ sub load_transform_module {
     no strict 'refs';
     for my $key (sort keys %{"$module\::"}) {
         if (my $function = *{${"$module\::"}{$key}}{CODE}) {
-            $self->function->namespace->{$key} = $function;
+            $self->function->namespace->{$key} = TestML::Function->new(
+                value => $function,
+            );
         }
     }
 }
