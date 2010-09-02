@@ -106,14 +106,14 @@ sub parse {
     );
     $parser->parse($_[1], 'document')
         or die "Parse TestML failed";
-    return $parser->receiver->document;
+    return $parser->receiver->function;
 }
 
 sub parse_data {
     $parser->receiver(TestML::Parser::Receiver->new);
     $parser->parse($_[1], 'data_section')
         or die "Parse TestML data failed";
-    return $parser->receiver->document->data->blocks;
+    return $parser->receiver->function->data->blocks;
 }
 
 #-----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ use TestML::Base -base;
 
 use TestML::AST;
 
-has 'document', -init => 'TestML::Document->new()';
+has 'function', -init => 'TestML::Function->new()';
 
 has 'statement';
 has 'expression_stack' => [];
@@ -164,11 +164,11 @@ sub got_meta_section {
 
     my $grammar = $parser->grammar;
 
-    my $block_marker = $self->document->meta->data->{BlockMarker};
+    my $block_marker = $self->function->meta->data->{BlockMarker};
     $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
     $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
 
-    my $point_marker = $self->document->meta->data->{PointMarker};
+    my $point_marker = $self->function->meta->data->{PointMarker};
     $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
     $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
 
@@ -180,18 +180,18 @@ sub got_meta_section {
 
 sub got_meta_testml_statement {
     my $self = shift;
-    $self->document->meta->data->{TestML} = shift;
+    $self->function->meta->data->{TestML} = shift;
 }
 
 sub got_meta_statement {
     my $self = shift;
     my $meta_keyword = shift;
     my $meta_value = shift;
-    if (ref($self->document->meta->data->{$meta_keyword}) eq 'ARRAY') {
-        push @{$self->document->meta->data->{$meta_keyword}}, $meta_value;
+    if (ref($self->function->meta->data->{$meta_keyword}) eq 'ARRAY') {
+        push @{$self->function->meta->data->{$meta_keyword}}, $meta_value;
     }
     else {
-        $self->document->meta->data->{$meta_keyword} = $meta_value;
+        $self->function->meta->data->{$meta_keyword} = $meta_value;
     }
 }
 
@@ -210,7 +210,7 @@ sub try_assignment_statement {
 
 sub got_assignment_statement {
     my $self = shift;
-    push @{$self->document->test->statements}, $self->statement;
+    push @{$self->function->statements}, $self->statement;
     $self->statement->expression->transforms->[0]->args->[1] =
         pop @{$self->expression_stack};
 }
@@ -234,7 +234,7 @@ sub try_test_statement {
 
 sub got_test_statement {
     my $self = shift;
-    push @{$self->document->test->statements}, $self->statement;
+    push @{$self->function->statements}, $self->statement;
     pop @{$self->expression_stack};
 }
 
@@ -354,7 +354,7 @@ sub got_point_lines {
 
 sub got_data_block {
     my $self = shift;
-    push @{$self->document->data->blocks}, $self->current_block;
+    push @{$self->function->data->blocks}, $self->current_block;
 }
 
 1;

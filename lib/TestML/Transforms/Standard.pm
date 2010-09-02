@@ -4,7 +4,7 @@ use TestML;
 sub Point {
     my $context = shift;
     my $name = shift;
-    my $value = $context->runtime->block->points->{$name};
+    my $value = $context->runtime->function->block->points->{$name};
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
@@ -20,14 +20,14 @@ sub GetLabel {
 sub Get {
     my $context = shift;
     my $key = shift->value;
-    $context->set(Str => $context->runtime->namespace->{$key});
+    $context->set(Str => $context->runtime->function->namespace->{$key});
 }
 
 sub Set {
     my $context = shift;
     my $key = shift;
     my $value = shift->value;
-    $context->runtime->namespace->{$key} = $value;
+    $context->runtime->function->namespace->{$key} = $value;
     return; 
 }
 

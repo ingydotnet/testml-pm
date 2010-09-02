@@ -2,8 +2,9 @@
 + Meta data goes in global variable stash.
 + Title, Plan and Data can become variables
 + Split standard
++ Move TestML setup into M:I:T
 
-- Move TestML setup into M:I:T
+- Move functions and vars into a namespace
 - True, False and None are constant variables
 - Add functions to document
 - Make current parse create a top level function

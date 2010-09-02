@@ -1,18 +1,26 @@
 package TestML::AST;
 
+#-----------------------------------------------------------------------------
 package TestML::Function;
-
-package TestML::Document;
 use TestML::Base -base;
 
 has 'meta' => -init => 'TestML::Document::Meta->new';
-has 'test' => -init => 'TestML::Document::Test->new';
 has 'data' => -init => 'TestML::Document::Data->new';
+
+has 'statements' => [];
+
+has 'current_expression';
+has 'block';
+
+has 'namespace' => {
+    'Label' => '$BlockLabel',
+};
 
 #-----------------------------------------------------------------------------
 package TestML::Document::Meta;
 use TestML::Base -base;
 
+# XXX Put above in 'namespace'.
 has 'data' => {
     'TestML', '',
     'Data' => [],
@@ -21,12 +29,6 @@ has 'data' => {
     'BlockMarker' => '===',
     'PointMarker' => '---',
 };
-
-#-----------------------------------------------------------------------------
-package TestML::Document::Test;
-use TestML::Base -base;
-
-has 'statements' => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Statement;

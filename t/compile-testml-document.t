@@ -20,16 +20,16 @@ Title = "O HAI TEST";
 --- output: I LOVE LUCY
 ';
 
-my $match = TestML::Compiler->compile($testml);
-ok $match, 'TestML string matches against TestML grammar';
-is $match->meta->data->{TestML}, '1.0', 'Version parses';
-is $match->test->statements->[0]->expression->transforms->[0]->args->[1]->transforms->[0]->value, '2', 'Plan parses';
-is $match->test->statements->[1]->expression->transforms->[0]->args->[1]->transforms->[0]->value, 'O HAI TEST', 'Title parses';
-is $match->meta->data->{BlockMarker}, '===', 'BlockMarker defaults';
-is $match->meta->data->{PointMarker}, '---', 'PointMarker defaults';
+my $func = TestML::Compiler->compile($testml);
+ok $func, 'TestML string matches against TestML grammar';
+is $func->meta->data->{TestML}, '1.0', 'Version parses';
+is $func->statements->[0]->expression->transforms->[0]->args->[1]->transforms->[0]->value, '2', 'Plan parses';
+is $func->statements->[1]->expression->transforms->[0]->args->[1]->transforms->[0]->value, 'O HAI TEST', 'Title parses';
+is $func->meta->data->{BlockMarker}, '===', 'BlockMarker defaults';
+is $func->meta->data->{PointMarker}, '---', 'PointMarker defaults';
 
-is scalar(@{$match->test->statements}), 3, 'Three test statements';
-my $statement = $match->test->statements->[2];
+is scalar(@{$func->statements}), 3, 'Three test statements';
+my $statement = $func->statements->[2];
 is join('-', @{$statement->points}), 'input-output',
     'Point list is correct';
 
@@ -46,8 +46,8 @@ is scalar(@{$expression->transforms}), 1, 'Right side has one part';
 is $expression->transforms->[0]->name, 'Point', 'First sub is a Point';
 is $expression->transforms->[0]->args->[0], 'output', 'Point name is "output"';
 
-is scalar(@{$match->data->blocks}), 2, 'Two data blocks';
-my ($block1, $block2) = @{$match->data->blocks};
+is scalar(@{$func->data->blocks}), 2, 'Two data blocks';
+my ($block1, $block2) = @{$func->data->blocks};
 is $block1->label, 'Test mixed case string', 'Block 1 label ok';
 is $block1->points->{input}, 'I Like Pie', 'Block 1, input point';
 is $block1->points->{output}, 'I LIKE PIE', 'Block 1, output point';

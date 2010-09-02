@@ -8,16 +8,12 @@ use TestML::Compiler;
 # put a reference to it into every object that needs to access it.
 our $self;
 
-has 'bridge';
-has 'testml';
-has 'transforms';
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
+has 'testml';
+has 'bridge';
+has 'transforms';
+
 has 'function', -init => '$self->compile_testml()';
-has 'current_expression';
-has 'block';
-has 'namespace' => {
-    'Label' => '$BlockLabel',
-};
 has 'planned' => 0;
 
 sub init {
@@ -39,12 +35,12 @@ sub plan_end { }
 sub run {
     my $self = shift;
 
-    for my $statement (@{$self->function->test->statements}) {
+    for my $statement (@{$self->function->statements}) {
         my $blocks = @{$statement->points}
             ? $self->select_blocks($statement->points)
             : [TestML::Block->new()];
         for my $block (@$blocks) {
-            $self->block($block);
+            $self->function->block($block);
             my $context = $self->evaluate_expression(
                 $statement->expression,
                 $block,
@@ -115,9 +111,9 @@ sub select_blocks {
 
 sub evaluate_expression {
     my $self = shift;
-    my $prev_expression = $self->current_expression;
+    my $prev_expression = $self->function->current_expression;
     my $expression = shift;
-    $self->current_expression($expression);
+    $self->function->current_expression($expression);
     my $block = shift || undef;
 
     my $context = TestML::Context->new();
@@ -157,7 +153,7 @@ sub evaluate_expression {
     if ($expression->error) {
         die $expression->error;
     }
-    $self->current_expression($prev_expression);
+    $self->function->current_expression($prev_expression);
     return $context;
 }
 
@@ -195,26 +191,26 @@ sub compile_testml {
 
 sub get_label {
     my $self = shift;
-    my $label = $self->namespace->{Label};
+    my $label = $self->function->namespace->{Label};
     my %replace = map {
-        my $v = $self->block->points->{$_};
+        my $v = $self->function->block->points->{$_};
         $v =~ s/\n.*//s;
         $v =~ s/^\s*(.*?)\s*$/$1/;
         ($_, $v);
-    } keys %{$self->block->points};
-    $replace{BlockLabel} = $self->block->label;
+    } keys %{$self->function->block->points};
+    $replace{BlockLabel} = $self->function->block->label;
     $label =~ s/\$(\w+)/$replace{$1}/ge;
     return $label;
 }
 
 sub get_error {
     my $self = shift;
-    return $self->current_expression->error;
+    return $self->function->current_expression->error;
 }
 
 sub clear_error {
     my $self = shift;
-    return $self->current_expression->error(undef);
+    return $self->function->current_expression->error(undef);
 }
 
 sub throw {
@@ -237,7 +233,7 @@ sub set {
         unless $type =~ /^(?:None|Str|Num|Bool|List)$/;
     $self->type($type);
     $self->value($value);
-    $self->runtime->current_expression->set_called(1);
+    $self->runtime->function->current_expression->set_called(1);
 }
 
 sub assert_type {
