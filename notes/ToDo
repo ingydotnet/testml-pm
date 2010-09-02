@@ -10,13 +10,18 @@
 + Move functions and vars into namespace
 + Make functions into objects of type -> Func.
 + True, False and None are constant variables
++ Fix M:I:T to use new module set.
+
+- Parse data in a separate parse.
+- Add transform for data parse
+- Localize data to a function
+- Support function definitions
 
 - Allow quotes for line points
 - Support Native objects
 
 - Redo grammar to match current terminology. like get rid of meta section, for
   example.
-- Fix M:I:T to use new module set.
 
 == Tests
 - List assertions
