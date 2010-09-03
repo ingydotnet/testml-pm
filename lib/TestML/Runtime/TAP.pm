@@ -33,7 +33,18 @@ sub assert_EQ {
 
 sub assert_HAS {
     my $self = shift;
-    my $assertion = (index shift->value, shift->value) >= 0;
+    my $text = shift->value;
+    my $part = shift->value;
+    my $assertion = (index($text, $part) >= 0);
+    if (not $assertion) {
+        my $msg = <<"...";
+Failed TestML HAS (~~) assertion. This text:
+'$text'
+does not contain this string:
+'$part'
+...
+        $self->test_builder->diag($msg);
+    }
     $self->test_builder->ok($assertion, $self->get_label);
 }
 

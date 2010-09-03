@@ -15,9 +15,10 @@ sub combine {
     return join ' ', map $_->value, @_;
 }
 
-sub parse_testml {
+sub compile_testml {
     my $context = shift;
-    TestML::Parser->parse($context->value);
+    require TestML::Compiler;
+    TestML::Compiler->new->compile($context->value);
 }
 
 sub msg {

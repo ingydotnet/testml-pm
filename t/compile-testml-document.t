@@ -4,7 +4,7 @@ use TestML::Compiler;
 
 my $testml = '
 # A comment
-%TestML 1.0                #A line comment
+%TestML 1.0
 
 Plan = 2;
 Title = "O HAI TEST";
@@ -20,7 +20,7 @@ Title = "O HAI TEST";
 --- output: I LOVE LUCY
 ';
 
-my $func = TestML::Compiler->compile($testml);
+my $func = TestML::Compiler->new->compile($testml);
 ok $func, 'TestML string matches against TestML grammar';
 is $func->namespace->{TestML}, '1.0', 'Version parses';
 is $func->statements->[0]->expression->transforms->[0]->args->[1]->transforms->[0]->value, '2', 'Plan parses';
@@ -44,8 +44,8 @@ is scalar(@{$expression->transforms}), 1, 'Right side has one part';
 is $expression->transforms->[0]->name, 'Point', 'First sub is a Point';
 is $expression->transforms->[0]->args->[0], 'output', 'Point name is "output"';
 
-is scalar(@{$func->namespace->{DataBlocks}}), 2, 'Two data blocks';
-my ($block1, $block2) = @{$func->namespace->{DataBlocks}};
+is scalar(@{$func->data}), 2, 'Two data blocks';
+my ($block1, $block2) = @{$func->data};
 is $block1->label, 'Test mixed case string', 'Block 1 label ok';
 is $block1->points->{input}, 'I Like Pie', 'Block 1, input point';
 is $block1->points->{output}, 'I LIKE PIE', 'Block 1, output point';

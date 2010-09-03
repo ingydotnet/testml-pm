@@ -1,7 +1,9 @@
 package TestML::Compiler;
 use TestML::Base -base;
+use TestML::Parser::Grammar;
 
 has 'base';
+has 'debug' => '0';
 
 sub compile {
     my $self = shift;
@@ -14,66 +16,129 @@ sub compile {
         ? $file
         : $self->slurp($file);
 
-    my $text = $self->preprocess($input);
+    my $result = $self->preprocess($input, 'top');
 
-    my ($code, $data) = $self->split_text($text);
+    my ($code, $data) = @$result{qw(code data)};
 
-    my $function = TestML::Parser->parse($code)
-        or die "TestML document failed to parse";
-    return $function;
+    my $parser = TestML::Parser::Grammar->new(
+        receiver => TestML::Parser::Receiver->new,
+        debug => $self->debug,
+    );
+    $parser->parse($code, 'code_section')
+        or die "Parse TestML code section failed";
+
+    $self->fixup_grammar($parser, $result);
+
+    $parser->parse($data, 'data_section')
+        or die "Parse TestML data section failed";
+
+    return $parser->receiver->function;
 }
 
-sub compile_code {
+sub fixup_grammar {
     my $self = shift;
-    my $text = shift;
-    my $function = TestML::Parser->parse($text)
-        or die "TestML document failed to parse";
-    return $function;
-}
+    my $parser = shift;
+    my $hash = shift;
 
-sub compile_data {
-    my $self = shift;
-    my $text = shift;
-    my $blocks = TestML::Parser->parse_data($text)
-        or die "TestML data document failed to parse";
-    return $blocks;
+    my $namespace = $parser->receiver->function->namespace;
+    $namespace->{TestML} = $hash->{TestML};
+
+    my $grammar = $parser->grammar;
+    my $point_lines = $grammar->{point_lines}{'+re'};
+
+    my $block_marker = $hash->{BlockMarker};
+    if ($block_marker) {
+        $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+        $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
+        $point_lines =~ s/===/$block_marker/;
+    }
+
+    my $point_marker = $hash->{PointMarker};
+    if ($point_marker) {
+        $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+        $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
+        $point_lines =~ s/---/$point_marker/;
+    }
+
+    $grammar->{point_lines}{'+re'} = qr/$point_lines/;
 }
 
 sub preprocess {
     my $self = shift;
     my $text = shift;
+    my $top = shift;
 
-    my @parts = split /^(%\w+.*)\n/m, $text;
+    my @parts = split /^((?:\%\w+.*|\#.*|\ *)\n)/m, $text;
 
     $text = '';
 
+    my $result = {
+        TestML => '',
+        DataMarker => '',
+        BlockMarker => '===',
+        PointMarker => '---',
+    };
+
+    my $order_error = 0;
     for my $part (@parts) {
-        if ($part =~ /^%(\w+)\s*(.*?)\s*$/) {
+        next unless length($part);
+        if ($part =~ /^(\#.*|\ *)\n/) {
+            $text .= "\n";
+            next;
+        }
+        if ($part =~ /^%(\w+)\s*(.*?)\s*\n/) {
             my ($directive, $value) = ($1, $2);
-            if ($directive eq 'Include') {
-                $text .= $self->preprocess($self->slurp($value));
+            $text .= "\n";
+            if ($directive eq 'TestML') {
+                die "Invalid TestML directive"
+                    unless $value =~ /^\d+\.\d+$/;
+                die "More than one TestML directive found"
+                    if $result->{TestML};
+                $result->{TestML} = $value;
+                next;
             }
-            elsif ($directive =~ /^(TestML|BlockMarker|PointMarker)$/) {
-                $text .= "%$directive $value\n";
+            $order_error = 1 unless $result->{TestML};
+            if ($directive eq 'Include') {
+                $text .= $self->preprocess($self->slurp($value))->{text};
+            }
+            elsif ($directive =~ /^(DataMarker|BlockMarker|PointMarker)$/) {
+                $result->{$directive} = $value;
             }
             else {
                 die "Unknown TestML directive '$directive'";
             }
         }
         else {
+            $order_error = 1 if $text and not $result->{TestML};
             $text .= $part;
         }
     }
+    die "No TestML directive found"
+        if $top and not $result->{TestML};
+    die "%TestML directive must be the first (non-comment) statement"
+        if $order_error;
 
-    $text =~ s/^\\(\\*%)/$1/gm;
-    return $text;
-}
 
-sub split_text {
-    my $self = shift;
-    my $text = shift;
+    if ($top) {
+        my $DataMarker = $result->{DataMarker} ||= $result->{BlockMarker};
+        my ($code, $data);
+        if ((my $split = index($text, "\n$DataMarker")) >= 0) {
+            $result->{code} = substr($text, 0, $split + 1);
+            $result->{data} = substr($text, $split + 1);
+        }
+        else {
+            $result->{code} = $text;
+            $result->{data} = '';
+        }
 
-    return ($text, undef);
+        $result->{code} =~ s/^\\(\\*[\%\#])/$1/gm;
+        $result->{data} =~ s/^\\(\\*[\%\#])/$1/gm;
+    }
+    else {
+        $result->{text} = $text;
+    }
+
+    return $result;
 }
 
 sub slurp {
@@ -92,29 +157,6 @@ sub slurp {
     return <$fh>;
 }
 
-
-package TestML::Parser;
-use TestML::Base -base;
-use TestML::Parser::Grammar;
-
-our $parser;
-
-sub parse {
-    $parser = TestML::Parser::Grammar->new(
-        receiver => TestML::Parser::Receiver->new,
-        debug => 0,
-    );
-    $parser->parse($_[1], 'document')
-        or die "Parse TestML failed";
-    return $parser->receiver->function;
-}
-
-sub parse_data {
-    $parser->receiver(TestML::Parser::Receiver->new);
-    $parser->parse($_[1], 'data_section')
-        or die "Parse TestML data failed";
-    return $parser->receiver->function->data->blocks;
-}
 
 #-----------------------------------------------------------------------------
 package TestML::Parser::Receiver;
@@ -157,46 +199,6 @@ sub got_double_quoted_string {
 sub got_unquoted_string {
     my $self = shift;
     $self->string(shift);
-}
-
-sub got_meta_section {
-    my $self = shift;
-
-    my $grammar = $parser->grammar;
-    my $point_lines = $grammar->{point_lines}{'+re'};
-
-    my $block_marker = $self->function->namespace->{BlockMarker};
-    if ($block_marker) {
-        $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-        $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
-        $point_lines =~ s/===/$block_marker/;
-    }
-
-    my $point_marker = $self->function->namespace->{PointMarker};
-    if ($point_marker) {
-        $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-        $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
-        $point_lines =~ s/---/$point_marker/;
-    }
-
-    $grammar->{point_lines}{'+re'} = qr/$point_lines/;
-}
-
-sub got_meta_testml_statement {
-    my $self = shift;
-    $self->function->namespace->{TestML} = shift;
-}
-
-sub got_meta_statement {
-    my $self = shift;
-    my $meta_keyword = shift;
-    my $meta_value = shift;
-    if (ref($self->function->namespace->{$meta_keyword}) eq 'ARRAY') {
-        push @{$self->function->namespace->{$meta_keyword}}, $meta_value;
-    }
-    else {
-        $self->function->namespace->{$meta_keyword} = $meta_value;
-    }
 }
 
 sub try_assignment_statement {
@@ -358,6 +360,5 @@ sub got_point_lines {
 
 sub got_data_block {
     my $self = shift;
-    $self->function->namespace->{DataBlocks} ||= [];
-    push @{$self->function->namespace->{DataBlocks}}, $self->current_block;
+    push @{$self->function->data}, $self->current_block;
 }

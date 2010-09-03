@@ -37,7 +37,17 @@ sub run {
 
     $self->run_function($self->function);
 
+    $self->run_plan();
     $self->plan_end();
+}
+
+sub run_plan {
+    my $self = shift;
+    if (! $self->planned) {
+        $self->title();
+        $self->plan_begin();
+        $self->planned(1);
+    }
 }
 
 sub run_function {
@@ -78,11 +88,7 @@ sub run_assertion {
     my $method = 'assert_' . $assertion->name;
 
     # Run this as late as possible.
-    if (! $self->planned) {
-        $self->title();
-        $self->plan_begin();
-        $self->planned(1);
-    }
+    $self->run_plan;
 
     # TODO - Should check 
     my $results = ($left->type eq 'List')
@@ -112,7 +118,7 @@ sub select_blocks {
     my $wanted = shift;
     my $selected = [];
 
-    OUTER: for my $block (@{$self->function->namespace->{DataBlocks}}) {
+    OUTER: for my $block (@{$self->function->data}) {
         my %points = %{$block->points};
         next if exists $points{SKIP};
         for my $point (@$wanted) {

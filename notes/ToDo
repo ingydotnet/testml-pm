@@ -16,6 +16,7 @@
 - Add transform for data parse
 - Localize data to a function
 - Support function definitions
+- Rename TestML::Parser::Grammar to TestML::Grammar
 
 - Allow quotes for line points
 - Support Native objects

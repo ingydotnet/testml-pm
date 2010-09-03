@@ -7,6 +7,7 @@ use TestML::Base -base;
 has 'parent';
 has 'namespace' => {};
 has 'statements' => [];
+has 'data' => [];
 has 'expression';
 has 'block';
 
