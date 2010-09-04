@@ -26,14 +26,17 @@ sub testml_setup {
 
         my $src = "$base/$testml/$testml_file";
         my $dest = "$base/$local/$testml_file";
-        system("cp -f $src $dest") == 0
-            or die "copy $src to $dest failed";
+        
+        if (not -e $dest or -M $src < -M $dest) {
+            system("cp -f $src $dest") == 0
+                or die "copy $src to $dest failed";
 
-        next if grep {$name eq $_} @$skip;
-        my $filename = "$name.t";
-        print "Generating $filename\n";
-        my $output = tt->render(\$template, \%data);
-        io("$base/$filename")->print($output);
+            next if grep {$name eq $_} @$skip;
+            my $filename = "$name.t";
+            print "Generating $filename\n";
+            my $output = tt->render(\$template, \%data);
+            io("$base/$filename")->print($output);
+        }
     }
 }
 
