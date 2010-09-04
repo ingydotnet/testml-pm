@@ -1,0 +1,15 @@
+%TestML 1.0
+
+Plan = 3;
+
+Label = 'Test $TestNumber';
+
+'Foo'.Type == 'Str';
+
+42.Type == 'Num';
+
+True.Type == 'Bool';
+
+# [].Type == 'List';
+
+# {}.Type == 'Func';

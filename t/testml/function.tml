@@ -1,0 +1,43 @@
+%TestML 1.0
+
+Plan = 14;
+
+Label = 'Fruity Tests';
+
+{
+    Label = 'Anonymous function never called';
+    True == False;
+};
+
+test1 = (f, c, t) {
+    f + '->' + c == t;
+    t - f - '->' == c;
+    t - '->' == f + c;
+};
+
+test.Type == 'Func';
+
+Label = '$BlockLabel';
+
+test(*fruit, *color, *thing);
+
+test2 = {
+    thing ~~ color;
+};
+
+test2(*color, *thing);
+
+=== Red Apple
+--- fruit: apple
+--- color: red
+--- thing: apple->red
+
+=== Orange Orange
+--- fruit: orange
+--- color: orange
+--- thing: orange->orange
+
+=== Green Grape
+--- fruit: green
+--- color: grape
+--- thing: grape->green
