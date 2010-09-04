@@ -8,6 +8,7 @@ has 'test_builder' => -init => 'Test::Builder->new';
 sub title {
     my $self = shift;
     if (my $title = $self->function->namespace->{Title}) {
+        $title = $title->value;
         $self->test_builder->note("=== $title ===\n");
     }
 }
@@ -15,7 +16,7 @@ sub title {
 sub plan_begin {
     my $self = shift;
     if (defined (my $tests = $self->function->namespace->{Plan})) {
-        $self->test_builder->plan(tests => $tests);
+        $self->test_builder->plan(tests => $tests->value);
     }
     else {
         $self->test_builder->no_plan();

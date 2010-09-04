@@ -25,15 +25,22 @@ sub GetLabel {
 sub Get {
     my $context = shift;
     my $key = shift->value;
-    $context->set(Str => $context->runtime->function->namespace->{$key});
+    my $value = $context->runtime->function->namespace->{$key};
+    $value = $value ? $value->value : '';
+    $context->set(Str => $value);
 }
 
 sub Set {
     my $context = shift;
     my $key = shift;
-    my $value = shift->value;
+    my $value = shift;
     $context->runtime->function->namespace->{$key} = $value;
     return; 
+}
+
+sub Type {
+    my $context = shift;
+    $context->set('Str', $context->type);
 }
 
 sub Catch {

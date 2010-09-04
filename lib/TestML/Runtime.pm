@@ -14,6 +14,7 @@ has 'bridge';
 
 has 'function';
 has 'planned' => 0;
+has 'test_number' => 0;
 
 sub init {
     my $self = $TestML::Runtime::self = shift;
@@ -89,6 +90,10 @@ sub run_assertion {
 
     # Run this as late as possible.
     $self->run_plan;
+
+    $self->test_number($self->test_number + 1);
+    $self->function->namespace->{TestNumber} =
+        TestML::Number->new(value => $self->test_number);
 
     # TODO - Should check 
     my $results = ($left->type eq 'List')
@@ -200,7 +205,8 @@ sub compile_testml {
 
 sub load_variables {
     my $self = shift;
-    $self->function->namespace->{Label} = '$BlockLabel';
+    $self->function->namespace->{Label} =
+        TestML::String->new(value => '$BlockLabel');
 }
 
 sub load_transform_module {
@@ -228,15 +234,21 @@ sub load_transform_module {
 
 sub get_label {
     my $self = shift;
-    my $label = $self->function->namespace->{Label};
-    my %replace = map {
-        my $v = $self->function->block->points->{$_};
-        $v =~ s/\n.*//s;
-        $v =~ s/^\s*(.*?)\s*$/$1/;
-        ($_, $v);
-    } keys %{$self->function->block->points};
-    $replace{BlockLabel} = $self->function->block->label;
-    $label =~ s/\$(\w+)/$replace{$1}/ge;
+    my $label = $self->function->namespace->{Label}->value;
+    sub label {
+        my $self = shift;
+        my $var = shift;
+        return $self->function->block->label if $var eq 'BlockLabel';
+        if (my $v = $self->function->block->points->{$var}) {
+            $v =~ s/\n.*//s;
+            $v =~ s/^\s*(.*?)\s*$/$1/;
+            return $v;
+        }
+        if (my $v = $self->function->namespace->{$var}) {
+            return $v->value;
+        }
+    }
+    $label =~ s/\$(\w+)/label($self, $1)/ge;
     return $label;
 }
 
