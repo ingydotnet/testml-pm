@@ -216,6 +216,20 @@ sub grammar_tree {
   'double_quoted_string' => {
     '+re' => qr/(?-xism:\G(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
   },
+  'function_definition' => {
+    '+all' => [
+      {
+        '+re' => qr/(?-xism:\G\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
+      },
+      {
+        '+rule' => 'test_statement',
+        '<' => '*'
+      },
+      {
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\})/
+      }
+    ]
+  },
   'lines_point' => {
     '+all' => [
       {
@@ -309,6 +323,9 @@ sub grammar_tree {
   },
   'sub_expression' => {
     '+any' => [
+      {
+        '+rule' => 'function_definition'
+      },
       {
         '+rule' => 'point_call'
       },
