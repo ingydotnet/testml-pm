@@ -11,10 +11,11 @@
 + Make functions into objects of type -> Func.
 + True, False and None are constant variables
 + Fix M:I:T to use new module set.
++ Parse data in a separate parse.
++ Localize data to a function
 
-- Parse data in a separate parse.
+- Add fetch / store in Function for variable access.
 - Add transform for data parse
-- Localize data to a function
 - Support function definitions
 - Rename TestML::Parser::Grammar to TestML::Grammar
 
