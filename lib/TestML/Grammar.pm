@@ -1,4 +1,4 @@
-package TestML::Parser::Grammar;
+package TestML::Grammar;
 use base 'Pegex::Grammar';
 
 sub grammar_tree {

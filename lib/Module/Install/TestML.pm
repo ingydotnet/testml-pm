@@ -31,7 +31,7 @@ sub use_testml {
     $self->include('TestML::AST');
     $self->include('TestML::Base');
     $self->include('TestML::Compiler');
-    $self->include('TestML::Parser::Grammar');
+    $self->include('TestML::Grammar');
     $self->include('TestML::Runtime');
     $self->include('TestML::Runtime::TAP');
     $self->include('TestML::Transforms::Debug');

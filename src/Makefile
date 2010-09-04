@@ -1,4 +1,4 @@
-BASE=../lib/TestML/Parser
+BASE=../lib/TestML
 
 $(BASE)/Grammar.pm: testml.pgx grammar.pl Makefile $(BASE)
 	perl grammar.pl $< > $@

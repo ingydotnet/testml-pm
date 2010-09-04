@@ -1,6 +1,6 @@
 package TestML::Compiler;
 use TestML::Base -base;
-use TestML::Parser::Grammar;
+use TestML::Grammar;
 
 has 'base';
 has 'debug' => '0';
@@ -20,7 +20,7 @@ sub compile {
 
     my ($code, $data) = @$result{qw(code data)};
 
-    my $parser = TestML::Parser::Grammar->new(
+    my $parser = TestML::Grammar->new(
         receiver => TestML::Parser::Receiver->new,
         debug => $self->debug,
     );

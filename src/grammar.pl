@@ -9,7 +9,7 @@ my $perl = Pegex::Compiler::Bootstrap->compile($testml)->combinate->to_perl; # X
 chomp($perl);
 
 print <<"...";
-package TestML::Parser::Grammar;
+package TestML::Grammar;
 use base 'Pegex::Grammar';
 
 sub grammar_tree {
