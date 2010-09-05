@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.006001;
 
-use TestML::AST;
+use TestML::Runtime;
 
 $TestML::VERSION = '0.20';
 

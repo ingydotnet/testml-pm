@@ -1,4 +1,5 @@
 package TestML::Compiler;
+
 use TestML::Base -base;
 use TestML::Grammar;
 
@@ -162,7 +163,7 @@ sub slurp {
 package TestML::Parser::Receiver;
 use TestML::Base -base;
 
-use TestML::AST;
+use TestML::Runtime;
 
 has 'function', -init => 'TestML::Function->new()';
 
