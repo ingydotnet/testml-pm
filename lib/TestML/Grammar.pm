@@ -52,7 +52,7 @@ sub grammar_tree {
         '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.)EQ\()/
       },
       {
-        '+rule' => 'test_expression'
+        '+rule' => 'code_expression'
       },
       {
         '+re' => qr/(?-xism:\G\))/
@@ -65,7 +65,7 @@ sub grammar_tree {
         '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.)HAS\()/
       },
       {
-        '+rule' => 'test_expression'
+        '+rule' => 'code_expression'
       },
       {
         '+re' => qr/(?-xism:\G\))/
@@ -94,7 +94,7 @@ sub grammar_tree {
         '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+==(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
       },
       {
-        '+rule' => 'test_expression'
+        '+rule' => 'code_expression'
       }
     ]
   },
@@ -104,7 +104,7 @@ sub grammar_tree {
         '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+~~(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
       },
       {
-        '+rule' => 'test_expression'
+        '+rule' => 'code_expression'
       }
     ]
   },
@@ -117,7 +117,7 @@ sub grammar_tree {
         '+re' => qr/(?-xism:\G\s+=\s+)/
       },
       {
-        '+rule' => 'test_expression'
+        '+rule' => 'code_expression'
       },
       {
         '+rule' => 'semicolon'
@@ -167,6 +167,27 @@ sub grammar_tree {
   'call_indicator' => {
     '+re' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.))/
   },
+  'code_expression' => {
+    '+all' => [
+      {
+        '+rule' => 'sub_expression'
+      },
+      {
+        '+all' => [
+          {
+            '+not' => 'assertion_call_test'
+          },
+          {
+            '+rule' => 'call_indicator'
+          },
+          {
+            '+rule' => 'sub_expression'
+          }
+        ],
+        '<' => '*'
+      }
+    ]
+  },
   'code_section' => {
     '+any' => [
       {
@@ -176,10 +197,24 @@ sub grammar_tree {
         '+rule' => 'assignment_statement'
       },
       {
-        '+rule' => 'test_statement'
+        '+rule' => 'code_statement'
       }
     ],
     '<' => '*'
+  },
+  'code_statement' => {
+    '+all' => [
+      {
+        '+rule' => 'code_expression'
+      },
+      {
+        '+rule' => 'assertion_call',
+        '<' => '?'
+      },
+      {
+        '+rule' => 'semicolon'
+      }
+    ]
   },
   'comment' => {
     '+re' => qr/(?-xism:\G\#.*\r?\n)/
@@ -222,7 +257,7 @@ sub grammar_tree {
         '+re' => qr/(?-xism:\G\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
       },
       {
-        '+rule' => 'test_statement',
+        '+rule' => 'code_statement',
         '<' => '*'
       },
       {
@@ -340,43 +375,8 @@ sub grammar_tree {
       }
     ]
   },
-  'test_expression' => {
-    '+all' => [
-      {
-        '+rule' => 'sub_expression'
-      },
-      {
-        '+all' => [
-          {
-            '+not' => 'assertion_call_test'
-          },
-          {
-            '+rule' => 'call_indicator'
-          },
-          {
-            '+rule' => 'sub_expression'
-          }
-        ],
-        '<' => '*'
-      }
-    ]
-  },
-  'test_statement' => {
-    '+all' => [
-      {
-        '+rule' => 'test_expression'
-      },
-      {
-        '+rule' => 'assertion_call',
-        '<' => '?'
-      },
-      {
-        '+rule' => 'semicolon'
-      }
-    ]
-  },
   'transform_argument' => {
-    '+rule' => 'test_expression'
+    '+rule' => 'code_expression'
   },
   'transform_argument_list' => {
     '+all' => [

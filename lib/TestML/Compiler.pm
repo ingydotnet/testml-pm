@@ -172,8 +172,6 @@ has 'expression_stack' => [];
 has 'current_block';
 has 'point_name';
 has 'string';
-has 'transform_name';
-has 'transform_arguments' => [];
 
 my %ESCAPES = (
     '\\' => '\\',
@@ -233,19 +231,19 @@ sub got_variable_name {
     $self->statement->expression->units->[0]->args->[0] = $variable_name;
 }
 
-sub try_test_statement {
+sub try_code_statement {
     my $self = shift;
     $self->statement(TestML::Statement->new());
     push @{$self->expression_stack}, $self->statement->expression;
 }
 
-sub got_test_statement {
+sub got_code_statement {
     my $self = shift;
     push @{$self->function->statements}, $self->statement;
     pop @{$self->expression_stack};
 }
 
-sub not_test_statement {
+sub not_code_statement {
     my $self = shift;
     pop @{$self->expression_stack};
 }
