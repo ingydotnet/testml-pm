@@ -21,30 +21,30 @@ sub compile {
 
     my ($code, $data) = @$result{qw(code data)};
 
-    my $parser = TestML::Grammar->new(
-        receiver => TestML::Parser::Receiver->new,
+    my $grammar = TestML::Grammar->new(
+        receiver => TestML::Receiver->new,
         debug => $self->debug,
     );
-    $parser->parse($code, 'code_section')
+    $grammar->parse($code, 'code_section')
         or die "Parse TestML code section failed";
 
-    $self->fixup_grammar($parser, $result);
+    $self->fixup_grammar($grammar, $result);
 
-    $parser->parse($data, 'data_section')
+    $grammar->parse($data, 'data_section')
         or die "Parse TestML data section failed";
 
-    return $parser->receiver->function;
+    return $grammar->receiver->function;
 }
 
 sub fixup_grammar {
     my $self = shift;
-    my $parser = shift;
+    my $grammar = shift;
     my $hash = shift;
 
-    my $namespace = $parser->receiver->function->namespace;
+    my $namespace = $grammar->receiver->function->namespace;
     $namespace->{TestML} = $hash->{TestML};
 
-    my $grammar = $parser->grammar;
+    $grammar = $grammar->grammar;
     my $point_lines = $grammar->{point_lines}{'+re'};
 
     my $block_marker = $hash->{BlockMarker};
@@ -160,7 +160,7 @@ sub slurp {
 
 
 #-----------------------------------------------------------------------------
-package TestML::Parser::Receiver;
+package TestML::Receiver;
 use TestML::Base -base;
 
 use TestML::Runtime;
@@ -171,8 +171,8 @@ has 'statement';
 has 'expression_stack' => [];
 has 'current_block';
 has 'point_name';
-has 'transform_name';
 has 'string';
+has 'transform_name';
 has 'transform_arguments' => [];
 
 my %ESCAPES = (
@@ -208,7 +208,7 @@ sub try_assignment_statement {
     );
     $self->statement($statement);
     my $expression = $self->statement->expression;
-    $expression->transforms->[0] = TestML::Transform->new(
+    $expression->units->[0] = TestML::Transform->new(
         name => 'Set',
     );
     $statement->expression($expression);
@@ -218,7 +218,7 @@ sub try_assignment_statement {
 sub got_assignment_statement {
     my $self = shift;
     push @{$self->function->statements}, $self->statement;
-    $self->statement->expression->transforms->[0]->args->[1] =
+    $self->statement->expression->units->[0]->args->[1] =
         pop @{$self->expression_stack};
 }
 
@@ -230,7 +230,7 @@ sub not_assignment_statement {
 sub got_variable_name {
     my $self = shift;
     my $variable_name = shift;
-    $self->statement->expression->transforms->[0]->args->[0] = $variable_name;
+    $self->statement->expression->units->[0]->args->[0] = $variable_name;
 }
 
 sub try_test_statement {
@@ -258,19 +258,18 @@ sub got_point_call {
         name => 'Point',
         args => [$point_name],
     );
-    push @{$self->expression_stack->[-1]->transforms}, $transform;
+    push @{$self->expression_stack->[-1]->units}, $transform;
     push @{$self->statement->points}, $point_name;
 }
 
 sub got_transform_call {
     my $self = shift;
     pop @{$self->expression_stack};
-    my $transform_name = $self->transform_name;
     my $transform = TestML::Transform->new(
-        name => $transform_name,
+        name => $self->transform_name,
         args => $self->transform_arguments,
     );
-    push @{$self->expression_stack->[-1]->transforms}, $transform;
+    push @{$self->expression_stack->[-1]->units}, $transform;
 }
 
 sub got_transform_name {
@@ -292,7 +291,7 @@ sub got_string_call {
     my $transform = TestML::Str->new(
         value => $string,
     );
-    push @{$self->expression_stack->[-1]->transforms}, $transform;
+    push @{$self->expression_stack->[-1]->units}, $transform;
 }
 
 sub got_number_call {
@@ -301,7 +300,7 @@ sub got_number_call {
     my $transform = TestML::Num->new(
         value => $number,
     );
-    push @{$self->expression_stack->[-1]->transforms}, $transform;
+    push @{$self->expression_stack->[-1]->units}, $transform;
 }
 
 sub try_assertion_call {

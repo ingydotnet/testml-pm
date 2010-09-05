@@ -15,6 +15,7 @@ has 'library' => []; # XXX Add TestML.pm support for -library keyword.
 has 'function';
 has 'planned' => 0;
 has 'test_number' => 0;
+$main::x = 0;
 
 sub init {
     my $self = $TestML::Runtime::self = shift;
@@ -101,7 +102,7 @@ sub run_assertion {
         ? $left->value
         : [ $left ];
     for my $result (@$results) {
-        if (@{$assertion->expression->transforms}) {
+        if (@{$assertion->expression->units}) {
             my $right = $self->run_expression(
                 $assertion->expression,
                 $block,
@@ -147,21 +148,22 @@ sub run_expression {
     $self->function->expression($expression);
     my $block = shift || undef;
 
-    my $transforms = $expression->transforms;
-    my $context = TestML::Object->new;
+    my $units = $expression->units;
+    my $context = TestML::None->new;
 
-    for (my $i = 0; $i < @$transforms; $i++) {
-        my $transform = $transforms->[$i];
-        next if $expression->error and (
-            not $transform->isa('TestML::Transform') or
-            $transform->name ne 'Catch'
-        );
-        if ($transform->isa('TestML::Object')) {
-            $context = $transform;
+    for (my $i = 0; $i < @$units; $i++) {
+        my $unit = $units->[$i];
+        if ($expression->error) {
+            next unless
+                $unit->isa('TestML::Transform') and
+                $unit->name eq 'Catch';
+        }
+        if ($unit->isa('TestML::Object')) {
+            $context = $unit;
             next;
         }
-        my $object = $self->function->getvar($transform->name)
-            or die "Can't find transform '${\$transform->name}'";
+        my $object = $self->function->getvar($unit->name)
+            or die "Can't find transform '${\$unit->name}'";
         if ($object->isa('TestML::Code')) {
             my $function = $object->value;
             my $value = eval {
@@ -171,7 +173,7 @@ sub run_expression {
                         (ref($_) eq 'TestML::Expression')
                         ? $self->run_expression($_, $block)
                         : $_
-                    } @{$transform->args}
+                    } @{$unit->args}
                 );
             };
             if ($@) {
@@ -189,8 +191,11 @@ sub run_expression {
                     TestML::Str->new(value => $value);
             }
         }
-        else {
+        elsif ($object->isa('TestML::Object')) {
             $context = $object;
+        }
+        else {
+            XXX $object;
         }
     }
     if ($expression->error) {
@@ -319,7 +324,7 @@ has 'points' => [];
 package TestML::Expression;
 use TestML::Base -base;
 
-has 'transforms' => [];
+has 'units' => [];
 has 'error';
 
 #-----------------------------------------------------------------------------

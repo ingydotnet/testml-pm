@@ -376,7 +376,7 @@ sub grammar_tree {
     ]
   },
   'transform_argument' => {
-    '+rule' => 'sub_expression'
+    '+rule' => 'test_expression'
   },
   'transform_argument_list' => {
     '+all' => [

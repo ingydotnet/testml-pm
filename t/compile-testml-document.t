@@ -23,26 +23,26 @@ Title = "O HAI TEST";
 my $func = TestML::Compiler->new->compile($testml);
 ok $func, 'TestML string matches against TestML grammar';
 is $func->namespace->{TestML}, '1.0', 'Version parses';
-is $func->statements->[0]->expression->transforms->[0]->args->[1]->transforms->[0]->value, '2', 'Plan parses';
-is $func->statements->[1]->expression->transforms->[0]->args->[1]->transforms->[0]->value, 'O HAI TEST', 'Title parses';
+is $func->statements->[0]->expression->units->[0]->args->[1]->units->[0]->value, '2', 'Plan parses';
+is $func->statements->[1]->expression->units->[0]->args->[1]->units->[0]->value, 'O HAI TEST', 'Title parses';
 
 is scalar(@{$func->statements}), 3, 'Three test statements';
 my $statement = $func->statements->[2];
 is join('-', @{$statement->points}), 'input-output',
     'Point list is correct';
 
-is scalar(@{$statement->expression->transforms}), 2, 'Expression has two transforms';
+is scalar(@{$statement->expression->units}), 2, 'Expression has two units';
 my $expression = $statement->expression;
-is $expression->transforms->[0]->name, 'Point', 'First sub is a Point';
-is $expression->transforms->[0]->args->[0], 'input', 'Point name is "input"';
-is $expression->transforms->[1]->name, 'uppercase', 'Second sub is "uppercase"';
+is $expression->units->[0]->name, 'Point', 'First sub is a Point';
+is $expression->units->[0]->args->[0], 'input', 'Point name is "input"';
+is $expression->units->[1]->name, 'uppercase', 'Second sub is "uppercase"';
 
 is $statement->assertion->name, 'EQ', 'Assertion is "EQ"';
 
 $expression = $statement->assertion->expression;
-is scalar(@{$expression->transforms}), 1, 'Right side has one part';
-is $expression->transforms->[0]->name, 'Point', 'First sub is a Point';
-is $expression->transforms->[0]->args->[0], 'output', 'Point name is "output"';
+is scalar(@{$expression->units}), 1, 'Right side has one part';
+is $expression->units->[0]->name, 'Point', 'First sub is a Point';
+is $expression->units->[0]->args->[0], 'output', 'Point name is "output"';
 
 is scalar(@{$func->data}), 2, 'Two data blocks';
 my ($block1, $block2) = @{$func->data};
