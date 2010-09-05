@@ -248,7 +248,7 @@ sub not_code_statement {
     pop @{$self->expression_stack};
 }
 
-sub got_point_call {
+sub got_point_object {
     my $self = shift;
     my $point_name = shift;
     $point_name =~ s/^\*// or die;
@@ -260,12 +260,12 @@ sub got_point_call {
     push @{$self->statement->points}, $point_name;
 }
 
-sub try_transform_call {
+sub try_transform_object {
     my $self = shift;
     push @{$self->expression_stack->[-1]->units}, TestML::Transform->new();
 }
 
-sub not_transform_call {
+sub not_transform_object {
     my $self = shift;
     pop @{$self->expression_stack->[-1]->units};
 }
@@ -294,7 +294,7 @@ sub not_transform_argument {
     pop @{$self->expression_stack};
 }
 
-sub got_string_call {
+sub got_string_object {
     my $self = shift;
     my $string = $self->string;
     my $transform = TestML::Str->new(
@@ -303,7 +303,7 @@ sub got_string_call {
     push @{$self->expression_stack->[-1]->units}, $transform;
 }
 
-sub got_number_call {
+sub got_number_object {
     my $self = shift;
     my $number = shift;
     my $transform = TestML::Num->new(

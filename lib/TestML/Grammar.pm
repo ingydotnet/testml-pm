@@ -170,21 +170,30 @@ sub grammar_tree {
   'code_expression' => {
     '+all' => [
       {
-        '+rule' => 'sub_expression'
+        '+rule' => 'code_object'
       },
       {
-        '+all' => [
-          {
-            '+not' => 'assertion_call_test'
-          },
-          {
-            '+rule' => 'call_indicator'
-          },
-          {
-            '+rule' => 'sub_expression'
-          }
-        ],
+        '+rule' => 'unit_call',
         '<' => '*'
+      }
+    ]
+  },
+  'code_object' => {
+    '+any' => [
+      {
+        '+rule' => 'function_object'
+      },
+      {
+        '+rule' => 'point_object'
+      },
+      {
+        '+rule' => 'string_object'
+      },
+      {
+        '+rule' => 'number_object'
+      },
+      {
+        '+rule' => 'transform_object'
       }
     ]
   },
@@ -251,7 +260,7 @@ sub grammar_tree {
   'double_quoted_string' => {
     '+re' => qr/(?-xism:\G(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
   },
-  'function_definition' => {
+  'function_object' => {
     '+all' => [
       {
         '+re' => qr/(?-xism:\G\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
@@ -287,7 +296,7 @@ sub grammar_tree {
   'number' => {
     '+re' => qr/(?-xism:\G([0-9]+))/
   },
-  'number_call' => {
+  'number_object' => {
     '+rule' => 'number'
   },
   'phrase_point' => {
@@ -315,9 +324,6 @@ sub grammar_tree {
       }
     ]
   },
-  'point_call' => {
-    '+re' => qr/(?-xism:\G(\*[a-z]\w*))/
-  },
   'point_lines' => {
     '+re' => qr/(?-xism:\G((?:(?!===|---).*\r?\n)*))/
   },
@@ -326,6 +332,9 @@ sub grammar_tree {
   },
   'point_name' => {
     '+re' => qr/(?-xism:\G([a-z]\w*|[A-Z]\w*))/
+  },
+  'point_object' => {
+    '+re' => qr/(?-xism:\G(\*[a-z]\w*))/
   },
   'point_phrase' => {
     '+re' => qr/(?-xism:\G(([^\ \t\n\#](?:[^\n\#]*[^\ \t\n\#])?)))/
@@ -353,27 +362,8 @@ sub grammar_tree {
   'single_quoted_string' => {
     '+re' => qr/(?-xism:\G(?:'(([^\n\\']|\\'|\\\\)*?)'))/
   },
-  'string_call' => {
+  'string_object' => {
     '+rule' => 'quoted_string'
-  },
-  'sub_expression' => {
-    '+any' => [
-      {
-        '+rule' => 'function_definition'
-      },
-      {
-        '+rule' => 'point_call'
-      },
-      {
-        '+rule' => 'string_call'
-      },
-      {
-        '+rule' => 'number_call'
-      },
-      {
-        '+rule' => 'transform_call'
-      }
-    ]
   },
   'transform_argument' => {
     '+rule' => 'code_expression'
@@ -410,7 +400,17 @@ sub grammar_tree {
       }
     ]
   },
-  'transform_call' => {
+  'transform_name' => {
+    '+any' => [
+      {
+        '+rule' => 'user_transform'
+      },
+      {
+        '+rule' => 'core_transform'
+      }
+    ]
+  },
+  'transform_object' => {
     '+all' => [
       {
         '+rule' => 'transform_name'
@@ -421,13 +421,16 @@ sub grammar_tree {
       }
     ]
   },
-  'transform_name' => {
-    '+any' => [
+  'unit_call' => {
+    '+all' => [
       {
-        '+rule' => 'user_transform'
+        '+not' => 'assertion_call_test'
       },
       {
-        '+rule' => 'core_transform'
+        '+rule' => 'call_indicator'
+      },
+      {
+        '+rule' => 'code_object'
       }
     ]
   },
