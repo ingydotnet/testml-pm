@@ -1,6 +1,6 @@
 package TestML::Runtime;
 use TestML::Base -base;
-
+use TestML::AST;
 use TestML::Compiler;
 
 # Since there is only ever one test runtime, it makes things a lot easier to
@@ -93,7 +93,7 @@ sub run_assertion {
 
     $self->test_number($self->test_number + 1);
     $self->function->namespace->{TestNumber} =
-        TestML::Number->new(value => $self->test_number);
+        TestML::Num->new(value => $self->test_number);
 
     # TODO - Should check 
     my $results = ($left->type eq 'List')
@@ -146,22 +146,23 @@ sub run_expression {
     $self->function->expression($expression);
     my $block = shift || undef;
 
-    my $context = TestML::Object->new();
+    my $transforms = $expression->transforms;
+    my $context = TestML::Object->new;
 
-    for my $transform (@{$expression->transforms}) {
+    for (my $i = 0; $i < @$transforms; $i++) {
+        my $transform = $transforms->[$i];
         next if $expression->error and (
             not $transform->isa('TestML::Transform') or
             $transform->name ne 'Catch'
         );
         if ($transform->isa('TestML::Object')) {
-            $context->set($transform->type => $transform->value);
+            $context = $transform;
             next;
         }
         my $object = $self->function->fetch($transform->name)
             or die "Can't find transform '${\$transform->name}'";
-        if ($object->isa('TestML::Function')) {
+        if ($object->isa('TestML::Code')) {
             my $function = $object->value;
-            $expression->set_called(0);
             my $value = eval {
                 &$function(
                     $context,
@@ -173,17 +174,24 @@ sub run_expression {
                 );
             };
             if ($@) {
+                die $@;
                 $expression->error($@);
                 $context->type('None');
                 $context->value(undef);
             }
-            elsif (not $expression->set_called) {
-                $context->value($value);
+            elsif (UNIVERSAL::isa($value, 'TestML::Object')) {
+                $context = $value;
+            }
+            else {
+                $context =
+                    not(defined $value) ? TestML::None->new :
+                    ref($value) eq 'ARRAY' ? TestML::List->new(value => $value) :
+                    $value =~ /^-?\d+$/ ? TestML::Num->new(value => $value + 0) :
+                    TestML::Str->new(value => $value);
             }
         }
         else {
-            $context->type($object->type);
-            $context->value($object->value);
+            $context = $object;
         }
     }
     if ($expression->error) {
@@ -206,7 +214,10 @@ sub compile_testml {
 sub load_variables {
     my $self = shift;
     $self->function->namespace->{Label} =
-        TestML::String->new(value => '$BlockLabel');
+        TestML::Str->new(value => '$BlockLabel');
+    $self->function->namespace->{True} = $TestML::AST::True;
+    $self->function->namespace->{False} = $TestML::AST::False;
+    $self->function->namespace->{None} = $TestML::AST::None;
 }
 
 sub load_transform_module {
@@ -220,7 +231,7 @@ sub load_transform_module {
     for my $key (sort keys %{"$module\::"}) {
         my $glob = ${"$module\::"}{$key};
         if (my $function = *$glob{CODE}) {
-            $self->function->namespace->{$key} = TestML::Function->new(
+            $self->function->namespace->{$key} = TestML::Code->new(
                 value => $function,
             );
         }

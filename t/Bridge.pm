@@ -1,5 +1,4 @@
 package t::Bridge;
-use TestML;
 
 sub my_lower {
     my $context = shift;

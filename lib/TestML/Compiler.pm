@@ -288,7 +288,7 @@ sub got_transform_argument {
 sub got_string_call {
     my $self = shift;
     my $string = $self->string;
-    my $transform = TestML::String->new(
+    my $transform = TestML::Str->new(
         value => $string,
     );
     push @{$self->expression_stack->[-1]->transforms}, $transform;
@@ -297,7 +297,7 @@ sub got_string_call {
 sub got_number_call {
     my $self = shift;
     my $number = shift;
-    my $transform = TestML::Number->new(
+    my $transform = TestML::Num->new(
         value => $number,
     );
     push @{$self->expression_stack->[-1]->transforms}, $transform;

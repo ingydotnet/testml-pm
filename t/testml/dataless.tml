@@ -2,6 +2,7 @@
 
 Title = 'TestML with no data section';
 Plan = 2;
+Label = 'Test $TestNumber';
 
 'foo' == "foo";
 

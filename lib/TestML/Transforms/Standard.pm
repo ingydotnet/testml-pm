@@ -1,10 +1,5 @@
 package TestML::Transforms::Standard;
 use TestML;
-use TestML::AST;
-
-our $True = TestML::Boolean->new(value => 1);
-our $False = TestML::Boolean->new(value => 0);
-our $None = TestML::Object->new;
 
 sub Point {
     my $context = shift;
@@ -13,21 +8,19 @@ sub Point {
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
-    $context->set(Str => $value);
+    return str($value);
 }
 
 sub GetLabel {
     my $context = shift;
     my $label = $context->runtime->get_label;
-    $context->set(Str => $label);
+    return str($label);
 }
 
 sub Get {
     my $context = shift;
-    my $key = shift->value;
-    my $value = $context->runtime->function->namespace->{$key};
-    $value = $value ? $value->value : '';
-    $context->set(Str => $value);
+    my $key = shift->str->value;
+    return $context->runtime->function->namespace->{$key};
 }
 
 sub Set {
@@ -35,12 +28,11 @@ sub Set {
     my $key = shift;
     my $value = shift;
     $context->runtime->function->namespace->{$key} = $value;
-    return; 
+    return $value; 
 }
 
 sub Type {
-    my $context = shift;
-    $context->set('Str', $context->type);
+    return str(shift->type);
 }
 
 sub Catch {
@@ -49,7 +41,7 @@ sub Catch {
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
     $context->runtime->clear_error;
-    $context->set(Str => $error);
+    return str($error);
 }
 
 sub Throw {
@@ -59,32 +51,19 @@ sub Throw {
     die $msg;
 }
 
-sub Str {
-    my $context = shift;
-    $context->set(Str => $context->as_str);
-}
+sub Str { return str(shift->str->value) }
+sub Num { return num(shift->num->value) }
+sub Bool { return bool(shift->bool->value) }
 
-sub Bool {
-    my $context = shift;
-    $context->set(Bool => $context->as_bool);
-}
-
-sub Num {
-    my $context = shift;
-    $context->set(Num => $context->as_num);
-}
-
-sub Not {
-    my $context = shift;
-    $context->set(Bool => $context->as_bool ? 0 : 1);
-}
+sub Not { return bool(shift->bool->value ? 0: 1) }
 
 sub Chomp {
-    my $context = shift;
-    my $value = $context->assert_type('Str');
+    my $value = shift->str->value;
     chomp($value);
     return $value;
 }
+
+1;
 
 __END__
 sub Context {
@@ -154,4 +133,3 @@ sub Raw {
 sub Select {
     return (shift)->value;
 }
-

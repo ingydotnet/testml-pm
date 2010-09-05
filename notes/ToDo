@@ -13,11 +13,16 @@
 + Fix M:I:T to use new module set.
 + Parse data in a separate parse.
 + Localize data to a function
++ Rename TestML::Parser::Grammar to TestML::Grammar
 
+- Delete t/runner.t
+- Make namespace a real object with get/set methods.
+- Rename TestML::AST -> TestML::Internals
+- Rename TestML::Transform::* -> TestML::Library
 - Add fetch / store in Function for variable access.
 - Add transform for data parse
 - Support function definitions
-- Rename TestML::Parser::Grammar to TestML::Grammar
+- True/False/None can be singleton objects
 
 - Allow quotes for line points
 - Support Native objects

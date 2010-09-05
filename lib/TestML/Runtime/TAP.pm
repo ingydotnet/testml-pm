@@ -26,8 +26,8 @@ sub plan_begin {
 sub assert_EQ {
     my $self = shift;
     $self->test_builder->is_eq(
-        shift->as_str,
-        shift->as_str,
+        shift->str->value,
+        shift->str->value,
         $self->get_label,
     );
 }
@@ -52,5 +52,8 @@ does not contain this string:
 sub assert_OK {
     my $self = shift;
     my $context = shift;
-    $self->test_builder->ok($context->as_bool, $self->get_label);
+    $self->test_builder->ok(
+        $context->bool->value,
+        $self->get_label,
+    );
 }

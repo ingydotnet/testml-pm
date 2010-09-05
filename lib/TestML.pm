@@ -3,14 +3,23 @@ use strict;
 use warnings;
 use 5.006001;
 
+use TestML::AST;
+
 $TestML::VERSION = '0.20';
 
-our @EXPORT = qw(WWW XXX YYY ZZZ);
+our @EXPORT_OK = qw(str num bool list WWW XXX YYY ZZZ);
+our @EXPORT = qw(str num bool list WWW XXX YYY ZZZ);
+
 our $DumpModule = 'YAML::XS';
 sub WWW { require XXX; local $XXX::DumpModule = $DumpModule; XXX::WWW(@_) }
 sub XXX { require XXX; local $XXX::DumpModule = $DumpModule; XXX::XXX(@_) }
 sub YYY { require XXX; local $XXX::DumpModule = $DumpModule; XXX::YYY(@_) }
 sub ZZZ { require XXX; local $XXX::DumpModule = $DumpModule; XXX::ZZZ(@_) }
+
+sub str { TestML::Str->new(value => $_[0]) }
+sub num { TestML::Num->new(value => $_[0]) }
+sub bool { TestML::Bool->new(value => $_[0]) }
+sub list { TestML::List->new(value => $_[0]) }
 
 sub import {
     my $run;
