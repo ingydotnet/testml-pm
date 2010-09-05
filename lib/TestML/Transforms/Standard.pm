@@ -65,71 +65,70 @@ sub Chomp {
 
 1;
 
-__END__
-sub Context {
-    my $context = shift;
-    $context->set(None => $context);
-}
-
-sub Text {
-    my $context = shift;
-    my $value = $context->assert_type('List');
-    $context->set(Str => join "\n", @$value, '');
-}
-
-sub Lines {
-    my $context = shift;
-    my $value = $context->value || '';
-    $value = [ split /\n/, $value ];
-    $context->set(List => $value);
-}
-
-sub Join {
-    my $context = shift;
-    my $value = $context->assert_type('List');
-    my $string = @_ ? (shift)->value : '';
-    $context->set(Str => join $string, @$value);
-}
-
-sub Reverse {
-    my $context = shift;
-    my $value = $context->assert_type('List');
-    return [ reverse @$value ];
-}
-
-sub Sort {
-    my $context = shift;
-    my $value = $context->assert_type('List');
-    return [ sort @$value ];
-}
-
-sub BoolStr {
-    my $context = shift;
-    return $context->value ? 'True' : 'False';
-}
-
-
-sub Union {
-    my $list = (shift)->value;
-    # my $list2 = shift;
-    my $list2 = [ @$list ];
-    return [ @$list, @$list2 ];
-}
-
-sub Unique {
-    my $list = (shift)->value;
-    # my $list2 = shift;
-    my $list2 = [ @$list ];
-    return [ @$list, @$list2 ];
-}
-
-sub Raw {
-    my $context = shift;
-    my $point = $context->point
-        or die "Raw called but there is no point";
-    return $context->runtime->block->points->{$point};
-}
-
-sub Select {
-    return (shift)->value;
-}
+# sub Context {
+#     my $context = shift;
+#     $context->set(None => $context);
+# }
+# 
+# sub Text {
+#     my $context = shift;
+#     my $value = $context->assert_type('List');
+#     $context->set(Str => join "\n", @$value, '');
+# }
+# 
+# sub Lines {
+#     my $context = shift;
+#     my $value = $context->value || '';
+#     $value = [ split /\n/, $value ];
+#     $context->set(List => $value);
+# }
+# 
+# sub Join {
+#     my $context = shift;
+#     my $value = $context->assert_type('List');
+#     my $string = @_ ? (shift)->value : '';
+#     $context->set(Str => join $string, @$value);
+# }
+# 
+# sub Reverse {
+#     my $context = shift;
+#     my $value = $context->assert_type('List');
+#     return [ reverse @$value ];
+# }
+# 
+# sub Sort {
+#     my $context = shift;
+#     my $value = $context->assert_type('List');
+#     return [ sort @$value ];
+# }
+# 
+# sub BoolStr {
+#     my $context = shift;
+#     return $context->value ? 'True' : 'False';
+# }
+# 
+# 
+# sub Union {
+#     my $list = (shift)->value;
+#     # my $list2 = shift;
+#     my $list2 = [ @$list ];
+#     return [ @$list, @$list2 ];
+# }
+# 
+# sub Unique {
+#     my $list = (shift)->value;
+#     # my $list2 = shift;
+#     my $list2 = [ @$list ];
+#     return [ @$list, @$list2 ];
+# }
+# 
+# sub Raw {
+#     my $context = shift;
+#     my $point = $context->point
+#         or die "Raw called but there is no point";
+#     return $context->runtime->block->points->{$point};
+# }
+# 
+# sub Select {
+#     return (shift)->value;
+# }

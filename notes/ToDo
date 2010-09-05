@@ -15,6 +15,7 @@
 + Localize data to a function
 + Rename TestML::Parser::Grammar to TestML::Grammar
 
+- Make TestML::Object::type a method that returns type based on class.
 - Delete t/runner.t
 - Make namespace a real object with get/set methods.
 - Rename TestML::AST -> TestML::Internals

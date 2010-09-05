@@ -132,6 +132,12 @@ sub bool { Bool(0) }
 sub list { List([]) }
 
 #-----------------------------------------------------------------------------
+package TestML::Error;
+use TestML::Object -base;
+
+has 'type' => 'Error';
+
+#-----------------------------------------------------------------------------
 package TestML::Code;
 use TestML::Object -base;
 

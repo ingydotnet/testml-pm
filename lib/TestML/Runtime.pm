@@ -174,10 +174,8 @@ sub run_expression {
                 );
             };
             if ($@) {
-                die $@;
                 $expression->error($@);
-                $context->type('None');
-                $context->value(undef);
+                $context = TestML::Error->new(value => $@);
             }
             elsif (UNIVERSAL::isa($value, 'TestML::Object')) {
                 $context = $value;
