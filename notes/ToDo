@@ -14,22 +14,22 @@
 + Parse data in a separate parse.
 + Localize data to a function
 + Rename TestML::Parser::Grammar to TestML::Grammar
++ Delete t/runner.t
++ Put TestML::AST into TestML::Runtime
++ Rename TestML::Transform::* -> TestML::Library
++ True/False/None can be singleton objects
++ Make TestML::Object::type a method that returns type based on class.
++ Add getvar / setvar in Function for variable access.
++ Redo grammar to match current terminology. like get rid of meta section, for example.
 
-- Make TestML::Object::type a method that returns type based on class.
-- Delete t/runner.t
-- Make namespace a real object with get/set methods.
-- Rename TestML::AST -> TestML::Internals
-- Rename TestML::Transform::* -> TestML::Library
-- Add fetch / store in Function for variable access.
+- Rename transform to 'call'
+  - expression: <object> <call>*
 - Add transform for data parse
 - Support function definitions
-- True/False/None can be singleton objects
 
 - Allow quotes for line points
 - Support Native objects
 
-- Redo grammar to match current terminology. like get rid of meta section, for
-  example.
 
 == Tests
 - List assertions

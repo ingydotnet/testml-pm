@@ -92,8 +92,9 @@ sub run_assertion {
     $self->run_plan;
 
     $self->test_number($self->test_number + 1);
-    $self->function->namespace->{TestNumber} =
-        TestML::Num->new(value => $self->test_number);
+    $self->function->setvar(
+        TestNumber => TestML::Num->new(value => $self->test_number),
+    );
 
     # TODO - Should check 
     my $results = ($left->type eq 'List')
@@ -159,7 +160,7 @@ sub run_expression {
             $context = $transform;
             next;
         }
-        my $object = $self->function->fetch($transform->name)
+        my $object = $self->function->getvar($transform->name)
             or die "Can't find transform '${\$transform->name}'";
         if ($object->isa('TestML::Code')) {
             my $function = $object->value;
@@ -211,11 +212,10 @@ sub compile_testml {
 
 sub load_variables {
     my $self = shift;
-    $self->function->namespace->{Label} =
-        TestML::Str->new(value => '$BlockLabel');
-    $self->function->namespace->{True} = $TestML::AST::True;
-    $self->function->namespace->{False} = $TestML::AST::False;
-    $self->function->namespace->{None} = $TestML::AST::None;
+    $self->function->setvar(Label => TestML::Str->new(value => '$BlockLabel'));
+    $self->function->setvar(True => $TestML::Constant::True);
+    $self->function->setvar(False => $TestML::Constant::False);
+    $self->function->setvar(None => $TestML::Constant::None);
 }
 
 sub load_transform_module {
@@ -229,13 +229,13 @@ sub load_transform_module {
     for my $key (sort keys %{"$module\::"}) {
         my $glob = ${"$module\::"}{$key};
         if (my $function = *$glob{CODE}) {
-            $self->function->namespace->{$key} = TestML::Code->new(
-                value => $function,
+            $self->function->setvar(
+                $key => TestML::Code->new(value => $function),
             );
         }
         elsif (my $object = *$glob{SCALAR}) {
             if ($$object) {
-                $self->function->namespace->{$key} = $$object;
+                $self->function->setvar($key => $$object);
             }
         }
     }
@@ -243,7 +243,7 @@ sub load_transform_module {
 
 sub get_label {
     my $self = shift;
-    my $label = $self->function->namespace->{Label}->value;
+    my $label = $self->function->getvar('Label')->value;
     sub label {
         my $self = shift;
         my $var = shift;
@@ -253,7 +253,7 @@ sub get_label {
             $v =~ s/^\s*(.*?)\s*$/$1/;
             return $v;
         }
-        if (my $v = $self->function->namespace->{$var}) {
+        if (my $v = $self->function->getvar($var)) {
             return $v->value;
         }
     }
@@ -287,7 +287,7 @@ has 'data' => [];
 has 'expression';
 has 'block';
 
-sub fetch {
+sub getvar {
     my $self = shift;
     my $name = shift;
     while ($self) {
@@ -296,6 +296,14 @@ sub fetch {
         }
         $self = $self->outer;
     }
+    return;
+}
+
+sub setvar {
+    my $self = shift;
+    my $name = shift;
+    my $object = shift;
+    $self->namespace->{$name} = $object;
     return;
 }
 
@@ -313,7 +321,6 @@ use TestML::Base -base;
 
 has 'transforms' => [];
 has 'error';
-has 'set_called';
 
 #-----------------------------------------------------------------------------
 package TestML::Assertion;
@@ -340,51 +347,43 @@ has 'points' => {};
 package TestML::Object;
 use TestML::Base -base;
 
-our @EXPORT_BASE = qw(Str Num Bool List);
-
-has 'type' => 'None';
 has 'value';
+
+sub type {
+    my $type = ref(shift);
+    $type =~ s/^TestML::// or die "Can't find type of '$type'";
+    return $type;
+}
 
 sub runtime { return $TestML::Runtime::self }
 
-sub Str     { TestML::Str->new(value => shift) }
-sub Num     { TestML::Num->new(value => shift) }
-sub Bool    { TestML::Bool->new(value => shift) }
-sub List    { TestML::List->new(value => shift) }
-
-use Carp;
-sub str { my $t = $_[0]->type; confess "Cast from $t to Str is not supported" }
+sub str { my $t = $_[0]->type; die "Cast from $t to Str is not supported" }
 sub num { my $t = $_[0]->type; die "Cast from $t to Num is not supported" }
 sub bool { my $t = $_[0]->type; die "Cast from $t to Bool is not supported" }
 sub list { my $t = $_[0]->type; die "Cast from $t to List is not supported" }
+sub none { $TestML::Constant::None }
 
 #-----------------------------------------------------------------------------
 package TestML::Str;
 use TestML::Object -base;
 
-has 'type' => 'Str';
-
 sub str { shift }
 sub num { $_[0]->value =~ /^-?\d+(?:\.\d+)$/ ? ($_[0]->value + 0) : 0 }
-sub bool { TestML::Bool->new(value => length($_[0]->value) ? 1 : 0) }
+sub bool { length($_[0]->value) ? $TestML::Constant::True : $TestML::Constant::False }
 sub list { List([split //, $_[0]->value]) }
 
 #-----------------------------------------------------------------------------
 package TestML::Num;
 use TestML::Object -base;
 
-has 'type' => 'Num';
-
 sub str { TestML::Str->new($_[0]->value . "") }
 sub num { shift }
-sub bool { TestML::Bool->new(value => ($_[0]->value != 0)) }
+sub bool { ($_[0]->value != 0) ? $TestML::Constant::True : $TestML::Constant::False }
 sub list { my $list = []; $#{$list} = int($_[0]) -1; TestML::List->new($list) }
 
 #-----------------------------------------------------------------------------
 package TestML::Bool;
 use TestML::Object -base;
-
-has 'type' => 'Bool';
 
 sub str { TestML::Str->new($_[0]->value ? "1" : "") }
 sub num { TestML::Num->new($_[0]->value ? 1 : 0) }
@@ -394,30 +393,22 @@ sub bool { shift }
 package TestML::List;
 use TestML::Object -base;
 
-has 'type' => 'List';
-
 #-----------------------------------------------------------------------------
 package TestML::None;
 use TestML::Object -base;
 
-has 'type' => 'None';
-
 sub str { Str('') }
 sub num { Num(0) }
-sub bool { Bool(0) }
+sub bool { $TestML::Constant::False }
 sub list { List([]) }
 
 #-----------------------------------------------------------------------------
 package TestML::Error;
 use TestML::Object -base;
 
-has 'type' => 'Error';
-
 #-----------------------------------------------------------------------------
 package TestML::Code;
 use TestML::Object -base;
-
-has 'type' => 'Code';
 
 # #-----------------------------------------------------------------------------
 # package TestML::Native;
@@ -426,7 +417,7 @@ has 'type' => 'Code';
 # has 'type' => 'Func';
 # 
 
-package TestML::AST;
+package TestML::Constant;
 
 our $True = TestML::Bool->new(value => 1);
 our $False = TestML::Bool->new(value => 0);
