@@ -1,4 +1,4 @@
-package TestML::Transforms::Debug;
+package TestML::Library::Debug;
 use TestML();
 
 sub WWW {

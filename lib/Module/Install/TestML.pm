@@ -28,14 +28,13 @@ sub use_testml {
     $self->include('Pegex::Base');
 
     $self->include('TestML');
-    $self->include('TestML::AST');
     $self->include('TestML::Base');
     $self->include('TestML::Compiler');
     $self->include('TestML::Grammar');
     $self->include('TestML::Runtime');
     $self->include('TestML::Runtime::TAP');
-    $self->include('TestML::Transforms::Debug');
-    $self->include('TestML::Transforms::Standard');
+    $self->include('TestML::Library::Debug');
+    $self->include('TestML::Library::Standard');
 }
 
 sub testml_setup {

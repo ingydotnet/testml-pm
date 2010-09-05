@@ -10,6 +10,7 @@ our $self;
 has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
 has 'testml';
 has 'bridge';
+has 'library' => []; # XXX Add TestML.pm support for -library keyword.
 
 has 'function';
 has 'planned' => 0;
@@ -20,8 +21,8 @@ sub init {
     $self->SUPER::init(@_);
     $self->function($self->compile_testml);
     $self->load_variables;
-    $self->load_transform_module('TestML::Transforms::Standard');
-    $self->load_transform_module('TestML::Transforms::Debug');
+    $self->load_transform_module('TestML::Library::Standard');
+    $self->load_transform_module('TestML::Library::Debug');
     if ($self->bridge) {
         $self->load_transform_module($self->bridge);
     }

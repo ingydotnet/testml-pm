@@ -1,4 +1,4 @@
-package TestML::Transforms::Standard;
+package TestML::Library::Standard;
 use TestML;
 
 sub Point {
