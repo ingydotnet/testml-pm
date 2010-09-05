@@ -2,7 +2,7 @@ package TestML::Runtime;
 use TestML::Base -base;
 use TestML::Compiler;
 
-# Since there is only ever one test runtime, it makes things a lot easier to
+# Since there is only ever one test runtime, it makes things a LOT cleaner to
 # keep the reference to it in a global variable accessed by a method, than to
 # put a reference to it into every object that needs to access it.
 our $self;
@@ -188,6 +188,9 @@ sub run_expression {
                     not(defined $value) ? TestML::None->new :
                     ref($value) eq 'ARRAY' ? TestML::List->new(value => $value) :
                     $value =~ /^-?\d+$/ ? TestML::Num->new(value => $value + 0) :
+                    "$value" eq "$TestML::Constant::True" ? $value :
+                    "$value" eq "$TestML::Constant::False" ? $value :
+                    "$value" eq "$TestML::Constant::None" ? $value :
                     TestML::Str->new(value => $value);
             }
         }
