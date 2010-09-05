@@ -262,19 +262,21 @@ sub got_point_call {
     push @{$self->statement->points}, $point_name;
 }
 
-sub got_transform_call {
+sub try_transform_call {
     my $self = shift;
-    my $transform = TestML::Transform->new(
-        name => $self->transform_name,
-        args => $self->transform_arguments,
-    );
-    push @{$self->expression_stack->[-1]->units}, $transform;
+    push @{$self->expression_stack->[-1]->units}, TestML::Transform->new();
+}
+
+sub not_transform_call {
+    my $self = shift;
+    pop @{$self->expression_stack->[-1]->units};
 }
 
 sub got_transform_name {
     my $self = shift;
-    $self->transform_name(shift);
-    $self->transform_arguments([]);
+    my $transform = $self->expression_stack->[-1]->units->[-1];
+    $transform->name(shift);
+    $transform->args([]);
 }
 
 sub try_transform_argument {
@@ -284,7 +286,9 @@ sub try_transform_argument {
 
 sub got_transform_argument {
     my $self = shift;
-    push @{$self->transform_arguments}, pop @{$self->expression_stack};
+    my $argument = pop @{$self->expression_stack};
+    my $transform = $self->expression_stack->[-1]->units->[-1];
+    push @{$transform->args}, $argument;
 }
 
 sub not_transform_argument {
