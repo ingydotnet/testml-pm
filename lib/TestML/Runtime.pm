@@ -292,6 +292,8 @@ has 'outer';
 has 'namespace' => {};
 has 'statements' => [];
 has 'data' => [];
+
+# Runtime pointers to current objects.
 has 'expression';
 has 'block';
 
