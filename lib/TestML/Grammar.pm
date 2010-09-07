@@ -200,7 +200,7 @@ sub grammar_tree {
   'code_section' => {
     '+any' => [
       {
-        '+rule' => 'ws'
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
       },
       {
         '+rule' => 'assignment_statement'
@@ -263,14 +263,63 @@ sub grammar_tree {
   'function_object' => {
     '+all' => [
       {
-        '+re' => qr/(?-xism:\G\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
+        '+rule' => 'function_signature',
+        '<' => '?'
       },
       {
-        '+rule' => 'code_statement',
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
+      },
+      {
+        '+any' => [
+          {
+            '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
+          },
+          {
+            '+rule' => 'assignment_statement'
+          },
+          {
+            '+rule' => 'code_statement'
+          }
+        ],
         '<' => '*'
       },
       {
         '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\})/
+      }
+    ]
+  },
+  'function_signature' => {
+    '+all' => [
+      {
+        '+re' => qr/(?-xism:\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*)/
+      },
+      {
+        '+rule' => 'function_variables',
+        '<' => '?'
+      },
+      {
+        '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\))/
+      }
+    ]
+  },
+  'function_variable' => {
+    '+rule' => 'variable_name'
+  },
+  'function_variables' => {
+    '+all' => [
+      {
+        '+rule' => 'function_variable'
+      },
+      {
+        '+all' => [
+          {
+            '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
+          },
+          {
+            '+rule' => 'function_variable'
+          }
+        ],
+        '<' => '*'
       }
     ]
   },
@@ -442,9 +491,6 @@ sub grammar_tree {
   },
   'variable_name' => {
     '+re' => qr/(?-xism:\G([a-zA-Z]\w*))/
-  },
-  'ws' => {
-    '+re' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n))/
   }
 };
 }
