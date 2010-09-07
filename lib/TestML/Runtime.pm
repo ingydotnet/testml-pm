@@ -288,10 +288,10 @@ sub throw {
 package TestML::Function;
 use TestML::Base -base;
 
-has 'outer';
-has 'namespace' => {};
-has 'statements' => [];
-has 'data' => [];
+has 'outer';                # Parent/container function
+has 'namespace' => {};      # Lexical scoped variable stash
+has 'statements' => [];     # Exexcutable code statements
+has 'data' => [];           # Data section scoped to this function
 
 # Runtime pointers to current objects.
 has 'expression';

@@ -167,10 +167,11 @@ use TestML::Runtime;
 
 has 'function', -init => 'TestML::Function->new()';
 
-has 'expression_stack' => [];
-has 'current_block';
-has 'point_name';
+has 'stack' => [];
+has 'block';
+
 has 'string';
+has 'point_name';
 
 my %ESCAPES = (
     '\\' => '\\',
@@ -207,19 +208,19 @@ sub try_assignment_statement {
         name => 'Set',
     );
     $self->function->statements->[-1]->expression($expression);
-    push @{$self->expression_stack}, TestML::Expression->new;
+    push @{$self->stack}, TestML::Expression->new;
 }
 
 sub got_assignment_statement {
     my $self = shift;
     $self->function->statements->[-1]->expression->units->[0]->args->[1] =
-        pop @{$self->expression_stack};
+        pop @{$self->stack};
 }
 
 sub not_assignment_statement {
     my $self = shift;
     pop @{$self->function->statements};
-    pop @{$self->expression_stack};
+    pop @{$self->stack};
 }
 
 sub got_variable_name {
@@ -232,18 +233,18 @@ sub got_variable_name {
 sub try_code_statement {
     my $self = shift;
     push @{$self->function->statements}, TestML::Statement->new();
-    push @{$self->expression_stack}, $self->function->statements->[-1]->expression;
+    push @{$self->stack}, $self->function->statements->[-1]->expression;
 }
 
 sub got_code_statement {
     my $self = shift;
-    pop @{$self->expression_stack};
+    pop @{$self->stack};
 }
 
 sub not_code_statement {
     my $self = shift;
     pop @{$self->function->statements};
-    pop @{$self->expression_stack};
+    pop @{$self->stack};
 }
 
 sub got_point_object {
@@ -254,42 +255,42 @@ sub got_point_object {
         name => 'Point',
         args => [$point_name],
     );
-    push @{$self->expression_stack->[-1]->units}, $transform;
+    push @{$self->stack->[-1]->units}, $transform;
     push @{$self->function->statements->[-1]->points}, $point_name;
 }
 
 sub try_transform_object {
     my $self = shift;
-    push @{$self->expression_stack->[-1]->units}, TestML::Transform->new();
+    push @{$self->stack->[-1]->units}, TestML::Transform->new();
 }
 
 sub not_transform_object {
     my $self = shift;
-    pop @{$self->expression_stack->[-1]->units};
+    pop @{$self->stack->[-1]->units};
 }
 
 sub got_transform_name {
     my $self = shift;
-    my $transform = $self->expression_stack->[-1]->units->[-1];
+    my $transform = $self->stack->[-1]->units->[-1];
     $transform->name(shift);
     $transform->args([]);
 }
 
 sub try_transform_argument {
     my $self = shift;
-    push @{$self->expression_stack}, TestML::Expression->new;
+    push @{$self->stack}, TestML::Expression->new;
 }
 
 sub got_transform_argument {
     my $self = shift;
-    my $argument = pop @{$self->expression_stack};
-    my $transform = $self->expression_stack->[-1]->units->[-1];
+    my $argument = pop @{$self->stack};
+    my $transform = $self->stack->[-1]->units->[-1];
     push @{$transform->args}, $argument;
 }
 
 sub not_transform_argument {
     my $self = shift;
-    pop @{$self->expression_stack};
+    pop @{$self->stack};
 }
 
 sub got_string_object {
@@ -298,7 +299,7 @@ sub got_string_object {
     my $transform = TestML::Str->new(
         value => $string,
     );
-    push @{$self->expression_stack->[-1]->units}, $transform;
+    push @{$self->stack->[-1]->units}, $transform;
 }
 
 sub got_number_object {
@@ -307,25 +308,25 @@ sub got_number_object {
     my $transform = TestML::Num->new(
         value => $number,
     );
-    push @{$self->expression_stack->[-1]->units}, $transform;
+    push @{$self->stack->[-1]->units}, $transform;
 }
 
 sub try_assertion_call {
     my $self = shift;
     $self->function->statements->[-1]->assertion(TestML::Assertion->new);
-    push @{$self->expression_stack},
+    push @{$self->stack},
         $self->function->statements->[-1]->assertion->expression;
 }
 
 sub got_assertion_call {
     my $self = shift;
-    pop @{$self->expression_stack};
+    pop @{$self->stack};
 }
 
 sub not_assertion_call {
     my $self = shift;
     $self->function->statements->[-1]->assertion(undef);
-    pop @{$self->expression_stack};
+    pop @{$self->stack};
 }
 
 sub got_assertion_eq {
@@ -345,8 +346,7 @@ sub got_assertion_has {
 
 sub got_block_label {
     my $self = shift;
-    my $block = TestML::Block->new(label => shift);
-    $self->current_block($block);
+    $self->block(TestML::Block->new(label => shift));
 }
 
 sub got_point_name {
@@ -357,16 +357,16 @@ sub got_point_name {
 sub got_point_phrase {
     my $self = shift;
     my $point_phrase = shift;
-    $self->current_block->points->{$self->point_name} = $point_phrase;
+    $self->block->points->{$self->point_name} = $point_phrase;
 }
 
 sub got_point_lines {
     my $self = shift;
     my $point_lines = shift;
-    $self->current_block->points->{$self->point_name} = $point_lines;
+    $self->block->points->{$self->point_name} = $point_lines;
 }
 
 sub got_data_block {
     my $self = shift;
-    push @{$self->function->data}, $self->current_block;
+    push @{$self->function->data}, $self->block;
 }
