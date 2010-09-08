@@ -166,49 +166,60 @@ sub run_expression {
             $context = $unit;
             next;
         }
-        my $object = $self->function->getvar($unit->name)
+        die "Unexpected unit: $unit" unless $unit->isa('TestML::Transform');
+        my $callable = $self->function->getvar($unit->name)
             or die "Can't find transform '${\$unit->name}'";
-        if ($object->isa('TestML::Code')) {
-            my $function = $object->value;
-            my $value = eval {
-                &$function(
-                    $context,
-                    map {
-                        (ref($_) eq 'TestML::Expression')
-                        ? $self->run_expression($_, $block)
-                        : $_
-                    } @{$unit->args}
-                );
-            };
-            if ($@) {
-                $expression->error($@);
-                $context = TestML::Error->new(value => $@);
-            }
-            elsif (UNIVERSAL::isa($value, 'TestML::Object')) {
-                $context = $value;
-            }
-            else {
-                $context =
-                    not(defined $value) ? TestML::None->new :
-                    ref($value) eq 'ARRAY' ? TestML::List->new(value => $value) :
-                    $value =~ /^-?\d+$/ ? TestML::Num->new(value => $value + 0) :
-                    "$value" eq "$TestML::Constant::True" ? $value :
-                    "$value" eq "$TestML::Constant::False" ? $value :
-                    "$value" eq "$TestML::Constant::None" ? $value :
-                    TestML::Str->new(value => $value);
-            }
+        my $args = $unit->args;
+        if ($callable->isa('TestML::Native')) {
+            $context = $self->run_native($callable->value, $context, $args, $block);
         }
-        elsif ($object->isa('TestML::Object')) {
-            $context = $object;
+        elsif ($callable->isa('TestML::Object')) {
+            $context = $callable;
         }
         else {
-            XXX $object;
+            XXX $callable;
         }
     }
     if ($expression->error) {
         die $expression->error;
     }
     $self->function->expression($prev_expression);
+    return $context;
+}
+
+sub run_native {
+    my $self = shift;
+    my $function = shift;
+    my $context = shift;
+    my $args = shift;
+    my $block = shift;
+    my $value = eval {
+        &$function(
+            $context,
+            map {
+                (ref($_) eq 'TestML::Expression')
+                ? $self->run_expression($_, $block)
+                : $_
+            } @$args
+        );
+    };
+    if ($@) {
+        $self->function->expression->error($@);
+        $context = TestML::Error->new(value => $@);
+    }
+    elsif (UNIVERSAL::isa($value, 'TestML::Object')) {
+        $context = $value;
+    }
+    else {
+        $context =
+            not(defined $value) ? TestML::None->new :
+            ref($value) eq 'ARRAY' ? TestML::List->new(value => $value) :
+            $value =~ /^-?\d+$/ ? TestML::Num->new(value => $value + 0) :
+            "$value" eq "$TestML::Constant::True" ? $value :
+            "$value" eq "$TestML::Constant::False" ? $value :
+            "$value" eq "$TestML::Constant::None" ? $value :
+            TestML::Str->new(value => $value);
+    }
     return $context;
 }
 
@@ -243,7 +254,7 @@ sub load_transform_module {
         my $glob = ${"$module\::"}{$key};
         if (my $function = *$glob{CODE}) {
             $self->function->setvar(
-                $key => TestML::Code->new(value => $function),
+                $key => TestML::Native->new(value => $function),
             );
         }
         elsif (my $object = *$glob{SCALAR}) {
@@ -423,15 +434,8 @@ package TestML::Error;
 use TestML::Object -base;
 
 #-----------------------------------------------------------------------------
-package TestML::Code;
+package TestML::Native;
 use TestML::Object -base;
-
-# #-----------------------------------------------------------------------------
-# package TestML::Native;
-# use TestML::Object -base;
-# 
-# has 'type' => 'Func';
-# 
 
 package TestML::Constant;
 
