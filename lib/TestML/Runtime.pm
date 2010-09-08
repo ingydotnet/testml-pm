@@ -294,6 +294,7 @@ package TestML::Function;
 use TestML::Base -base;
 
 has 'outer';                # Parent/container function
+has 'signature' => [];      # Input variable names
 has 'namespace' => {};      # Lexical scoped variable stash
 has 'statements' => [];     # Exexcutable code statements
 has 'data' => [];           # Data section scoped to this function

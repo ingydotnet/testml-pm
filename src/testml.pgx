@@ -68,7 +68,7 @@ function_variables:
   <function_variable>
   [ /<ws>*<COMMA><ws>*/ <function_variable> ]*
 
-function_variable: <variable_name>
+function_variable: /(<ALPHA><WORD>*)/
 
 point_object: /(<STAR><LOWER><WORD>*)/
 

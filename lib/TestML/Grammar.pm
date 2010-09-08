@@ -303,7 +303,7 @@ sub grammar_tree {
     ]
   },
   'function_variable' => {
-    '+rule' => 'variable_name'
+    '+re' => qr/(?-xism:\G([a-zA-Z]\w*))/
   },
   'function_variables' => {
     '+all' => [

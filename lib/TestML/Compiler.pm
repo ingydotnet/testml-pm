@@ -284,6 +284,12 @@ sub not_function_object {
     $self->function($self->function->outer);
 }
 
+sub got_function_variable {
+    my $self = shift;
+    my $variable_name = shift;
+    push @{$self->function->signature}, $variable_name;
+}
+
 sub try_transform_object {
     my $self = shift;
     push @{$self->stack->[-1]->units}, TestML::Transform->new();
@@ -298,7 +304,6 @@ sub got_transform_name {
     my $self = shift;
     my $transform = $self->stack->[-1]->units->[-1];
     $transform->name(shift);
-    $transform->args([]);
 }
 
 sub try_transform_argument {
@@ -309,8 +314,7 @@ sub try_transform_argument {
 sub got_transform_argument {
     my $self = shift;
     my $argument = pop @{$self->stack};
-    my $transform = $self->stack->[-1]->units->[-1];
-    push @{$transform->args}, $argument;
+    push @{$self->stack->[-1]->units->[-1]->args}, $argument;
 }
 
 sub not_transform_argument {
