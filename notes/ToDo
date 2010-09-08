@@ -22,14 +22,15 @@
 + Add getvar / setvar in Function for variable access.
 + Redo grammar to match current terminology. like get rid of meta section, for example.
 + Add input arguments to functions
++ Support function definitions
 
+- Allow functions to return values.
 - Rethink moving TestML::Runtime::TAP to TestML::(Adapter|Test)::TAP
 - Make bare functions callable by '.' or '()'
 - Make assertions into regular function calls.
 - Rename transform to 'call'
   - expression: <object> <call>*
-- Add transform for data parse
-- Support function definitions
+- Add a standard transform for data parse
 
 - Allow quotes for line points
 - Support Native objects

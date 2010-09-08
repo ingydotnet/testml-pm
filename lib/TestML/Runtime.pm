@@ -71,7 +71,7 @@ sub run_function {
         scalar(@$signature),
     ) if @$signature and @$args != @$signature;
     $function->setvar('Self', $context);
-    for (my $i = 0; $i < @$args; $i++) {
+    for (my $i = 0; $i < @$signature; $i++) {
         my $arg = $args->[$i];
         $arg = $self->run_expression($arg)
             if ref($arg) eq 'TestML::Expression';
@@ -195,10 +195,17 @@ sub run_expression {
             $context = $callable;
         }
         elsif ($callable->isa('TestML::Function')) {
-            $context = $self->run_function($callable, $context, $args);
+            if ($i or $unit->explicit_call) {
+                my $points = $self->function->getvar('Block')->points;
+                for my $key (keys %$points) {
+                    $callable->setvar($key, TestML::Str->new(value => $points->{$key}));
+                }
+                $context = $self->run_function($callable, $context, $args);
+            }
+            $context = $callable;
         }
         else {
-            die;
+            ZZZ $callable;
         }
     }
     if ($expression->error) {
@@ -332,6 +339,7 @@ sub throw {
 package TestML::Function;
 use TestML::Base -base;
 
+has 'type' => 'Func';       # Functions are TestML typed objects
 has 'outer';                # Parent/container function
 has 'signature' => [];      # Input variable names
 has 'namespace' => {};      # Lexical scoped variable stash
@@ -397,6 +405,7 @@ use TestML::Base -base;
 
 has 'name';
 has 'args' => [];
+has 'explicit_call' => 0;
 
 #-----------------------------------------------------------------------------
 package TestML::Block;

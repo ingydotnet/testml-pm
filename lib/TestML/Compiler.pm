@@ -36,7 +36,7 @@ sub compile {
         or die "Parse TestML data section failed";
 
     XXX($grammar->receiver->function)
-        if $result->{DumpAst};
+        if $result->{DumpAST};
 
     return $grammar->receiver->function;
 }
@@ -110,7 +110,7 @@ sub preprocess {
             elsif ($directive =~ /^(DataMarker|BlockMarker|PointMarker)$/) {
                 $result->{$directive} = $value;
             }
-            elsif ($directive =~ /^(DebugPegex|DumpAst)$/) {
+            elsif ($directive =~ /^(DebugPegex|DumpAST)$/) {
                 $value = 1 unless length($value);
                 $result->{$directive} = $value;
             }
@@ -307,6 +307,11 @@ sub got_transform_name {
     my $self = shift;
     my $transform = $self->stack->[-1]->units->[-1];
     $transform->name(shift);
+}
+
+sub got_transform_argument_list {
+    my $self = shift;
+    $self->stack->[-1]->units->[-1]->explicit_call(1);
 }
 
 sub try_transform_argument {

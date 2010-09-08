@@ -25,4 +25,16 @@ sub msg {
     return $context->value;
 }
 
+sub f1 {
+    my $context = shift;
+    my $num = shift->value;
+    return $num * 42 + $num;
+}
+
+sub f2 {
+    my $context = shift;
+    my $num = shift->value;
+    return $num * $num + $num;
+}
+
 1;
