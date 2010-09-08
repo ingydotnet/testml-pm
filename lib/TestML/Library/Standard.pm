@@ -54,6 +54,23 @@ sub Throw {
 sub Str { return str(shift->str->value) }
 sub Num { return num(shift->num->value) }
 sub Bool { return bool(shift->bool->value) }
+sub List {
+    my $context = shift;
+    return list([@_]);
+}
+sub Join {
+    my $context = shift;
+    return join '', map $_->value, @{$context->list->value};
+}
+sub Strip {
+    my $context = shift;
+    my $string = $context->str->value;
+    my $part = shift->str->value;
+    if ((my $i = index($string, $part)) >= 0) {
+        $string = substr($string, 0, $i) . substr($string, $i + length($part));
+    }
+    return $string;
+}
 
 sub Not { return bool(shift->bool->value ? 0: 1) }
 

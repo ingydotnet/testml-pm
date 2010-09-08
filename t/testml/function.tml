@@ -1,6 +1,7 @@
 %TestML 1.0
+# %DumpAst 1
 
-Plan = 14;
+Plan = 9;
 
 Label = 'Fruity Tests';
 
@@ -11,12 +12,12 @@ Label = 'Fruity Tests';
 
 test1 = (f, c, t) {
     List(f, '->', c).Join == t;
-#     f + '->' + c == t;
-#     t - f - '->' == c;
-#     t - '->' == f + c;
+    t.Strip(f).Strip('->') == c;
+    t.Strip('->') == List(f, c).Join;
 };
 
-test1.Type == 'Func';
+# XXX test1 should not be called here.
+# test1.Type == 'Func';
 
 Label = '$BlockLabel';
 
@@ -25,8 +26,8 @@ test1(*fruit, *color, *thing);
 test2 = {
     thing ~~ color;
 };
-
-test2(*color, *thing);
+ 
+# test2(*color, *thing);
 
 === Red Apple
 --- fruit: apple
@@ -39,6 +40,6 @@ test2(*color, *thing);
 --- thing: orange->orange
 
 === Green Grape
---- fruit: green
---- color: grape
+--- fruit: grape
+--- color: green
 --- thing: grape->green
