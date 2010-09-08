@@ -72,12 +72,9 @@ sub run_statement {
         : [TestML::Block->new()];
     for my $block (@$blocks) {
         $self->function->block($block);
-        my $context = $self->run_expression(
-            $statement->expression,
-            $block,
-        );
+        my $context = $self->run_expression($statement->expression);
         if (my $assertion = $statement->assertion) {
-            $self->run_assertion($context, $block, $assertion);
+            $self->run_assertion($context, $assertion);
         }
     }
 }
@@ -85,7 +82,6 @@ sub run_statement {
 sub run_assertion {
     my $self = shift;
     my $left = shift;
-    my $block = shift;
     my $assertion = shift;
     my $method = 'assert_' . $assertion->name;
 
@@ -103,10 +99,7 @@ sub run_assertion {
         : [ $left ];
     for my $result (@$results) {
         if (@{$assertion->expression->units}) {
-            my $right = $self->run_expression(
-                $assertion->expression,
-                $block,
-            );
+            my $right = $self->run_expression($assertion->expression);
             my $matches = ($right->type eq 'List')
                 ? $right->value
                 : [ $right ];
@@ -146,7 +139,6 @@ sub run_expression {
     my $prev_expression = $self->function->expression;
     my $expression = shift;
     $self->function->expression($expression);
-    my $block = shift || undef;
 
     my $units = $expression->units;
     my $context = TestML::None->new;
@@ -171,7 +163,7 @@ sub run_expression {
             or die "Can't find transform '${\$unit->name}'";
         my $args = $unit->args;
         if ($callable->isa('TestML::Native')) {
-            $context = $self->run_native($callable->value, $context, $args, $block);
+            $context = $self->run_native($callable->value, $context, $args);
         }
         elsif ($callable->isa('TestML::Object')) {
             $context = $callable;
@@ -192,13 +184,12 @@ sub run_native {
     my $function = shift;
     my $context = shift;
     my $args = shift;
-    my $block = shift;
     my $value = eval {
         &$function(
             $context,
             map {
                 (ref($_) eq 'TestML::Expression')
-                ? $self->run_expression($_, $block)
+                ? $self->run_expression($_)
                 : $_
             } @$args
         );
