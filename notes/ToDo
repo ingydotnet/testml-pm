@@ -22,6 +22,9 @@
 + Add getvar / setvar in Function for variable access.
 + Redo grammar to match current terminology. like get rid of meta section, for example.
 
+- Add input arguments to functions
+- Make bare functions callable by '.' or '()'
+- Make assertions into regular function calls.
 - Rename transform to 'call'
   - expression: <object> <call>*
 - Add transform for data parse

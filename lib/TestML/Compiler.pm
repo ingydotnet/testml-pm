@@ -21,9 +21,11 @@ sub compile {
 
     my ($code, $data) = @$result{qw(code data)};
 
+    my $debug = $self->debug;
+    $debug = $result->{PegexDebug} if defined $result->{PegexDebug};
     my $grammar = TestML::Grammar->new(
         receiver => TestML::Receiver->new,
-        debug => $self->debug,
+        debug => $debug,
     );
     $grammar->parse($code, 'code_section')
         or die "Parse TestML code section failed";
@@ -103,6 +105,10 @@ sub preprocess {
                 $text .= $self->preprocess($self->slurp($value))->{text};
             }
             elsif ($directive =~ /^(DataMarker|BlockMarker|PointMarker)$/) {
+                $result->{$directive} = $value;
+            }
+            elsif ($directive eq 'PegexDebug') {
+                $value = 1 unless length($value);
                 $result->{$directive} = $value;
             }
             else {
@@ -257,6 +263,25 @@ sub got_point_object {
     );
     push @{$self->stack->[-1]->units}, $transform;
     push @{$self->function->statements->[-1]->points}, $point_name;
+}
+
+sub try_function_object {
+    my $self = shift;
+    my $function = TestML::Function->new(
+        outer => $self->function,
+    );
+    $self->function($function);
+}
+
+sub got_function_object {
+    my $self = shift;
+    push @{$self->stack->[-1]->units}, $self->function;
+    $self->function($self->function->outer);
+}
+
+sub not_function_object {
+    my $self = shift;
+    $self->function($self->function->outer);
 }
 
 sub try_transform_object {

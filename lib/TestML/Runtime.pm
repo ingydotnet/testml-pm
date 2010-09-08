@@ -162,6 +162,10 @@ sub run_expression {
             $context = $unit;
             next;
         }
+        if ($unit->isa('TestML::Function')) {
+            $context = $unit;
+            next;
+        }
         my $object = $self->function->getvar($unit->name)
             or die "Can't find transform '${\$unit->name}'";
         if ($object->isa('TestML::Code')) {
@@ -235,6 +239,7 @@ sub load_transform_module {
     }
     no strict 'refs';
     for my $key (sort keys %{"$module\::"}) {
+        next if $key eq "\x16";
         my $glob = ${"$module\::"}{$key};
         if (my $function = *$glob{CODE}) {
             $self->function->setvar(
@@ -242,7 +247,7 @@ sub load_transform_module {
             );
         }
         elsif (my $object = *$glob{SCALAR}) {
-            if ($$object) {
+            if (ref($$object)) {
                 $self->function->setvar($key => $$object);
             }
         }
@@ -266,7 +271,7 @@ sub get_label {
         }
     }
     $label =~ s/\$(\w+)/label($self, $1)/ge;
-    return $label;
+    return $label ? ($label) : ();
 }
 
 sub get_error {
@@ -395,8 +400,8 @@ sub list { my $list = []; $#{$list} = int($_[0]) -1; TestML::List->new($list) }
 package TestML::Bool;
 use TestML::Object -base;
 
-sub str { TestML::Str->new($_[0]->value ? "1" : "") }
-sub num { TestML::Num->new($_[0]->value ? 1 : 0) }
+sub str { TestML::Str->new(value => $_[0]->value ? "1" : "") }
+sub num { TestML::Num->new(value => $_[0]->value ? 1 : 0) }
 sub bool { shift }
 
 #-----------------------------------------------------------------------------
