@@ -10,16 +10,17 @@ Label = 'Fruity Tests';
 };
 
 test1 = (f, c, t) {
-    f + '->' + c == t;
-    t - f - '->' == c;
-    t - '->' == f + c;
+    List(f, '->', c).Join == t;
+#     f + '->' + c == t;
+#     t - f - '->' == c;
+#     t - '->' == f + c;
 };
 
-test.Type == 'Func';
+test1.Type == 'Func';
 
 Label = '$BlockLabel';
 
-test(*fruit, *color, *thing);
+test1(*fruit, *color, *thing);
 
 test2 = {
     thing ~~ color;

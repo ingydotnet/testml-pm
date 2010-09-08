@@ -21,8 +21,9 @@
 + Make TestML::Object::type a method that returns type based on class.
 + Add getvar / setvar in Function for variable access.
 + Redo grammar to match current terminology. like get rid of meta section, for example.
++ Add input arguments to functions
 
-- Add input arguments to functions
+- Rethink moving TestML::Runtime::TAP to TestML::(Adapter|Test)::TAP
 - Make bare functions callable by '.' or '()'
 - Make assertions into regular function calls.
 - Rename transform to 'call'

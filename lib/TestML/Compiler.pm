@@ -22,7 +22,7 @@ sub compile {
     my ($code, $data) = @$result{qw(code data)};
 
     my $debug = $self->debug;
-    $debug = $result->{PegexDebug} if defined $result->{PegexDebug};
+    $debug = $result->{DebugPegex} if defined $result->{DebugPegex};
     my $grammar = TestML::Grammar->new(
         receiver => TestML::Receiver->new,
         debug => $debug,
@@ -34,6 +34,9 @@ sub compile {
 
     $grammar->parse($data, 'data_section')
         or die "Parse TestML data section failed";
+
+    XXX($grammar->receiver->function)
+        if $result->{DumpAst};
 
     return $grammar->receiver->function;
 }
@@ -107,7 +110,7 @@ sub preprocess {
             elsif ($directive =~ /^(DataMarker|BlockMarker|PointMarker)$/) {
                 $result->{$directive} = $value;
             }
-            elsif ($directive eq 'PegexDebug') {
+            elsif ($directive =~ /^(DebugPegex|DumpAst)$/) {
                 $value = 1 unless length($value);
                 $result->{$directive} = $value;
             }

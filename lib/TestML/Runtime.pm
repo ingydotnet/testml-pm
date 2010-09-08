@@ -37,7 +37,11 @@ sub plan_end { }
 sub run {
     my $self = shift;
 
-    $self->run_function($self->function);
+    my $function = $self->function;
+    my $context = TestML::None->new;
+    my $args = [];
+
+    $self->run_function($self->function, $context, $args);
 
     $self->run_plan();
     $self->plan_end();
@@ -52,16 +56,38 @@ sub run_plan {
     }
 }
 
+# XXX - TestML exception handling needs to happen at the function level, not
+# just at the expression level. Not yet handled here.
 sub run_function {
     my $self = shift;
     my $function = shift;
+    my $context = shift;
+    my $args = shift;
+
+    my $signature = $function->signature;
+    die sprintf(
+        "Function received %d args but expected %d",
+        scalar(@$args),
+        scalar(@$signature),
+    ) if @$signature and @$args != @$signature;
+    $function->setvar('Self', $context);
+    for (my $i = 0; $i < @$args; $i++) {
+        my $arg = $args->[$i];
+        $arg = $self->run_expression($arg)
+            if ref($arg) eq 'TestML::Expression';
+        $function->setvar($signature->[$i], $arg);
+    }
+
     my $parent = $self->function;
     $self->function($function);
 
     for my $statement (@{$function->statements}) {
         $self->run_statement($statement);
     }
+
     $self->function($parent);
+
+    return TestML::None->new;
 }
 
 sub run_statement {
@@ -168,8 +194,12 @@ sub run_expression {
         elsif ($callable->isa('TestML::Object')) {
             $context = $callable;
         }
+        elsif ($callable->isa('TestML::Function')) {
+            $callable->block($self->function->block);
+            $context = $self->run_function($callable, $context, $args);
+        }
         else {
-            XXX $callable;
+            die;
         }
     }
     if ($expression->error) {
@@ -202,16 +232,22 @@ sub run_native {
         $context = $value;
     }
     else {
-        $context =
-            not(defined $value) ? TestML::None->new :
-            ref($value) eq 'ARRAY' ? TestML::List->new(value => $value) :
-            $value =~ /^-?\d+$/ ? TestML::Num->new(value => $value + 0) :
-            "$value" eq "$TestML::Constant::True" ? $value :
-            "$value" eq "$TestML::Constant::False" ? $value :
-            "$value" eq "$TestML::Constant::None" ? $value :
-            TestML::Str->new(value => $value);
+        $context = $self->object_from_native($value);
     }
     return $context;
+}
+
+sub object_from_native {
+    my $self = shift;
+    my $value = shift;
+    return
+        not(defined $value) ? TestML::None->new :
+        ref($value) eq 'ARRAY' ? TestML::List->new(value => $value) :
+        $value =~ /^-?\d+$/ ? TestML::Num->new(value => $value + 0) :
+        "$value" eq "$TestML::Constant::True" ? $value :
+        "$value" eq "$TestML::Constant::False" ? $value :
+        "$value" eq "$TestML::Constant::None" ? $value :
+        TestML::Str->new(value => $value);
 }
 
 sub compile_testml {
@@ -325,6 +361,13 @@ sub setvar {
     return;
 }
 
+sub forgetvar {
+    my $self = shift;
+    my $name = shift;
+    delete $self->namespace->{$name};
+    return;
+}
+
 #-----------------------------------------------------------------------------
 package TestML::Statement;
 use TestML::Base -base;
@@ -394,7 +437,7 @@ sub list { List([split //, $_[0]->value]) }
 package TestML::Num;
 use TestML::Object -base;
 
-sub str { TestML::Str->new($_[0]->value . "") }
+sub str { TestML::Str->new(value => $_[0]->value . "") }
 sub num { shift }
 sub bool { ($_[0]->value != 0) ? $TestML::Constant::True : $TestML::Constant::False }
 sub list { my $list = []; $#{$list} = int($_[0]) -1; TestML::List->new($list) }
