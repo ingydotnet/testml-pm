@@ -95,9 +95,9 @@ sub run_statement {
     my $statement = shift;
     my $blocks = @{$statement->points}
         ? $self->select_blocks($statement->points)
-        : [TestML::Block->new()];
+        : [1];
     for my $block (@$blocks) {
-        $self->function->block($block);
+        $self->function->setvar('Block', $block) if ref($block);
         my $context = $self->run_expression($statement->expression);
         if (my $assertion = $statement->assertion) {
             $self->run_assertion($context, $assertion);
@@ -195,7 +195,6 @@ sub run_expression {
             $context = $callable;
         }
         elsif ($callable->isa('TestML::Function')) {
-            $callable->block($self->function->block);
             $context = $self->run_function($callable, $context, $args);
         }
         else {
@@ -262,6 +261,7 @@ sub compile_testml {
 
 sub load_variables {
     my $self = shift;
+    $self->function->setvar(Block => TestML::Block->new);
     $self->function->setvar(Label => TestML::Str->new(value => '$BlockLabel'));
     $self->function->setvar(True => $TestML::Constant::True);
     $self->function->setvar(False => $TestML::Constant::False);
@@ -298,8 +298,9 @@ sub get_label {
     sub label {
         my $self = shift;
         my $var = shift;
-        return $self->function->block->label if $var eq 'BlockLabel';
-        if (my $v = $self->function->block->points->{$var}) {
+        my $block = $self->function->getvar('Block');
+        return $block->label if $var eq 'BlockLabel';
+        if (my $v = $block->points->{$var}) {
             $v =~ s/\n.*//s;
             $v =~ s/^\s*(.*?)\s*$/$1/;
             return $v;
