@@ -96,13 +96,13 @@ sub preprocess {
             $text .= $part;
         }
     }
-    die "No TestML directive found"
-        if $top and not $result->{TestML};
-    die "%TestML directive must be the first (non-comment) statement"
-        if $order_error;
-
 
     if ($top) {
+        die "No TestML directive found"
+            if $top and not $result->{TestML};
+        die "%TestML directive must be the first (non-comment) statement"
+            if $order_error;
+
         my $DataMarker = $result->{DataMarker} ||= $result->{BlockMarker};
         my ($code, $data);
         if ((my $split = index($text, "\n$DataMarker")) >= 0) {
