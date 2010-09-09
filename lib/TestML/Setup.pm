@@ -83,6 +83,8 @@ TestML::Runner::TAP.new(
 
 1;
 
+=encoding utf-8
+
 =head1 NAME
 
 TestML::Setup - Generate Test Files for a TestML Suite
@@ -99,3 +101,18 @@ and runs it.
 
 This module does that for you. By providing a small YAML file, this
 module will generate all your testml runtime programs for you.
+
+=head1 AUTHOR
+
+Ingy döt Net <ingy@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2010. Ingy döt Net.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See http://www.perl.com/perl/misc/Artistic.html
+
+=cut

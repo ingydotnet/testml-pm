@@ -7,7 +7,6 @@ use TestML::Runtime;
 
 $TestML::VERSION = '0.20';
 
-our @EXPORT_OK = qw(str num bool list WWW XXX YYY ZZZ);
 our @EXPORT = qw(str num bool list WWW XXX YYY ZZZ);
 
 our $DumpModule = 'YAML::XS';

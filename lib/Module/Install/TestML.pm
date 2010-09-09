@@ -6,7 +6,7 @@ use Module::Install::Base;
 
 use vars qw($VERSION @ISA);
 BEGIN {
-    $VERSION = '0.11';
+    $VERSION = '0.20';
     @ISA     = 'Module::Install::Base';
 }
 
@@ -31,10 +31,10 @@ sub use_testml {
     $self->include('TestML::Base');
     $self->include('TestML::Compiler');
     $self->include('TestML::Grammar');
-    $self->include('TestML::Runtime');
-    $self->include('TestML::Runtime::TAP');
     $self->include('TestML::Library::Debug');
     $self->include('TestML::Library::Standard');
+    $self->include('TestML::Runtime');
+    $self->include('TestML::Runtime::TAP');
 }
 
 sub testml_setup {

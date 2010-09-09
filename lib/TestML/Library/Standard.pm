@@ -20,15 +20,15 @@ sub GetLabel {
 sub Get {
     my $context = shift;
     my $key = shift->str->value;
-    return $context->runtime->function->namespace->{$key};
+    return $context->runtime->function->getvar($key);
 }
 
 sub Set {
     my $context = shift;
     my $key = shift;
     my $value = shift;
-    $context->runtime->function->namespace->{$key} = $value;
-    return $value; 
+    $context->runtime->function->setvar($key, $value);
+    return $value;
 }
 
 sub Type {
@@ -58,10 +58,12 @@ sub List {
     my $context = shift;
     return list([@_]);
 }
+
 sub Join {
     my $context = shift;
     return join '', map $_->value, @{$context->list->value};
 }
+
 sub Strip {
     my $context = shift;
     my $string = $context->str->value;

@@ -23,26 +23,42 @@
 + Redo grammar to match current terminology. like get rid of meta section, for example.
 + Add input arguments to functions
 + Support function definitions
++ Make bare functions callable by '.' or '()'
 
-- Allow functions to return values.
-- Rethink moving TestML::Runtime::TAP to TestML::(Adapter|Test)::TAP
-- Make bare functions callable by '.' or '()'
+== Language Model
+- Move TestML::Runtime::TAP to TestML::Adapter::TAP
 - Make assertions into regular function calls.
+
+== Compiler
+- Add and honor #line numbers in preprocessor.
+- Add line numbers to the AST
+- Add line numbers and context to error messages.
+
+== Functions
+- Allow functions to return values.
+
+== Refactoring
 - Rename transform to 'call'
   - expression: <object> <call>*
+
+== Debugging
+- XXX, et al are not reporting the correct line they came from.
+
+== Standard
 - Add a standard transform for data parse
 
 - Allow quotes for line points
 - Support Native objects
 
-
 == Tests
+- Data types
 - List assertions
 - Standard string transforms
 - Standard list transforms
 - Functions
 
+== Application Tests
 - from glossary
 - from test::base
-- from yaml::xs
-- from perl6 tests
+- from testml-pm6 tests
+- convert yaml::xs

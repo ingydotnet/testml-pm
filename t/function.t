@@ -1,3 +1,3 @@
-use TestML -run, # -skip_all => 'Not coded yet',
+use TestML -run,
     -testml => 'testml/function.tml',
     -bridge => 't::Bridge';

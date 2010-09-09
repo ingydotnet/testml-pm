@@ -3,7 +3,7 @@ version: 0.20
 date:    Wed Sep  1 09:12:42 PDT 2010
 changes:
 - Total language rewrite.
-- Added functions.
+- Added functions definitions and calls.
 - Added scoped variables.
 ---
 version: 0.11

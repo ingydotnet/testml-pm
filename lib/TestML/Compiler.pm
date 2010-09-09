@@ -35,38 +35,11 @@ sub compile {
     $grammar->parse($data, 'data_section')
         or die "Parse TestML data section failed";
 
-    XXX($grammar->receiver->function)
-        if $result->{DumpAST};
+    if ($result->{DumpAST}) {
+        XXX($grammar->receiver->function);
+    }
 
     return $grammar->receiver->function;
-}
-
-sub fixup_grammar {
-    my $self = shift;
-    my $grammar = shift;
-    my $hash = shift;
-
-    my $namespace = $grammar->receiver->function->namespace;
-    $namespace->{TestML} = $hash->{TestML};
-
-    $grammar = $grammar->grammar;
-    my $point_lines = $grammar->{point_lines}{'+re'};
-
-    my $block_marker = $hash->{BlockMarker};
-    if ($block_marker) {
-        $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-        $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
-        $point_lines =~ s/===/$block_marker/;
-    }
-
-    my $point_marker = $hash->{PointMarker};
-    if ($point_marker) {
-        $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-        $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
-        $point_lines =~ s/---/$point_marker/;
-    }
-
-    $grammar->{point_lines}{'+re'} = qr/$point_lines/;
 }
 
 sub preprocess {
@@ -151,6 +124,34 @@ sub preprocess {
     return $result;
 }
 
+sub fixup_grammar {
+    my $self = shift;
+    my $grammar = shift;
+    my $hash = shift;
+
+    my $namespace = $grammar->receiver->function->namespace;
+    $namespace->{TestML} = $hash->{TestML};
+
+    $grammar = $grammar->grammar;
+    my $point_lines = $grammar->{point_lines}{'+re'};
+
+    my $block_marker = $hash->{BlockMarker};
+    if ($block_marker) {
+        $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+        $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
+        $point_lines =~ s/===/$block_marker/;
+    }
+
+    my $point_marker = $hash->{PointMarker};
+    if ($point_marker) {
+        $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
+        $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
+        $point_lines =~ s/---/$point_marker/;
+    }
+
+    $grammar->{point_lines}{'+re'} = qr/$point_lines/;
+}
+
 sub slurp {
     my $self = shift;
     my $file = shift;
@@ -213,9 +214,7 @@ sub try_assignment_statement {
     my $self = shift;
     push @{$self->function->statements}, TestML::Statement->new();
     my $expression = $self->function->statements->[-1]->expression;
-    $expression->units->[0] = TestML::Transform->new(
-        name => 'Set',
-    );
+    $expression->units->[0] = TestML::Transform->new(name => 'Set');
     $self->function->statements->[-1]->expression($expression);
     push @{$self->stack}, TestML::Expression->new;
 }
@@ -260,19 +259,17 @@ sub got_point_object {
     my $self = shift;
     my $point_name = shift;
     $point_name =~ s/^\*// or die;
-    my $transform = TestML::Transform->new(
-        name => 'Point',
-        args => [$point_name],
-    );
-    push @{$self->stack->[-1]->units}, $transform;
+    push @{$self->stack->[-1]->units},
+        TestML::Transform->new(
+            name => 'Point',
+            args => [$point_name],
+        );
     push @{$self->function->statements->[-1]->points}, $point_name;
 }
 
 sub try_function_object {
     my $self = shift;
-    my $function = TestML::Function->new(
-        outer => $self->function,
-    );
+    my $function = TestML::Function->new(outer => $self->function);
     $self->function($function);
 }
 
@@ -289,8 +286,7 @@ sub not_function_object {
 
 sub got_function_variable {
     my $self = shift;
-    my $variable_name = shift;
-    push @{$self->function->signature}, $variable_name;
+    push @{$self->function->signature}, shift;
 }
 
 sub try_transform_object {
@@ -305,8 +301,7 @@ sub not_transform_object {
 
 sub got_transform_name {
     my $self = shift;
-    my $transform = $self->stack->[-1]->units->[-1];
-    $transform->name(shift);
+    $self->stack->[-1]->units->[-1]->name(shift);
 }
 
 sub got_transform_argument_list {
@@ -332,20 +327,14 @@ sub not_transform_argument {
 
 sub got_string_object {
     my $self = shift;
-    my $string = $self->string;
-    my $transform = TestML::Str->new(
-        value => $string,
-    );
-    push @{$self->stack->[-1]->units}, $transform;
+    push @{$self->stack->[-1]->units},
+        TestML::Str->new(value => $self->string);
 }
 
 sub got_number_object {
     my $self = shift;
-    my $number = shift;
-    my $transform = TestML::Num->new(
-        value => $number,
-    );
-    push @{$self->stack->[-1]->units}, $transform;
+    push @{$self->stack->[-1]->units},
+        TestML::Num->new(value => shift);
 }
 
 sub try_assertion_call {

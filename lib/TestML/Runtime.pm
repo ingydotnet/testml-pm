@@ -7,15 +7,15 @@ use TestML::Compiler;
 # put a reference to it into every object that needs to access it.
 our $self;
 
-has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';
-has 'testml';
-has 'bridge';
-has 'library' => []; # XXX Add TestML.pm support for -library keyword.
+has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';   # Base directory
+has 'testml';           # TestML document filename, handle or text
+has 'bridge';           # Bridge transform module
+# XXX Add TestML.pm support for -library keyword.
+has 'library' => [];    # Transform library modules
 
-has 'function';
-has 'planned' => 0;
-has 'test_number' => 0;
-$main::x = 0;
+has 'function';         # Current function executing
+has 'planned' => 0;     # plan() has been called
+has 'test_number' => 0; # Number of tests run so far
 
 sub init {
     my $self = $TestML::Runtime::self = shift;
@@ -30,6 +30,7 @@ sub init {
     return $self;
 }
 
+# XXX Move to TestML::Adapter
 sub title { }
 sub plan_begin { }
 sub plan_end { }
@@ -45,15 +46,6 @@ sub run {
 
     $self->run_plan();
     $self->plan_end();
-}
-
-sub run_plan {
-    my $self = shift;
-    if (! $self->planned) {
-        $self->title();
-        $self->plan_begin();
-        $self->planned(1);
-    }
 }
 
 # XXX - TestML exception handling needs to happen at the function level, not
@@ -139,27 +131,6 @@ sub run_assertion {
     }
 }
 
-sub select_blocks {
-    my $self = shift;
-    my $wanted = shift;
-    my $selected = [];
-
-    OUTER: for my $block (@{$self->function->data}) {
-        my %points = %{$block->points};
-        next if exists $points{SKIP};
-        for my $point (@$wanted) {
-            next OUTER unless exists $points{$point};
-        }
-        if (exists $points{ONLY}) {
-            @$selected = ($block);
-            last;
-        }
-        push @$selected, $block;
-        last if exists $points{LAST};
-    }
-    return $selected;
-}
-
 sub run_expression {
     my $self = shift;
     my $prev_expression = $self->function->expression;
@@ -243,6 +214,27 @@ sub run_native {
     return $context;
 }
 
+sub select_blocks {
+    my $self = shift;
+    my $wanted = shift;
+    my $selected = [];
+
+    OUTER: for my $block (@{$self->function->data}) {
+        my %points = %{$block->points};
+        next if exists $points{SKIP};
+        for my $point (@$wanted) {
+            next OUTER unless exists $points{$point};
+        }
+        if (exists $points{ONLY}) {
+            @$selected = ($block);
+            last;
+        }
+        push @$selected, $block;
+        last if exists $points{LAST};
+    }
+    return $selected;
+}
+
 sub object_from_native {
     my $self = shift;
     my $value = shift;
@@ -320,6 +312,15 @@ sub get_label {
     return $label ? ($label) : ();
 }
 
+sub run_plan {
+    my $self = shift;
+    if (! $self->planned) {
+        $self->title();
+        $self->plan_begin();
+        $self->planned(1);
+    }
+}
+
 sub get_error {
     my $self = shift;
     return $self->function->expression->error;
@@ -340,6 +341,7 @@ package TestML::Function;
 use TestML::Base -base;
 
 has 'type' => 'Func';       # Functions are TestML typed objects
+# XXX Make this a featherweight reference.
 has 'outer';                # Parent/container function
 has 'signature' => [];      # Input variable names
 has 'namespace' => {};      # Lexical scoped variable stash
@@ -439,9 +441,13 @@ package TestML::Str;
 use TestML::Object -base;
 
 sub str { shift }
-sub num { $_[0]->value =~ /^-?\d+(?:\.\d+)$/ ? ($_[0]->value + 0) : 0 }
-sub bool { length($_[0]->value) ? $TestML::Constant::True : $TestML::Constant::False }
-sub list { List([split //, $_[0]->value]) }
+sub num { TestML::Num->new(
+    value => ($_[0]->value =~ /^-?\d+(?:\.\d+)$/ ? ($_[0]->value + 0) : 0),
+)}
+sub bool {
+    length($_[0]->value) ? $TestML::Constant::True : $TestML::Constant::False
+}
+sub list { TestML::List->new(value => [split //, $_[0]->value]) }
 
 #-----------------------------------------------------------------------------
 package TestML::Num;
@@ -450,7 +456,11 @@ use TestML::Object -base;
 sub str { TestML::Str->new(value => $_[0]->value . "") }
 sub num { shift }
 sub bool { ($_[0]->value != 0) ? $TestML::Constant::True : $TestML::Constant::False }
-sub list { my $list = []; $#{$list} = int($_[0]) -1; TestML::List->new($list) }
+sub list {
+    my $list = [];
+    $#{$list} = int($_[0]) -1;
+    TestML::List->new(value =>$list);
+}
 
 #-----------------------------------------------------------------------------
 package TestML::Bool;
