@@ -9,7 +9,13 @@ sub title {
     my $self = shift;
     if (my $title = $self->function->getvar('Title')) {
         $title = $title->value;
-        $self->test_builder->note("=== $title ===\n");
+        $title = "=== $title ===\n";
+        if ($self->test_builder->can('note')) {
+            $self->test_builder->note($title);
+        }
+        else {
+            $self->test_builder->diag($title);
+        }
     }
 }
 

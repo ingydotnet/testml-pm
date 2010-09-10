@@ -32,17 +32,17 @@ SYNOPSIS
 
     To run this test you would have a normal test file that looks like this:
 
-        use TestML::Runner::TAP;
+        use TestML::Runtime::TAP;
 
-        TestML::Runner::TAP->new(
-            document => 'testml/encode.tml',
+        TestML::Runtime::TAP->new(
+            testml => 'testml/encode.tml',
             bridge => 't::Bridge',
         )->run();
 
     or more simply:
 
         use TestML -run,
-            -document => 'testml/encode.tml',
+            -testml => 'testml/encode.tml',
             -bridge => 't::Bridge';
 
     The apply_* transform functions are defined in the bridge class that is
@@ -75,10 +75,10 @@ RESOURCES
     IRC: #testml on irc.freenode.net
 
 AUTHOR
-    Ingy döt Net <ingy@cpan.org>
+    Ingy dÃ¶t Net <ingy@cpan.org>
 
 COPYRIGHT
-    Copyright (c) 2009, 2010. Ingy döt Net.
+    Copyright (c) 2009, 2010. Ingy dÃ¶t Net.
 
     This program is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.

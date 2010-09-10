@@ -8,4 +8,6 @@ use_gloom 'TestML::Base';
 
 testml_setup 't/testml.yaml';
 
+clean_files 'MANIFEST';
+
 WriteAll;
