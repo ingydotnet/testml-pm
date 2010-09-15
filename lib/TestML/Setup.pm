@@ -11,36 +11,31 @@ use base 'Exporter';
 
 my $config_file = 'testml.yaml';
 my $base;
-my $config = {};
 my $template;
-my $testml;
-my $local;
-my $lang;
-my $include;
-my $skip;
 
 sub setup {
     testml_setup(@ARGV);
 }
 
 sub testml_setup {
-    init(@_);
-    my %data = %$config;
-    $data{testml_dir} = $local;
-    for my $file (io("$base/$testml")->all_files) {
+    my $conf = init(@_);
+    my %data = %$conf;
+    $data{bridge} ||= '';
+    for my $file (io("$base/$conf->{testml}")->all_files) {
         my $testml_file = $data{testml_file} = $file->filename;
         my $name = $testml_file;
         $name =~ s/\.tml$// or next;
 
-        my $src = "$base/$testml/$testml_file";
-        my $dest = "$base/$local/$testml_file";
+        my $src = "$base/$conf->{testml}/$testml_file";
+        my $dest = "$base/$conf->{local}/$testml_file";
         
-        my $filename = $name . ($lang !~ /^pm/ ? ".$lang" : '.t');
+        my $filename = $conf->{filename};
+        $filename =~ s/\$name/$name/;
         if (not -e "$base/$filename" or not -e $dest or -M $src < -M $dest) {
-            if (@$include) {
-                next unless grep {$name eq $_} @$include;
+            if (@{$conf->{include}}) {
+                next unless grep {$name eq $_} @{$conf->{include}};
             }
-            next if grep {$name eq $_} @$skip;
+            next if grep {$name eq $_} @{$conf->{skip}};
             system("cp -f $src $dest") == 0
                 or die "copy $src to $dest failed";
             print "Generating $filename\n";
@@ -54,30 +49,33 @@ sub init {
     $config_file = shift;
     $config_file =~ /(.*)\//;
     $base = $1 || '.';
-    $config = YAML::XS::LoadFile("$config_file");
+    my $conf = YAML::XS::LoadFile("$config_file");
     die "Missing or invalid 'testml' directory in $config_file"
-        unless $config->{testml} and -d "$base/$config->{testml}";
+        unless $conf->{testml} and -d "$base/$conf->{testml}";
     die "Missing or invalid 'local' directory in $config_file"
-        unless $config->{local} and -d "$base/$config->{local}";
-    die "Missing 'lang' in $config_file"
-        unless $config->{lang};
-    $lang = $config->{lang};
-    no strict 'refs';
-    die "'$lang' in '$config_file' is an invalid language"
-        unless defined &{"template_$lang"};
-    ($testml, $local, $include, $skip) =
-        @{$config}{qw(testml local include skip)};
-    $include ||= [];
-    $skip ||= [];
-    $config->{bridge} ||= '';
-    $template = &{"template_$lang"}();
+        unless $conf->{local} and -d "$base/$conf->{local}";
+    $conf->{filename} ||= '$name.t';
+    
+    if ($conf->{template}) {
+        $template = io("$base/$conf->{template}")->all;
+    }
+    else {
+        die "Missing 'lang' in $config_file"
+            unless $conf->{lang};
+        no strict 'refs';
+        $template = &{"template_$conf->{lang}"}();
+    }
+
+    return $conf;
 }
 
 sub template_pm5 {
     return <<'...';
 use TestML -run,
-    -testml => '[% testml_dir %]/[% testml_file %]',
-    -bridge => '[% bridge %]';
+[% IF bridge %]
+    -bridge => '[% bridge %]',
+[% END %]
+    -testml => '[% testml_dir %]/[% testml_file %]';
 ...
 }
 
@@ -88,17 +86,10 @@ use TestML::Runner::TAP;
 
 TestML::Runner::TAP.new(
     document => '[% testml_dir %]/[% testml_file %]',
+[% IF bridge %]
     bridge => '[% bridge %]',
+[% END %]
 ).run();
-...
-}
-
-sub template_py {
-    return <<'...';
-import sys; sys.path.insert(0, '.')
-from testml.runner.pytest import TestML, test
-TestML.document = '[% testml_dir %]/[% testml_file %]'
-TestML.bridge = '[% bridge %]'
 ...
 }
 
