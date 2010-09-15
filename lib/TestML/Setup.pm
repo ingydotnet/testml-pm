@@ -35,14 +35,14 @@ sub testml_setup {
         my $src = "$base/$testml/$testml_file";
         my $dest = "$base/$local/$testml_file";
         
-        if (not -e $dest or -M $src < -M $dest) {
-            system("cp -f $src $dest") == 0
-                or die "copy $src to $dest failed";
+        my $filename = $name . ($lang !~ /^pm/ ? ".$lang" : '.t');
+        if (not -e "$base/$filename" or not -e $dest or -M $src < -M $dest) {
             if (@$include) {
                 next unless grep {$name eq $_} @$include;
             }
             next if grep {$name eq $_} @$skip;
-            my $filename = "$name.t";
+            system("cp -f $src $dest") == 0
+                or die "copy $src to $dest failed";
             print "Generating $filename\n";
             my $output = tt->render(\$template, \%data);
             io("$base/$filename")->print($output);
