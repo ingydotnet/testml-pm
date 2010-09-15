@@ -99,7 +99,7 @@ sub preprocess {
 
     if ($top) {
         die "No TestML directive found"
-            if $top and not $result->{TestML};
+            unless $result->{TestML};
         die "%TestML directive must be the first (non-comment) statement"
             if $order_error;
 
