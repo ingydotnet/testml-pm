@@ -13,6 +13,7 @@ my $template;
 my $testml;
 my $local;
 my $lang;
+my $include;
 my $skip;
 
 sub testml_setup {
@@ -30,7 +31,9 @@ sub testml_setup {
         if (not -e $dest or -M $src < -M $dest) {
             system("cp -f $src $dest") == 0
                 or die "copy $src to $dest failed";
-
+            if (@$include) {
+                next unless grep {$name eq $_} @$include;
+            }
             next if grep {$name eq $_} @$skip;
             my $filename = "$name.t";
             print "Generating $filename\n";
@@ -53,8 +56,9 @@ sub init {
         unless $config->{lang};
     die "'lang' must be 'pm5' or 'pm6' in $config_file"
         unless $config->{lang} =~ /^(pm5|pm6)$/;
-    ($testml, $local, $lang, $skip) =
-        @{$config}{qw(testml local lang skip)};
+    ($testml, $local, $lang, $include, $skip) =
+        @{$config}{qw(testml local lang include skip)};
+    $include ||= [];
     $skip ||= [];
     $config->{bridge} ||= '';
     no strict 'refs';
@@ -78,6 +82,15 @@ TestML::Runner::TAP.new(
     document => '[% testml_dir %]/[% testml_file %]',
     bridge => '[% bridge %]',
 ).run();
+...
+}
+
+sub template_py {
+    return <<'...';
+import sys; sys.path.insert(0, '.')
+from testml.runner.pytest import TestML, test
+TestML.document = '[% testml_dir %]/[% testml_file %]'
+TestML.bridge = '[% bridge %]'
 ...
 }
 
