@@ -1,4 +1,9 @@
 ---
+version: 0.21
+date:    Tue Sep 14 20:22:55 PDT 2010
+changes:
+- Make TestML::Setup work better.
+---
 version: 0.20
 date:    Thu Sep  9 10:47:15 PDT 2010
 changes:

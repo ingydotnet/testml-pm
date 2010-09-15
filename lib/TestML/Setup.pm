@@ -6,6 +6,9 @@ use YAML::XS;
 use IO::All;
 use Template::Toolkit::Simple;
 
+use base 'Exporter';
+@TestML::Setup::EXPORT = qw(setup);
+
 my $config_file = 'testml.yaml';
 my $base;
 my $config = {};
@@ -15,6 +18,10 @@ my $local;
 my $lang;
 my $include;
 my $skip;
+
+sub setup {
+    testml_setup(@ARGV);
+}
 
 sub testml_setup {
     init(@_);
@@ -54,14 +61,15 @@ sub init {
         unless $config->{local} and -d "$base/$config->{local}";
     die "Missing 'lang' in $config_file"
         unless $config->{lang};
-    die "'lang' must be 'pm5' or 'pm6' in $config_file"
-        unless $config->{lang} =~ /^(pm5|pm6)$/;
-    ($testml, $local, $lang, $include, $skip) =
-        @{$config}{qw(testml local lang include skip)};
+    $lang = $config->{lang};
+    no strict 'refs';
+    die "'$lang' in '$config_file' is an invalid language"
+        unless defined &{"template_$lang"};
+    ($testml, $local, $include, $skip) =
+        @{$config}{qw(testml local include skip)};
     $include ||= [];
     $skip ||= [];
     $config->{bridge} ||= '';
-    no strict 'refs';
     $template = &{"template_$lang"}();
 }
 
