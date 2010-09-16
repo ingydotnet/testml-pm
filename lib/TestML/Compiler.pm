@@ -39,7 +39,10 @@ sub compile {
         XXX($grammar->receiver->function);
     }
 
-    return $grammar->receiver->function;
+    my $function = $grammar->receiver->function;
+    $function->outer(TestML::Function->new());
+
+    return $function;
 }
 
 sub preprocess {
@@ -73,7 +76,7 @@ sub preprocess {
                     unless $value =~ /^\d+\.\d+$/;
                 die "More than one TestML directive found"
                     if $result->{TestML};
-                $result->{TestML} = $value;
+                $result->{TestML} = TestML::Str->new(value => $value);
                 next;
             }
             $order_error = 1 unless $result->{TestML};

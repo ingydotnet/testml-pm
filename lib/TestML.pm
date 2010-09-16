@@ -5,7 +5,7 @@ use 5.006001;
 
 use TestML::Runtime;
 
-$TestML::VERSION = '0.20';
+$TestML::VERSION = '0.21';
 
 our @EXPORT = qw(str num bool list WWW XXX YYY ZZZ);
 
@@ -40,10 +40,6 @@ sub import {
         my $value = (@_ and $_[0] !~ /^-/) ? shift(@_) : '';
         if ($option eq '-run') {
             $run = $value || 'TestML::Runtime::TAP';
-        }
-        # XXX - 2010-08-22
-        elsif ($option eq '-document') {
-            die "TestML '-document' option has been changed to '-testml'";
         }
         elsif ($option eq '-testml') {
             $testml = $value;

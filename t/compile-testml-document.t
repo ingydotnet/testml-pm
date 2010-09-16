@@ -22,7 +22,7 @@ Title = "O HAI TEST";
 
 my $func = TestML::Compiler->new->compile($testml);
 ok $func, 'TestML string matches against TestML grammar';
-is $func->namespace->{TestML}, '1.0', 'Version parses';
+is $func->namespace->{TestML}->value, '1.0', 'Version parses';
 is $func->statements->[0]->expression->units->[0]->args->[1]->units->[0]->value, '2', 'Plan parses';
 is $func->statements->[1]->expression->units->[0]->args->[1]->units->[0]->value, 'O HAI TEST', 'Title parses';
 
