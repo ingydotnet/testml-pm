@@ -356,7 +356,7 @@ has 'expression';
 has 'block';
 
 my $outer = {};
-sub outer { $outer->{$_[0]} = @_ == 1 ? $outer->{$_[0]} : $_[1] }
+sub outer { @_ == 1 ? $outer->{$_[0]} : ($outer->{$_[0]} = $_[1]) }
 
 sub getvar {
     my $self = shift;
