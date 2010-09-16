@@ -61,7 +61,8 @@ sub List {
 
 sub Join {
     my $context = shift;
-    return join '', map $_->value, @{$context->list->value};
+    my $separator = @_ ? shift->value : '';
+    return join $separator, map $_->value, @{$context->list->value};
 }
 
 sub Strip {
@@ -80,6 +81,12 @@ sub Chomp {
     my $value = shift->str->value;
     chomp($value);
     return $value;
+}
+
+sub Has {
+    my $text = shift->value;
+    my $part = shift->value;
+    return bool(index($text, $part) >= 0);
 }
 
 sub RunCommand {
@@ -128,11 +135,15 @@ sub Chdir {
 }
 
 sub Read {
-    return str('foo');
     my $context = shift;
     my $arg = shift
-       or die "Read requires an argument";
+        or die "Read requires an argument";
     my $file = $arg->value;
+    use Cwd;
+    open FILE, $file or die "Can't open $file for input in " . Cwd::cwd;
+    my $text = do { local $/; <FILE> };
+    close FILE;
+    return str($text);
 }
 
 1;
