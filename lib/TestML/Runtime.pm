@@ -176,6 +176,7 @@ sub run_expression {
             $context = $callable;
         }
         else {
+            XXX $expression, $unit;
             ZZZ $callable;
         }
     }

@@ -82,6 +82,59 @@ sub Chomp {
     return $value;
 }
 
+sub RunCommand {
+    require Capture::Tiny;
+    my $context = shift;
+    my $arg = shift
+       or die "RunCommand requires an argument";
+    my $command = $arg->value;
+    chomp($command);
+    my $sub = sub {
+        system($command);
+    };
+    my ($stdout, $stderr) = Capture::Tiny::capture($sub);
+    $context->runtime->function->setvar('_Stdout', $stdout);
+    $context->runtime->function->setvar('_Stderr', $stderr);
+    return str('');
+}
+
+sub RmPath {
+    require File::Path;
+    my $context = shift;
+    my $arg = shift
+       or die "RmPath requires an argument";
+    my $path = $arg->value;
+    File::Path::rmtree($path);
+    return str('');
+}
+
+sub Stdout {
+    my $context = shift;
+    return $context->runtime->function->getvar('_Stdout');
+}
+
+sub Stderr {
+    my $context = shift;
+    return $context->runtime->function->getvar('_Stderr');
+}
+
+sub Chdir {
+    my $context = shift;
+    my $arg = shift
+       or die "Chdir requires an argument";
+    my $dir = $arg->value;
+    chdir $dir;
+    return str('');
+}
+
+sub Read {
+    return str('foo');
+    my $context = shift;
+    my $arg = shift
+       or die "Read requires an argument";
+    my $file = $arg->value;
+}
+
 1;
 
 # sub Context {
