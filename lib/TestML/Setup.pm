@@ -66,6 +66,9 @@ sub init {
         $template = &{"template_$conf->{lang}"}();
     }
 
+    $conf->{include} ||= [];
+    $conf->{skip} ||= [];
+
     return $conf;
 }
 

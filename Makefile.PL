@@ -3,7 +3,8 @@ use inc::Module::Install;
 name 'TestML';
 all_from 'lib/TestML.pm';
 readme_from;
-manifest_skip
+manifest_skip;
+version_check;
 ack_xxx;
 
 requires 'Pegex' => '0.10';
