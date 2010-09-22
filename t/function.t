@@ -1,3 +1,3 @@
 use TestML -run,
-    -testml => 'testml/function.tml',
-    -bridge => 't::Bridge';
+    -bridge => 't::Bridge',
+    -testml => 'testml/function.tml';

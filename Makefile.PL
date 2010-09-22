@@ -1,3 +1,4 @@
+use lib 'lib';
 use inc::Module::Install;
 
 name 'TestML';

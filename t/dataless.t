@@ -1,3 +1,3 @@
 use TestML -run,
-    -testml => 'testml/dataless.tml',
-    -bridge => 't::Bridge';
+    -bridge => 't::Bridge',
+    -testml => 'testml/dataless.tml';

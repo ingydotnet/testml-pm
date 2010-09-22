@@ -270,17 +270,17 @@ sub load_variables {
 
 sub load_transform_module {
     my $self = shift;
-    my $module = shift;
-    if ($module ne 'main') {
-        eval "require $module; 1"
-            or die "Can't use $module:\n$@";
+    my $module_name = shift;
+    if ($module_name ne 'main') {
+        eval "require $module_name; 1"
+            or die "Can't use $module_name:\n$@";
     }
 
     my $global = $self->function->outer;
     no strict 'refs';
-    for my $key (sort keys %{"$module\::"}) {
+    for my $key (sort keys %{"$module_name\::"}) {
         next if $key eq "\x16";
-        my $glob = ${"$module\::"}{$key};
+        my $glob = ${"$module_name\::"}{$key};
         if (my $function = *$glob{CODE}) {
             $global->setvar(
                 $key => TestML::Native->new(value => $function),
@@ -292,7 +292,6 @@ sub load_transform_module {
             }
         }
     }
-    $self->function;
 }
 
 sub get_label {

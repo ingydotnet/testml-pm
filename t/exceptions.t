@@ -1,3 +1,3 @@
 use TestML -run,
-    -testml => 'testml/exceptions.tml',
-    -bridge => 't::Bridge';
+    -bridge => 't::Bridge',
+    -testml => 'testml/exceptions.tml';

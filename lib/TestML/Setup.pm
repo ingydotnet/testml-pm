@@ -23,6 +23,7 @@ sub testml_setup {
     $data{bridge} ||= '';
     for my $file (io("$base/$conf->{testml}")->all_files) {
         my $testml_file = $data{testml_file} = $file->filename;
+        $data{testml_dir} = $conf->{local};
         my $name = $testml_file;
         $name =~ s/\.tml$// or next;
 
@@ -75,9 +76,9 @@ sub init {
 sub template_pm5 {
     return <<'...';
 use TestML -run,
-[% IF bridge %]
+[% IF bridge -%]
     -bridge => '[% bridge %]',
-[% END %]
+[% END -%]
     -testml => '[% testml_dir %]/[% testml_file %]';
 ...
 }
@@ -88,10 +89,10 @@ use v6;
 use TestML::Runner::TAP;
 
 TestML::Runner::TAP.new(
-    document => '[% testml_dir %]/[% testml_file %]',
-[% IF bridge %]
+    testml => '[% testml_dir %]/[% testml_file %]',
+[% IF bridge -%]
     bridge => '[% bridge %]',
-[% END %]
+[% END -%]
 ).run();
 ...
 }
