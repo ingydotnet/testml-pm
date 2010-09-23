@@ -21,6 +21,7 @@ sub testml_setup {
     my $conf = init(@_);
     my %data = %$conf;
     $data{bridge} ||= '';
+
     for my $file (io("$base/$conf->{testml}")->all_files) {
         my $testml_file = $data{testml_file} = $file->filename;
         $data{testml_dir} = $conf->{local};
@@ -30,18 +31,26 @@ sub testml_setup {
         my $src = "$base/$conf->{testml}/$testml_file";
         my $dest = "$base/$conf->{local}/$testml_file";
         
-        my $filename = $conf->{filename};
-        $filename =~ s/\$name/$name/;
-        if (not -e "$base/$filename" or not -e $dest or -M $src < -M $dest) {
-            if (@{$conf->{include}}) {
-                next unless grep {$name eq $_} @{$conf->{include}};
+        if (@{$conf->{include}}) {
+            next unless grep {$name eq $_} @{$conf->{include}};
+        }
+        next if grep {$name eq $_} @{$conf->{skip}};
+
+        my $testname = $conf->{testname};
+        $testname =~ s/\$name/$name/;
+        if (not -e "$base/$testname" or not -e $dest or -M $src < -M $dest) {
+
+            if (not(-e $dest) or (-M $src < -M $dest) and (io($dest)->all ne io($src)->all)) {
+                my $copy_cmd = "cp -f $src $dest";
+                print "$copy_cmd\n";
+                system($copy_cmd) == 0 or die "'$copy_cmd' failed";
             }
-            next if grep {$name eq $_} @{$conf->{skip}};
-            system("cp -f $src $dest") == 0
-                or die "copy $src to $dest failed";
-            print "Generating $filename\n";
+
+            next unless io($dest)->all =~ /^%TestML \d/m;
+
+            print "Generating $testname\n";
             my $output = tt->render(\$template, \%data);
-            io("$base/$filename")->print($output);
+            io("$base/$testname")->print($output);
         }
     }
 }
@@ -55,7 +64,7 @@ sub init {
         unless $conf->{testml} and -d "$base/$conf->{testml}";
     die "Missing or invalid 'local' directory in $config_file"
         unless $conf->{local} and -d "$base/$conf->{local}";
-    $conf->{filename} ||= '$name.t';
+    $conf->{testname} ||= '$name.t';
     
     if ($conf->{template}) {
         $template = io("$base/$conf->{template}")->all;
