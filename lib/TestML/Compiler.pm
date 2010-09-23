@@ -81,7 +81,13 @@ sub preprocess {
             }
             $order_error = 1 unless $result->{TestML};
             if ($directive eq 'Include') {
-                $text .= $self->preprocess($self->slurp($value))->{text};
+                my $sub_result = $self->preprocess($self->slurp($value));
+                $text .= $sub_result->{text};
+                $result->{DataMarker} = $sub_result->{DataMarker};
+                $result->{BlockMarker} = $sub_result->{BlockMarker};
+                $result->{PointMarker} = $sub_result->{PointMarker};
+                die "Can't define %TestML in an Included file"
+                    if $sub_result->{TestML};
             }
             elsif ($directive =~ /^(DataMarker|BlockMarker|PointMarker)$/) {
                 $result->{$directive} = $value;
