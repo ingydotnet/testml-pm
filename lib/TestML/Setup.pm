@@ -47,6 +47,7 @@ sub testml_setup {
             }
 
             next unless io($dest)->all =~ /^%TestML \d/m;
+            next if -e "$base/$testname";
 
             print "Generating $testname\n";
             my $output = tt->render(\$template, \%data);
