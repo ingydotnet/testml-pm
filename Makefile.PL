@@ -8,7 +8,7 @@ manifest_skip;
 version_check;
 ack_xxx;
 
-requires 'Pegex' => '0.10';
+requires 'Pegex' => '0.11';
 use_gloom 'TestML::Base';
 
 testml_setup 't/testml.yaml';
