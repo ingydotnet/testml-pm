@@ -1,11 +1,23 @@
+##
+# name:      TestML
+# author:    Ingy döt Net <ingy@cpan.org>
+# abstract:  A Generic Software Testing Meta Language
+# license:   perl
+# copyright: 2009, 2010, 2011
+# see:
+# - http://www.testml.org/
+# - irc://irc.freenode.net#testml 
+
+use 5.006001;
 package TestML;
 use strict;
 use warnings;
-use 5.006001;
 
 use TestML::Runtime;
 
-$TestML::VERSION = '0.21';
+use Pegex 0.13 ();
+
+our $VERSION = '0.22';
 
 our @EXPORT = qw(str num bool list WWW XXX YYY ZZZ);
 
@@ -109,12 +121,6 @@ sub import {
 
 1;
 
-=encoding utf-8
-
-=head1 NAME
-
-TestML - A Generic Software Testing Meta Language
-
 =head1 SYNOPSIS
 
     # file t/testml/encode.tml
@@ -180,28 +186,3 @@ your application.
 In Perl 5, TestML is the evolution of the L<Test::Base> module. It has a
 superset of Test:Base's goals. The data markup syntax is currently
 exactly the same as Test::Base.
-
-=head1 RESOURCES
-
-Web: L<http://www.testml.org/>
-
-CPAN: L<http://search.cpan.org/dist/TestML/>
-
-GitHub: L<http://github.com/ingydotnet/testml-pm>
-
-IRC: #testml on irc.freenode.net
-
-=head1 AUTHOR
-
-Ingy döt Net <ingy@cpan.org>
-
-=head1 COPYRIGHT
-
-Copyright (c) 2009, 2010. Ingy döt Net.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-See http://www.perl.com/perl/misc/Artistic.html
-
-=cut

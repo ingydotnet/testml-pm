@@ -65,20 +65,16 @@ DESCRIPTION
     superset of Test:Base's goals. The data markup syntax is currently
     exactly the same as Test::Base.
 
-RESOURCES
-    Web: <http://www.testml.org/>
+SEE ALSO
+    *   <http://www.testml.org/>
 
-    CPAN: <http://search.cpan.org/dist/TestML/>
-
-    GitHub: <http://github.com/ingydotnet/testml-pm>
-
-    IRC: #testml on irc.freenode.net
+    *   <irc://irc.freenode.net#testml>
 
 AUTHOR
     Ingy döt Net <ingy@cpan.org>
 
-COPYRIGHT
-    Copyright (c) 2009, 2010. Ingy döt Net.
+COPYRIGHT AND LICENSE
+    Copyright (c) 2009, 2010, 2011. Ingy döt Net.
 
     This program is free software; you can redistribute it and/or modify it
     under the same terms as Perl itself.
