@@ -4,8 +4,10 @@ use Pegex::Compiler::Bootstrap;
 
 open IN, shift or die;
 my $testml = do {local $/; <IN>};
-# my $perl = Pegex::Compiler->compile($testml)->combinate->to_perl;
-my $perl = Pegex::Compiler::Bootstrap->compile($testml)->combinate->to_perl; # XXX
+# my $pegex = Pegex::Compiler->new;
+my $pegex = Pegex::Compiler::Bootstrap->new;
+$pegex->compile($testml);
+my $perl = $pegex->to_perl;
 chomp($perl);
 
 print <<"...";
