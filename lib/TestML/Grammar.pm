@@ -1,7 +1,8 @@
 package TestML::Grammar;
 use base 'Pegex::Grammar';
+# use base 'Pegex::Grammar::Bootstrap';
 
-sub grammar_tree {
+sub build_tree {
     return +{
   'NEVER' => {
     '+re' => qr/(?-xism:\G(?!))/
@@ -473,7 +474,8 @@ sub grammar_tree {
   'unit_call' => {
     '+all' => [
       {
-        '+not' => 'assertion_call_test'
+        '+rule' => 'assertion_call_test',
+        '<' => '!'
       },
       {
         '+rule' => 'call_indicator'

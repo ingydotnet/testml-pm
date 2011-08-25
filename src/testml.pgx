@@ -42,7 +42,7 @@ code_expression:
   <unit_call>*
 
 unit_call:
-  <!assertion_call_test>
+  !<assertion_call_test>
   <call_indicator>
   <code_object>
 

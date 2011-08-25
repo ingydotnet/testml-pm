@@ -141,24 +141,25 @@ sub fixup_grammar {
     my $namespace = $grammar->receiver->function->namespace;
     $namespace->{TestML} = $hash->{TestML};
 
-    $grammar = $grammar->grammar;
-    my $point_lines = $grammar->{point_lines}{'+re'};
+    my $tree = $grammar->tree;
+
+    my $point_lines = $tree->{point_lines}{'+re'};
 
     my $block_marker = $hash->{BlockMarker};
     if ($block_marker) {
         $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-        $grammar->{block_marker}{'+re'} = qr/\G$block_marker/;
+        $tree->{block_marker}{'+re'} = qr/\G$block_marker/;
         $point_lines =~ s/===/$block_marker/;
     }
 
     my $point_marker = $hash->{PointMarker};
     if ($point_marker) {
         $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-        $grammar->{point_marker}{'+re'} = qr/\G$point_marker/;
+        $tree->{point_marker}{'+re'} = qr/\G$point_marker/;
         $point_lines =~ s/---/$point_marker/;
     }
 
-    $grammar->{point_lines}{'+re'} = qr/$point_lines/;
+    $tree->{point_lines}{'+re'} = qr/$point_lines/;
 }
 
 sub slurp {

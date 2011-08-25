@@ -1,3 +1,5 @@
+# XXX This code currently depends on too much bootstrapping stuffs.
+
 use lib "../../pegex-pm/lib";
 # use Pegex::Compiler;
 use Pegex::Compiler::Bootstrap;
@@ -13,8 +15,9 @@ chomp($perl);
 print <<"...";
 package TestML::Grammar;
 use base 'Pegex::Grammar';
+# use base 'Pegex::Grammar::Bootstrap';
 
-sub grammar_tree {
+sub build_tree {
     return +$perl;
 }
 
