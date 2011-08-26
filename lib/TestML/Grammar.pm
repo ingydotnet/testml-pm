@@ -134,6 +134,7 @@ sub build_tree {
         '.rul' => 'block_marker'
       },
       {
+        '+mod' => '?',
         '.all' => [
           {
             '.rgx' => qr/(?-xism:\G[\ \t]+)/
@@ -141,8 +142,7 @@ sub build_tree {
           {
             '.rul' => 'block_label'
           }
-        ],
-        '<' => '?'
+        ]
       },
       {
         '.rgx' => qr/(?-xism:\G[\ \t]*\r?\n)/
@@ -174,8 +174,8 @@ sub build_tree {
         '.rul' => 'code_object'
       },
       {
-        '.rul' => 'unit_call',
-        '<' => '*'
+        '+mod' => '*',
+        '.rul' => 'unit_call'
       }
     ]
   },
@@ -199,6 +199,7 @@ sub build_tree {
     ]
   },
   'code_section' => {
+    '+mod' => '*',
     '.any' => [
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
@@ -209,8 +210,7 @@ sub build_tree {
       {
         '.rul' => 'code_statement'
       }
-    ],
-    '<' => '*'
+    ]
   },
   'code_statement' => {
     '.all' => [
@@ -218,8 +218,8 @@ sub build_tree {
         '.rul' => 'code_expression'
       },
       {
-        '.rul' => 'assertion_call',
-        '<' => '?'
+        '+mod' => '?',
+        '.rul' => 'assertion_call'
       },
       {
         '.rul' => 'semicolon'
@@ -238,6 +238,7 @@ sub build_tree {
         '.rul' => 'block_header'
       },
       {
+        '+mod' => '*',
         '.any' => [
           {
             '.rul' => 'blank_line'
@@ -245,18 +246,17 @@ sub build_tree {
           {
             '.rul' => 'comment'
           }
-        ],
-        '<' => '*'
+        ]
       },
       {
-        '.rul' => 'block_point',
-        '<' => '*'
+        '+mod' => '*',
+        '.rul' => 'block_point'
       }
     ]
   },
   'data_section' => {
-    '.rul' => 'data_block',
-    '<' => '*'
+    '+mod' => '*',
+    '.rul' => 'data_block'
   },
   'double_quoted_string' => {
     '.rgx' => qr/(?-xism:\G(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
@@ -264,13 +264,14 @@ sub build_tree {
   'function_object' => {
     '.all' => [
       {
-        '.rul' => 'function_signature',
-        '<' => '?'
+        '+mod' => '?',
+        '.rul' => 'function_signature'
       },
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
       },
       {
+        '+mod' => '*',
         '.any' => [
           {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
@@ -281,8 +282,7 @@ sub build_tree {
           {
             '.rul' => 'code_statement'
           }
-        ],
-        '<' => '*'
+        ]
       },
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\})/
@@ -295,8 +295,8 @@ sub build_tree {
         '.rgx' => qr/(?-xism:\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*)/
       },
       {
-        '.rul' => 'function_variables',
-        '<' => '?'
+        '+mod' => '?',
+        '.rul' => 'function_variables'
       },
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\))/
@@ -312,6 +312,7 @@ sub build_tree {
         '.rul' => 'function_variable'
       },
       {
+        '+mod' => '*',
         '.all' => [
           {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
@@ -319,8 +320,7 @@ sub build_tree {
           {
             '.rul' => 'function_variable'
           }
-        ],
-        '<' => '*'
+        ]
       }
     ]
   },
@@ -424,8 +424,8 @@ sub build_tree {
         '.rgx' => qr/(?-xism:\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*)/
       },
       {
-        '.rul' => 'transform_arguments',
-        '<' => '?'
+        '+mod' => '?',
+        '.rul' => 'transform_arguments'
       },
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\))/
@@ -438,6 +438,7 @@ sub build_tree {
         '.rul' => 'transform_argument'
       },
       {
+        '+mod' => '*',
         '.all' => [
           {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
@@ -445,8 +446,7 @@ sub build_tree {
           {
             '.rul' => 'transform_argument'
           }
-        ],
-        '<' => '*'
+        ]
       }
     ]
   },
@@ -466,16 +466,16 @@ sub build_tree {
         '.rul' => 'transform_name'
       },
       {
-        '.rul' => 'transform_argument_list',
-        '<' => '?'
+        '+mod' => '?',
+        '.rul' => 'transform_argument_list'
       }
     ]
   },
   'unit_call' => {
     '.all' => [
       {
-        '.rul' => 'assertion_call_test',
-        '<' => '!'
+        '+mod' => '!',
+        '.rul' => 'assertion_call_test'
       },
       {
         '.rul' => 'call_indicator'
