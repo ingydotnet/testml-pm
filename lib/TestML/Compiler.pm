@@ -143,23 +143,23 @@ sub fixup_grammar {
 
     my $tree = $grammar->tree;
 
-    my $point_lines = $tree->{point_lines}{'+re'};
+    my $point_lines = $tree->{point_lines}{'.rgx'};
 
     my $block_marker = $hash->{BlockMarker};
     if ($block_marker) {
         $block_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-        $tree->{block_marker}{'+re'} = qr/\G$block_marker/;
+        $tree->{block_marker}{'.rgx'} = qr/\G$block_marker/;
         $point_lines =~ s/===/$block_marker/;
     }
 
     my $point_marker = $hash->{PointMarker};
     if ($point_marker) {
         $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
-        $tree->{point_marker}{'+re'} = qr/\G$point_marker/;
+        $tree->{point_marker}{'.rgx'} = qr/\G$point_marker/;
         $point_lines =~ s/---/$point_marker/;
     }
 
-    $tree->{point_lines}{'+re'} = qr/$point_lines/;
+    $tree->{point_lines}{'.rgx'} = qr/$point_lines/;
 }
 
 sub slurp {
