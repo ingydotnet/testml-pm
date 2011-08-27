@@ -1,6 +1,5 @@
 package TestML::Grammar;
 use base 'Pegex::Grammar';
-# use base 'Pegex::Grammar::Bootstrap';
 
 sub build_tree {
     return +{

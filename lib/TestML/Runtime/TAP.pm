@@ -3,6 +3,15 @@ use TestML::Runtime -base;
 
 use Test::Builder;
 
+if ($TestML::Test::Differences) {
+    no warnings 'redefine';
+    require Test::Differences;
+    *Test::Builder::is_eq = sub {
+        my $self = shift;
+        \&Test::Differences::eq_or_diff(@_);
+    };
+}
+
 has 'test_builder' => -init => 'Test::Builder->new';
 
 sub title {
