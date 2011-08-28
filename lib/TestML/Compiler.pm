@@ -4,7 +4,7 @@ use TestML::Base -base;
 use TestML::Grammar;
 
 has 'base';
-has 'debug' => '0';
+has 'debug' => init => '$TestML::Compiler::Debug';
 
 sub compile {
     my $self = shift;
@@ -32,8 +32,10 @@ sub compile {
 
     $self->fixup_grammar($grammar, $result);
 
-    $grammar->parse($data, 'data_section')
-        or die "Parse TestML data section failed";
+    if (length $data) {
+        $grammar->parse($data, 'data_section')
+            or die "Parse TestML data section failed";
+    }
 
     if ($result->{DumpAST}) {
         XXX($grammar->receiver->function);
