@@ -10,26 +10,26 @@ sub build_tree {
   'TOP' => {
     '.all' => [
       {
-        '.rul' => 'NEVER'
+        '.ref' => 'NEVER'
       },
       {
-        '.rul' => 'code_section'
+        '.ref' => 'code_section'
       },
       {
-        '.rul' => 'data_section'
+        '.ref' => 'data_section'
       }
     ]
   },
   'assertion_call' => {
     '.any' => [
       {
-        '.rul' => 'assertion_eq'
+        '.ref' => 'assertion_eq'
       },
       {
-        '.rul' => 'assertion_ok'
+        '.ref' => 'assertion_ok'
       },
       {
-        '.rul' => 'assertion_has'
+        '.ref' => 'assertion_has'
       }
     ]
   },
@@ -39,10 +39,10 @@ sub build_tree {
   'assertion_eq' => {
     '.any' => [
       {
-        '.rul' => 'assertion_operator_eq'
+        '.ref' => 'assertion_operator_eq'
       },
       {
-        '.rul' => 'assertion_function_eq'
+        '.ref' => 'assertion_function_eq'
       }
     ]
   },
@@ -52,7 +52,7 @@ sub build_tree {
         '.rgx' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.)EQ\()/
       },
       {
-        '.rul' => 'code_expression'
+        '.ref' => 'code_expression'
       },
       {
         '.rgx' => qr/(?-xism:\G\))/
@@ -65,7 +65,7 @@ sub build_tree {
         '.rgx' => qr/(?-xism:\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.)HAS\()/
       },
       {
-        '.rul' => 'code_expression'
+        '.ref' => 'code_expression'
       },
       {
         '.rgx' => qr/(?-xism:\G\))/
@@ -78,15 +78,15 @@ sub build_tree {
   'assertion_has' => {
     '.any' => [
       {
-        '.rul' => 'assertion_operator_has'
+        '.ref' => 'assertion_operator_has'
       },
       {
-        '.rul' => 'assertion_function_has'
+        '.ref' => 'assertion_function_has'
       }
     ]
   },
   'assertion_ok' => {
-    '.rul' => 'assertion_function_ok'
+    '.ref' => 'assertion_function_ok'
   },
   'assertion_operator_eq' => {
     '.all' => [
@@ -94,7 +94,7 @@ sub build_tree {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+==(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
       },
       {
-        '.rul' => 'code_expression'
+        '.ref' => 'code_expression'
       }
     ]
   },
@@ -104,23 +104,23 @@ sub build_tree {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+~~(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
       },
       {
-        '.rul' => 'code_expression'
+        '.ref' => 'code_expression'
       }
     ]
   },
   'assignment_statement' => {
     '.all' => [
       {
-        '.rul' => 'variable_name'
+        '.ref' => 'variable_name'
       },
       {
         '.rgx' => qr/(?-xism:\G\s+=\s+)/
       },
       {
-        '.rul' => 'code_expression'
+        '.ref' => 'code_expression'
       },
       {
-        '.rul' => 'semicolon'
+        '.ref' => 'semicolon'
       }
     ]
   },
@@ -130,7 +130,7 @@ sub build_tree {
   'block_header' => {
     '.all' => [
       {
-        '.rul' => 'block_marker'
+        '.ref' => 'block_marker'
       },
       {
         '+mod' => '?',
@@ -139,7 +139,7 @@ sub build_tree {
             '.rgx' => qr/(?-xism:\G[\ \t]+)/
           },
           {
-            '.rul' => 'block_label'
+            '.ref' => 'block_label'
           }
         ]
       },
@@ -149,7 +149,7 @@ sub build_tree {
     ]
   },
   'block_label' => {
-    '.rul' => 'unquoted_string'
+    '.ref' => 'unquoted_string'
   },
   'block_marker' => {
     '.rgx' => qr/(?-xism:\G===)/
@@ -157,10 +157,10 @@ sub build_tree {
   'block_point' => {
     '.any' => [
       {
-        '.rul' => 'lines_point'
+        '.ref' => 'lines_point'
       },
       {
-        '.rul' => 'phrase_point'
+        '.ref' => 'phrase_point'
       }
     ]
   },
@@ -170,30 +170,30 @@ sub build_tree {
   'code_expression' => {
     '.all' => [
       {
-        '.rul' => 'code_object'
+        '.ref' => 'code_object'
       },
       {
         '+mod' => '*',
-        '.rul' => 'unit_call'
+        '.ref' => 'unit_call'
       }
     ]
   },
   'code_object' => {
     '.any' => [
       {
-        '.rul' => 'function_object'
+        '.ref' => 'function_object'
       },
       {
-        '.rul' => 'point_object'
+        '.ref' => 'point_object'
       },
       {
-        '.rul' => 'string_object'
+        '.ref' => 'string_object'
       },
       {
-        '.rul' => 'number_object'
+        '.ref' => 'number_object'
       },
       {
-        '.rul' => 'transform_object'
+        '.ref' => 'transform_object'
       }
     ]
   },
@@ -204,24 +204,24 @@ sub build_tree {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
       },
       {
-        '.rul' => 'assignment_statement'
+        '.ref' => 'assignment_statement'
       },
       {
-        '.rul' => 'code_statement'
+        '.ref' => 'code_statement'
       }
     ]
   },
   'code_statement' => {
     '.all' => [
       {
-        '.rul' => 'code_expression'
+        '.ref' => 'code_expression'
       },
       {
         '+mod' => '?',
-        '.rul' => 'assertion_call'
+        '.ref' => 'assertion_call'
       },
       {
-        '.rul' => 'semicolon'
+        '.ref' => 'semicolon'
       }
     ]
   },
@@ -234,28 +234,28 @@ sub build_tree {
   'data_block' => {
     '.all' => [
       {
-        '.rul' => 'block_header'
+        '.ref' => 'block_header'
       },
       {
         '+mod' => '*',
         '.any' => [
           {
-            '.rul' => 'blank_line'
+            '.ref' => 'blank_line'
           },
           {
-            '.rul' => 'comment'
+            '.ref' => 'comment'
           }
         ]
       },
       {
         '+mod' => '*',
-        '.rul' => 'block_point'
+        '.ref' => 'block_point'
       }
     ]
   },
   'data_section' => {
     '+mod' => '*',
-    '.rul' => 'data_block'
+    '.ref' => 'data_block'
   },
   'double_quoted_string' => {
     '.rgx' => qr/(?-xism:\G(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
@@ -264,7 +264,7 @@ sub build_tree {
     '.all' => [
       {
         '+mod' => '?',
-        '.rul' => 'function_signature'
+        '.ref' => 'function_signature'
       },
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
@@ -276,10 +276,10 @@ sub build_tree {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
           },
           {
-            '.rul' => 'assignment_statement'
+            '.ref' => 'assignment_statement'
           },
           {
-            '.rul' => 'code_statement'
+            '.ref' => 'code_statement'
           }
         ]
       },
@@ -295,7 +295,7 @@ sub build_tree {
       },
       {
         '+mod' => '?',
-        '.rul' => 'function_variables'
+        '.ref' => 'function_variables'
       },
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\))/
@@ -308,7 +308,7 @@ sub build_tree {
   'function_variables' => {
     '.all' => [
       {
-        '.rul' => 'function_variable'
+        '.ref' => 'function_variable'
       },
       {
         '+mod' => '*',
@@ -317,7 +317,7 @@ sub build_tree {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
           },
           {
-            '.rul' => 'function_variable'
+            '.ref' => 'function_variable'
           }
         ]
       }
@@ -326,19 +326,19 @@ sub build_tree {
   'lines_point' => {
     '.all' => [
       {
-        '.rul' => 'point_marker'
+        '.ref' => 'point_marker'
       },
       {
         '.rgx' => qr/(?-xism:\G[\ \t]+)/
       },
       {
-        '.rul' => 'point_name'
+        '.ref' => 'point_name'
       },
       {
         '.rgx' => qr/(?-xism:\G[\ \t]*\r?\n)/
       },
       {
-        '.rul' => 'point_lines'
+        '.ref' => 'point_lines'
       }
     ]
   },
@@ -346,24 +346,24 @@ sub build_tree {
     '.rgx' => qr/(?-xism:\G([0-9]+))/
   },
   'number_object' => {
-    '.rul' => 'number'
+    '.ref' => 'number'
   },
   'phrase_point' => {
     '.all' => [
       {
-        '.rul' => 'point_marker'
+        '.ref' => 'point_marker'
       },
       {
         '.rgx' => qr/(?-xism:\G[\ \t]+)/
       },
       {
-        '.rul' => 'point_name'
+        '.ref' => 'point_name'
       },
       {
         '.rgx' => qr/(?-xism:\G:[\ \t])/
       },
       {
-        '.rul' => 'point_phrase'
+        '.ref' => 'point_phrase'
       },
       {
         '.rgx' => qr/(?-xism:\G\r?\n)/
@@ -391,10 +391,10 @@ sub build_tree {
   'quoted_string' => {
     '.any' => [
       {
-        '.rul' => 'single_quoted_string'
+        '.ref' => 'single_quoted_string'
       },
       {
-        '.rul' => 'double_quoted_string'
+        '.ref' => 'double_quoted_string'
       }
     ]
   },
@@ -412,10 +412,10 @@ sub build_tree {
     '.rgx' => qr/(?-xism:\G(?:'(([^\n\\']|\\'|\\\\)*?)'))/
   },
   'string_object' => {
-    '.rul' => 'quoted_string'
+    '.ref' => 'quoted_string'
   },
   'transform_argument' => {
-    '.rul' => 'code_expression'
+    '.ref' => 'code_expression'
   },
   'transform_argument_list' => {
     '.all' => [
@@ -424,7 +424,7 @@ sub build_tree {
       },
       {
         '+mod' => '?',
-        '.rul' => 'transform_arguments'
+        '.ref' => 'transform_arguments'
       },
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\))/
@@ -434,7 +434,7 @@ sub build_tree {
   'transform_arguments' => {
     '.all' => [
       {
-        '.rul' => 'transform_argument'
+        '.ref' => 'transform_argument'
       },
       {
         '+mod' => '*',
@@ -443,7 +443,7 @@ sub build_tree {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
           },
           {
-            '.rul' => 'transform_argument'
+            '.ref' => 'transform_argument'
           }
         ]
       }
@@ -452,21 +452,21 @@ sub build_tree {
   'transform_name' => {
     '.any' => [
       {
-        '.rul' => 'user_transform'
+        '.ref' => 'user_transform'
       },
       {
-        '.rul' => 'core_transform'
+        '.ref' => 'core_transform'
       }
     ]
   },
   'transform_object' => {
     '.all' => [
       {
-        '.rul' => 'transform_name'
+        '.ref' => 'transform_name'
       },
       {
         '+mod' => '?',
-        '.rul' => 'transform_argument_list'
+        '.ref' => 'transform_argument_list'
       }
     ]
   },
@@ -474,13 +474,13 @@ sub build_tree {
     '.all' => [
       {
         '+mod' => '!',
-        '.rul' => 'assertion_call_test'
+        '.ref' => 'assertion_call_test'
       },
       {
-        '.rul' => 'call_indicator'
+        '.ref' => 'call_indicator'
       },
       {
-        '.rul' => 'code_object'
+        '.ref' => 'code_object'
       }
     ]
   },
