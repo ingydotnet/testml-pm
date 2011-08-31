@@ -6,8 +6,9 @@ chomp($perl);
 print <<"...";
 package TestML::Grammar;
 use base 'Pegex::Grammar';
+use strict;
 
-sub build_tree {
+sub tree_ {
     return +$perl;
 }
 

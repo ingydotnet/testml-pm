@@ -4,7 +4,6 @@ use TestML::Base -base;
 use TestML::Grammar;
 
 has 'base';
-has 'debug' => init => '$TestML::Compiler::Debug';
 
 sub compile {
     my $self = shift;
@@ -21,11 +20,10 @@ sub compile {
 
     my ($code, $data) = @$result{qw(code data)};
 
-    my $debug = $self->debug;
-    $debug = $result->{DebugPegex} if defined $result->{DebugPegex};
+#     my $debug = $self->debug;
+#     $debug = $result->{DebugPegex} if defined $result->{DebugPegex};
     my $grammar = TestML::Grammar->new(
         receiver => TestML::Receiver->new,
-        debug => $debug,
     );
     $grammar->parse($code, 'code_section')
         or die "Parse TestML code section failed";
