@@ -1,6 +1,6 @@
 use Pegex::Compiler;
 
-my $perl = Pegex::Compiler->compile_file(shift)->to_perl;
+my $perl = Pegex::Compiler->compile(shift)->to_perl;
 chomp($perl);
 
 print <<"...";
