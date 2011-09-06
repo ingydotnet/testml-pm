@@ -1,0 +1,31 @@
+%Foo bar
+
+Foo = bar;
+
+foo = (x, y) {};
+
+foo(a, b);
+
+x == y;
+x ~~ y;
+x != y;
+x !~ y;
+
+foo(c, d).bar;
+
+#-----------------------------------
+# New Ideas
+#-----------------------------------
+
+# Need a function return
+
+(){};       # a lambda
+(){}();     # a lambda call
+{};         
+
+x ? y : z;
+(
+
+Print("hello\n");
+Say("hello");
+

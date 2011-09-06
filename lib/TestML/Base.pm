@@ -7,7 +7,9 @@ use 5.008003;
 use strict;
 use warnings;
 
-our $VERSION = '0.16';
+our $VERSION = '0.17';
+
+use constant XXX_skip => 1;
 
 sub import {
     my ($class, $flag) = @_;
