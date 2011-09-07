@@ -24,9 +24,13 @@ sub compile {
 #     my $debug = $self->debug;
 #     $debug = $result->{DebugPegex} if defined $result->{DebugPegex};
     my $grammar = TestML::Grammar->new(
-        receiver => TestML::Receiver->new,
+        receiver => TestML::AST->new,
     );
-    $grammar->parse($code, 'code_section')
+    my $parser = Pegex::Parser->new(
+        grammar = 'TestML::Grammar',
+        receiver => 'TestML::Receiver',
+    );
+    XXX $grammar->parse($code, 'code_section')
         or die "Parse TestML code section failed";
 
     $self->fixup_grammar($grammar, $result);
