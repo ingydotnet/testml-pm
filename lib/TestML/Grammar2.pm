@@ -1,5 +1,5 @@
-package TestML::Grammar;
-use base 'Pegex::Grammar::Bootstrap';
+package TestML::Grammar2;
+use base 'Pegex::Grammar';
 use strict;
 
 sub tree_ {
