@@ -146,6 +146,43 @@ sub got_transform_name {
     else { XXX $match }
 }
 
+sub got_unquoted_string {
+    my ($self, $match) = @_;
+    return $match->{unquoted_string}{1};
+}
+
 sub got_semicolon { return }
+
+#----------------------------------------------------------
+sub got_data_section {
+    my ($self, $match) = @_;
+    return TestML::Function->new(
+        data => $match->{data_section},
+    );
+}
+
+sub got_data_block {
+    my ($self, $match) = @_;
+    my $block = $match->{data_block};
+    return TestML::Block->new(
+        label => $block->[0]{block_header}[1][1]{block_label},
+        points => +{map %$_, @{$block->[2]}},
+    );
+}
+
+sub got_block_point {
+    my ($self, $match) = @_;
+    
+    return $match->{block_point};
+}
+
+sub got_phrase_point {
+    my ($self, $match) = @_;
+
+    $match = $match->{phrase_point};
+    return {
+        $match->[2]{point_name}{1} => $match->[4]{point_phrase}{1},
+    };
+}
 
 1;

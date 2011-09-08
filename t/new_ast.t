@@ -1,4 +1,4 @@
-use Test::More tests => 1;
+use Test::More tests => 2;
 
 use Test::Differences;
 # use Test::Differences; *is = \&eq_or_diff;
@@ -13,10 +13,10 @@ use IO::All;
 
 # for my $file (<t/testml/*.tml>) {
 #     test($file);
-#     last;
 # }
 
 test('t/testml/basic.tml');
+# test('t/testml/arguments.tml');
 
 sub test {
     my $file = shift;
@@ -32,18 +32,24 @@ sub test {
         $data = substr($text, $split + 1);
     }
 
-    my $grammar1 = TestML::Grammar2->new(
-        receiver => 'TestML::AST',
-    );
-    my $ast1 = $grammar1->parse($code, 'code_section');
-    my $yaml1 = Dump($ast1);
+    run($code, 'code_section', "code section for $file");
+    run($data, 'data_section', "data section for $file");
 
-    my $grammar2 = TestML::Grammar->new(
-        receiver => TestML::Receiver->new,
-    );
-    $grammar2->parse($code, 'code_section');
-    my $ast2 = $grammar2->receiver->function;
-    my $yaml2 = Dump($ast2);
+    sub run {
+        my ($input, $rule, $label) = @_;
+        my $grammar1 = TestML::Grammar2->new(
+            receiver => 'TestML::AST',
+        );
+        my $ast1 = $grammar1->parse($input, $rule);
+        my $yaml1 = Dump($ast1);
 
-    eq_or_diff $yaml1, $yaml2, $file;
+        my $grammar2 = TestML::Grammar->new(
+            receiver => TestML::Receiver->new,
+        );
+        $grammar2->parse($input, $rule);
+        my $ast2 = $grammar2->receiver->function;
+        my $yaml2 = Dump($ast2);
+
+        eq_or_diff $yaml1, $yaml2, $label;
+    }
 }
