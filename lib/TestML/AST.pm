@@ -1,5 +1,5 @@
 package TestML::AST;
-use Pegex::AST -base;
+use Pegex::Receiver -base;
 
 use TestML::Runtime;
 
@@ -11,8 +11,7 @@ has points => -init => '[]';
 # }
 
 sub got_code_section {
-    my ($self, $match) = @_;
-    my $code = $match->{code_section} or die;
+    my ($self, $code) = @_;
     my $statements = [];
     for (@$code) {
         push @$statements, $_
@@ -25,7 +24,6 @@ sub got_code_section {
 
 sub got_assignment_statement {
     my ($self, $match) = @_;
-    $match = $match->{assignment_statement};
     return TestML::Statement->new(
         expression => TestML::Expression->new(
             units => [
@@ -42,12 +40,11 @@ sub got_assignment_statement {
 }
 
 sub got_code_statement {
-    my ($self, $match) = @_;
+    my ($self, $list) = @_;
     my ($expression, $assertion);
     my $points = $self->points;
     $self->points([]);
     
-    my $list = $match->{code_statement};
     for (@$list) {
         if (ref eq 'TestML::Expression') {
             $expression = $_;
@@ -64,9 +61,8 @@ sub got_code_statement {
 }
 
 sub got_code_expression {
-    my ($self, $match) = @_;
+    my ($self, $list) = @_;
     my $units = [];
-    my $list = $match->{code_expression};
     push @$units, shift @$list if @$list;
     $list = shift @$list || [];
     for (@$list) {
@@ -79,8 +75,8 @@ sub got_code_expression {
 }
 
 sub got_code_object {
-    my ($self, $match) = @_;
-    if (my $point = $match->{code_object}{point_object}) {
+    my ($self, $code) = @_;
+    if (my $point = $code->{point_object}) {
         my $name = $point->{1};
         $name =~ s/^\*// or die;
         push @{$self->points}, $name;
@@ -89,7 +85,6 @@ sub got_code_object {
             args => [$name],
         );
     }
-    my $code = $match->{code_object};
     if (my $transform = $code->{transform_object}) {
         return $transform;
     }
@@ -101,7 +96,7 @@ sub got_code_object {
             value => $number->{number}{1},
         );
     }
-    else { WWW $match }
+    else { WWW $code }
 }
 
 sub make_str {
@@ -116,8 +111,7 @@ sub make_str {
 }
 
 sub got_assertion_call {
-    my ($self, $match) = @_;
-    my $call = $match->{assertion_call} or die;
+    my ($self, $call) = @_;
     my ($name, $assertion);
     for (qw(
         assertion_eq
@@ -131,7 +125,7 @@ sub got_assertion_call {
             last;
         }
     }
-    XXX $match unless $assertion;
+    XXX $call unless $assertion;
     return TestML::Assertion->new(
         name => $name,
         expression => $assertion,
@@ -140,7 +134,7 @@ sub got_assertion_call {
 
 sub got_transform_name {
     my ($self, $match) = @_;
-    if (my $transform = $match->{transform_name}{user_transform}) {
+    if (my $transform = $match->{user_transform}) {
         return TestML::Transform->new(name => $transform->{1});
     }
     else { XXX $match }
@@ -148,22 +142,21 @@ sub got_transform_name {
 
 sub got_unquoted_string {
     my ($self, $match) = @_;
-    return $match->{unquoted_string}{1};
+    return $match->{1};
 }
 
 sub got_semicolon { return }
 
 #----------------------------------------------------------
 sub got_data_section {
-    my ($self, $match) = @_;
+    my ($self, $data) = @_;
     return TestML::Function->new(
-        data => $match->{data_section},
+        data => $data,
     );
 }
 
 sub got_data_block {
-    my ($self, $match) = @_;
-    my $block = $match->{data_block};
+    my ($self, $block) = @_;
     return TestML::Block->new(
         label => $block->[0]{block_header}[1][1]{block_label},
         points => +{map %$_, @{$block->[2]}},
@@ -171,17 +164,15 @@ sub got_data_block {
 }
 
 sub got_block_point {
-    my ($self, $match) = @_;
+    my ($self, $point) = @_;
     
-    return $match->{block_point};
+    return $point;
 }
 
 sub got_phrase_point {
-    my ($self, $match) = @_;
-
-    $match = $match->{phrase_point};
+    my ($self, $point) = @_;
     return {
-        $match->[2]{point_name}{1} => $match->[4]{point_phrase}{1},
+        $point->[2]{point_name}{1} => $point->[4]{point_phrase}{1},
     };
 }
 
