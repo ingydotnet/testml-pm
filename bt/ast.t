@@ -1,4 +1,6 @@
-use Test::More tests => 2;
+# BEGIN { $Pegex::Parser::Debug = 1 }
+use Test::More tests => 1;
+use strict;
 
 use Test::Differences;
 # use Test::Differences; *is = \&eq_or_diff;
@@ -9,54 +11,28 @@ use YAML::XS;
 use XXX;
 use IO::All;
 
-# BEGIN { $Pegex::Parser::Debug = 1 }
-
 # for my $file (<t/testml/*.tml>) {
 #     test($file);
 # }
 
-test('t/testml/basic.tml');
 # test('t/testml/arguments.tml');
+test('t/testml/basic.tml');
 
 sub test {
     my $file = shift;
     (my $filename = $file) =~ s!.*/!!;
-    my $text = io($file)->all;
-    my $DataMarker = "===";
+    my $input = io($file)->all;
+    $input =~ s/^#.*//gm;
+    $input =~ s/^\%.*//gm;
 
-    $text =~ s/^#.*//gm;
-    $text =~ s/^\%.*//gm;
+    my $grammar1 = TestML::Grammar->new(
+        receiver => 'TestML::AST',
+    );
+    my $ast1 = $grammar1->parse($input);
+    my $yaml1 = Dump($ast1);
 
-    my ($code, $data);
-    if ((my $split = index($text, "\n$DataMarker")) >= 0) {
-        $code = substr($text, 0, $split + 1);
-        $data = substr($text, $split + 1);
-    }
+    my $ast2 = YAML::XS::LoadFile("bt/ast/$filename");
+    my $yaml2 = Dump($ast2);
 
-    run($code, 'code', $filename);
-#     run($data, 'data', $filename);
-
-    sub run {
-        my ($input, $type, $filename) = @_;
-        my $rule = $type.'_section';
-        my $label = "$rule for $filename";
-        my $grammar1 = TestML::Grammar->new(
-            receiver => 'TestML::AST',
-        );
-        my $ast1 = $grammar1->parse($input, $rule)->statements;
-        my $yaml1 = Dump($ast1);
-
-        my $data2 = YAML::XS::LoadFile("ast/$filename");
-        my $ast2 = ($type eq 'code')
-            ? $data2->{statements}
-            : $data2->{data};
-#         my $grammar2 = TestML::Grammar->new(
-#             receiver => TestML::Receiver->new,
-#         );
-#         $grammar2->parse($input, $rule);
-#         my $ast2 = $grammar2->receiver->function;
-        my $yaml2 = Dump($ast2);
-
-        eq_or_diff $yaml1, $yaml2, $label;
-    }
+    eq_or_diff $yaml1, $yaml2, $filename;
 }

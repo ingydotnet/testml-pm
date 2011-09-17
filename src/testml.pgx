@@ -1,4 +1,4 @@
-TOP: <NEVER> <code_section> <data_section>
+testml_document: <code_section> <data_section>?
 
 # General Tokens
 escape: /[0nt]/
@@ -136,7 +136,7 @@ data_section: <data_block>*
 
 data_block:
   <block_header>
-  [ <blank_line> | <comment> ]*
+  .[ <blank_line> | <comment> ]*
   -<block_point>*
 
 block_header:

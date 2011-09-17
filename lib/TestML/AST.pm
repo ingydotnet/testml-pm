@@ -13,6 +13,17 @@ has function => ();
 # }
 # __END__
 
+sub got_testml_document {
+    my ($self, $document) = @_;
+    return TestML::Function->new(
+        statements => $document->[0]{statements},
+        data => $document->[1]{data},
+        namespace => {
+            TestML => TestML::Str->new(value => '1.0'),
+        },
+    );
+}
+
 sub got_code_section {
     my ($self, $code) = @_;
     my $statements = [];
@@ -161,21 +172,21 @@ sub got_data_section {
 sub got_data_block {
     my ($self, $block) = @_;
     return TestML::Block->new(
-        label => $block->[0]{block_header}[1][1]{block_label},
-        points => +{map %$_, @{$block->[2]}},
+        label => $block->[0]{block_header}[0][0]{block_label},
+        points => +{map %$_, @{$block->[1]}},
     );
 }
 
-sub got_block_point {
-    my ($self, $point) = @_;
-    
-    return $point;
-}
+# sub got_block_point {
+#     my ($self, $point) = @_;
+#     
+#     return $point;
+# }
 
 sub got_phrase_point {
     my ($self, $point) = @_;
     return {
-        $point->[0]{point_name}{1} => $point->[1]{point_phrase}{1},
+        $point->[0]{point_name}{1} => $point->[1]{point_phrase},
     };
 }
 

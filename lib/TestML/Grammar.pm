@@ -4,23 +4,7 @@ extends 'Pegex::Grammar';
 
 sub tree_ {
   {
-    '+top' => 'TOP',
-    'NEVER' => {
-      '.rgx' => qr/(?-xism:\G(?!))/
-    },
-    'TOP' => {
-      '.all' => [
-        {
-          '.ref' => 'NEVER'
-        },
-        {
-          '.ref' => 'code_section'
-        },
-        {
-          '.ref' => 'data_section'
-        }
-      ]
-    },
+    '+top' => 'testml_document',
     'assertion_call' => {
       '.any' => [
         {
@@ -239,6 +223,7 @@ sub tree_ {
         },
         {
           '+qty' => '*',
+          '-skip' => 1,
           '.any' => [
             {
               '.ref' => 'blank_line'
@@ -418,6 +403,17 @@ sub tree_ {
     },
     'string_object' => {
       '.ref' => 'quoted_string'
+    },
+    'testml_document' => {
+      '.all' => [
+        {
+          '.ref' => 'code_section'
+        },
+        {
+          '+qty' => '?',
+          '.ref' => 'data_section'
+        }
+      ]
     },
     'transform_argument' => {
       '.ref' => 'code_expression'
