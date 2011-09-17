@@ -1,5 +1,5 @@
 # BEGIN { $Pegex::Parser::Debug = 1 }
-use Test::More tests => 5;
+use Test::More tests => 9;
 use strict;
 
 use Test::Differences;
@@ -14,6 +14,13 @@ test('t/testml/assertions.tml');
 test('t/testml/basic.tml');
 test('t/testml/dataless.tml');
 test('t/testml/exceptions.tml');
+test('t/testml/external.tml');
+#     test('t/testml/function.tml');
+test('t/testml/label.tml');
+#     test('t/testml/markers.tml');
+test('t/testml/standard.tml');
+test('t/testml/truth.tml');
+#     test('t/testml/types.tml');
 
 sub test {
     my $file = shift;
