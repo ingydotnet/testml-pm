@@ -116,7 +116,7 @@ assertion_function_eq:
 
 assertion_ok: <assertion_function_ok>
 
-assertion_function_ok: /<call_indicator>OK<empty_parens>?/
+assertion_function_ok: /<call_indicator>(OK)<empty_parens>?/
 
 assertion_has: <assertion_operator_has> | <assertion_function_has>
 

@@ -117,19 +117,15 @@ sub make_str {
         value => $str,
     );
 }
-
 sub got_assertion_call {
     my ($self, $call) = @_;
     my ($name, $assertion);
-    for (qw(
-        assertion_eq
-        assertion_has
-        assertion_ok
-    )) {
-        if ($assertion = $call->{$_}) {
-            ($name = uc($_)) =~ s/.*_//;
-            my $key = "assertion_operator_" . lc $name;
-            $assertion = $assertion->{$key}[0];
+    for (qw( eq has ok )) {
+        if ($assertion = $call->{"assertion_$_"}) {
+            $name = uc $_;
+            $assertion =
+                $assertion->{"assertion_operator_$_"}[0] ||
+                $assertion->{"assertion_function_$_"}[0];
             last;
         }
     }
@@ -138,6 +134,15 @@ sub got_assertion_call {
         name => $name,
         expression => $assertion,
     );
+}
+
+sub got_assertion_function_ok {
+    my ($self, $ok) = @_;
+    return {
+        assertion_function_ok => [
+            TestML::Expression->new,
+        ]
+    }
 }
 
 sub got_transform_name {

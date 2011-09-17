@@ -1,5 +1,5 @@
 # BEGIN { $Pegex::Parser::Debug = 1 }
-use Test::More tests => 2;
+use Test::More tests => 3;
 use strict;
 
 use Test::Differences;
@@ -10,6 +10,7 @@ use YAML::XS;
 use XXX;
 
 test('t/testml/arguments.tml');
+test('t/testml/assertions.tml');
 test('t/testml/basic.tml');
 
 sub test {
