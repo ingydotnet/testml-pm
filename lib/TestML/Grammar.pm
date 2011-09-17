@@ -3,7 +3,7 @@ use TestML::Mo;
 extends 'Pegex::Grammar';
 
 sub tree_ {
-    return +{
+{
   '+top' => 'TOP',
   'NEVER' => {
     '.rgx' => qr/(?-xism:\G(?!))/
@@ -259,7 +259,7 @@ sub tree_ {
     '.ref' => 'data_block'
   },
   'double_quoted_string' => {
-    '.rgx' => qr/(?-xism:\G(?:"(([^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
+    '.rgx' => qr/(?-xism:\G(?:"((?:[^\n\\"]|\\"|\\\\|\\[0nt])*?)"))/
   },
   'function_object' => {
     '.all' => [
@@ -375,10 +375,10 @@ sub tree_ {
     ]
   },
   'point_lines' => {
-    '.rgx' => qr/(?-xism:\G((?:(?!===|---).*\r?\n)*))/
+    '.rgx' => qr/(?-xism:\G((?:(?!===|\-\-\-).*\r?\n)*))/
   },
   'point_marker' => {
-    '.rgx' => qr/(?-xism:\G---)/
+    '.rgx' => qr/(?-xism:\G\-\-\-)/
   },
   'point_name' => {
     '.rgx' => qr/(?-xism:\G([a-z]\w*|[A-Z]\w*))/
@@ -387,7 +387,7 @@ sub tree_ {
     '.rgx' => qr/(?-xism:\G(\*[a-z]\w*))/
   },
   'point_phrase' => {
-    '.rgx' => qr/(?-xism:\G(([^\ \t\n\#](?:[^\n\#]*[^\ \t\n\#])?)))/
+    '.ref' => 'unquoted_string'
   },
   'quoted_string' => {
     '.any' => [
@@ -410,7 +410,7 @@ sub tree_ {
     ]
   },
   'single_quoted_string' => {
-    '.rgx' => qr/(?-xism:\G(?:'(([^\n\\']|\\'|\\\\)*?)'))/
+    '.rgx' => qr/(?-xism:\G(?:'((?:[^\n\\']|\\'|\\\\)*?)'))/
   },
   'string_object' => {
     '.ref' => 'quoted_string'
@@ -474,7 +474,7 @@ sub tree_ {
   'unit_call' => {
     '.all' => [
       {
-        '+neg' => 1,
+        '+asr' => -1,
         '.ref' => 'assertion_call_test'
       },
       {
@@ -494,7 +494,5 @@ sub tree_ {
   'variable_name' => {
     '.rgx' => qr/(?-xism:\G([a-zA-Z]\w*))/
   }
-};
 }
-
-1;
+}
