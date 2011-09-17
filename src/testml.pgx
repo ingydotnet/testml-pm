@@ -39,7 +39,7 @@ semicolon:
 
 code_expression:
   <code_object>
-  <unit_call>*
+  -<unit_call>*
 
 unit_call:
   !<assertion_call_test>
@@ -90,7 +90,7 @@ call_indicator: /(?:<DOT><ws>*|<ws>*<DOT>)/
 
 transform_argument_list:
   /<LPAREN><ws>*/
-  <transform_arguments>?
+  -<transform_arguments>?
   /<ws>*<RPAREN>/
 
 transform_arguments:

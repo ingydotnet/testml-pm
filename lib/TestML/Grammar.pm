@@ -159,6 +159,7 @@ sub tree_ {
         },
         {
           '+qty' => '*',
+          '-pass' => 1,
           '.ref' => 'unit_call'
         }
       ]
@@ -425,6 +426,7 @@ sub tree_ {
         },
         {
           '+qty' => '?',
+          '-pass' => 1,
           '.ref' => 'transform_arguments'
         },
         {

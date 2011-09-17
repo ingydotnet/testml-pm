@@ -9,7 +9,7 @@ has function => default => sub { TestML::Function->new };
 
 # sub final {
 #     my ($self, $match, $top) = @_;
-#     return $match
+#     XXX $match;
 # }
 # __END__
 
@@ -73,7 +73,8 @@ sub got_code_expression {
     push @$units, shift @$list if @$list;
     $list = shift @$list || [];
     for (@$list) {
-        my $unit = $_->{unit_call}[0][0];
+#         WWW $_;
+        my $unit = $_->[0]; #->{unit_call}[0][0];
         push @$units, $unit;
     }
     return TestML::Expression->new(
@@ -103,7 +104,7 @@ sub got_code_object {
             value => $number->{number}{1},
         );
     }
-    else { WWW $code }
+    else { $code }
 }
 
 sub make_str {
@@ -145,6 +146,31 @@ sub got_transform_name {
         return TestML::Transform->new(name => $transform->{1});
     }
     else { XXX $match }
+}
+
+sub got_transform_object {
+    my ($self, $object) = @_;
+    my $transform = $object->[0];
+    my $args = [];
+    push @$args, $object->[1][0][0],
+        if $object->[1][0][0];
+    push @$args, @{$object->[1][0][1][0]}
+        if $object->[1][0][1][0];
+    $transform->args($args) if @$args;
+    $transform->explicit_call(1)
+        if $object->[1][1];
+    return $transform;
+}
+
+sub got_transform_argument_list {
+    my ($self, $list) = @_;
+    push @$list, 'explicit';
+    return $list;
+}
+
+sub got_transform_argument {
+    my ($self, $arg) = @_;
+    return $arg;
 }
 
 sub got_unquoted_string {
