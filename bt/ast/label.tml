@@ -1,0 +1,89 @@
+--- !!perl/hash:TestML::Function
+data:
+- !!perl/hash:TestML::Block
+  label: A Fruity Test
+  points:
+    fruit: apple
+    num: '14'
+    text: 'A Fruity Test: 14) The apple'
+- !!perl/hash:TestML::Block
+  label: X
+  points:
+    fruit: pear
+    num: '21'
+    text: 'X: 21) The pear'
+- !!perl/hash:TestML::Block
+  label: Last Test
+  points:
+    fruit: tomato
+    num: '99'
+    text: 'Last Test: 99) The tomato'
+namespace:
+  TestML: !!perl/hash:TestML::Str
+    value: '1.0'
+statements:
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Plan
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Num
+          value: '4'
+      name: Set
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: My label
+      name: Set
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Str
+        value: My label
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: Label
+      explicit_call: 1
+      name: Get
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: '$BlockLabel: $num) The $fruit'
+      name: Set
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Transform
+        args:
+        - text
+        name: Point
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      name: GetLabel
+  points:
+  - text

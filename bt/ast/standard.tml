@@ -1,0 +1,241 @@
+--- !!perl/hash:TestML::Function
+data:
+- !!perl/hash:TestML::Block
+  label: List
+  points:
+    lines: 'sail
+
+
+      away
+
+
+
+      List
+
+      NOT
+
+
+      Lines/Text
+
+      Split(delim)/Join(delim)
+
+      Sort/NumSort/Reverse
+
+      Item(num)/Count
+
+
+'
+- !!perl/hash:TestML::Block
+  label: Test One
+  points:
+    bar: a - b - c
+    baz: 'c
+
+      b
+
+      a
+
+
+'
+    foo: 'a
+
+      b
+
+      c
+
+'
+- !!perl/hash:TestML::Block
+  label: Test Two
+  points:
+    bar: I - like - pie!
+    baz: 'pie!
+
+      like
+
+      I
+
+'
+    foo: 'I
+
+      like
+
+      pie!
+
+'
+namespace:
+  TestML: !!perl/hash:TestML::Str
+    value: '1.0'
+statements:
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Title
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: Test the TestML Standard Library
+      name: Set
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Plan
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Num
+          value: '10'
+      name: Set
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      name: True
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      name: False
+    - !!perl/hash:TestML::Transform
+      name: Not
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      name: None
+    - !!perl/hash:TestML::Transform
+      name: Not
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Num
+        value: '5'
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - lines
+      name: Point
+    - !!perl/hash:TestML::Transform
+      name: Lines
+    - !!perl/hash:TestML::Transform
+      name: Count
+  points:
+  - lines
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Transform
+        args:
+        - bar
+        name: Point
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - foo
+      name: Point
+    - !!perl/hash:TestML::Transform
+      name: Lines
+    - !!perl/hash:TestML::Transform
+      args:
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: ' - '
+      explicit_call: 1
+      name: Join
+  points:
+  - foo
+  - bar
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Transform
+        args:
+        - baz
+        name: Point
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - foo
+      name: Point
+    - !!perl/hash:TestML::Transform
+      name: Lines
+    - !!perl/hash:TestML::Transform
+      name: Reverse
+    - !!perl/hash:TestML::Transform
+      name: Text
+  points:
+  - foo
+  - baz
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Transform
+        args:
+        - baz
+        name: Point
+      - !!perl/hash:TestML::Transform
+        name: Lines
+      - !!perl/hash:TestML::Transform
+        name: Sort
+      - !!perl/hash:TestML::Transform
+        name: Text
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - foo
+      name: Point
+    - !!perl/hash:TestML::Transform
+      name: Lines
+    - !!perl/hash:TestML::Transform
+      name: Sort
+    - !!perl/hash:TestML::Transform
+      name: Text
+  points:
+  - foo
+  - baz
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Transform
+        args:
+        - foo
+        name: Point
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - foo
+      name: Point
+    - !!perl/hash:TestML::Transform
+      name: Lines
+    - !!perl/hash:TestML::Transform
+      name: Text
+  points:
+  - foo
+  - foo

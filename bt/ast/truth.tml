@@ -1,0 +1,131 @@
+--- !!perl/hash:TestML::Function
+namespace:
+  TestML: !!perl/hash:TestML::Str
+    value: '1.0'
+statements:
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Plan
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Num
+          value: '9'
+      name: Set
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: Boolean OK
+      name: Set
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      name: True
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      name: False
+    - !!perl/hash:TestML::Transform
+      name: Not
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      name: True
+    - !!perl/hash:TestML::Transform
+      name: Not
+    - !!perl/hash:TestML::Transform
+      name: Not
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: String OK
+      name: Set
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Str
+      value: Text
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Str
+      value: ''
+    - !!perl/hash:TestML::Transform
+      name: Not
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Str
+      value: '0'
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: Number OK
+      name: Set
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Num
+      value: '0'
+    - !!perl/hash:TestML::Transform
+      name: Not
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Num
+      value: '1'
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression {}
+    name: OK
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Num
+      value: '42'

@@ -1,0 +1,127 @@
+--- !!perl/hash:TestML::Function
+data:
+- !!perl/hash:TestML::Block
+  label: Dear John
+  points:
+    greeting: Dear John
+    what: Dear
+    who: John
+- !!perl/hash:TestML::Block
+  label: Greetings and Salutations
+  points:
+    else: Salutations
+    greeting: Greetings and Salutations
+    upper_greeting: Greetings and SALUTATIONS
+    what: Greetings
+namespace:
+  TestML: !!perl/hash:TestML::Str
+    value: '1.0'
+statements:
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Plan
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Num
+          value: '3'
+      name: Set
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Transform
+        args:
+        - greeting
+        name: Point
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - what
+      name: Point
+    - !!perl/hash:TestML::Transform
+      args:
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Transform
+          args:
+          - who
+          name: Point
+      explicit_call: 1
+      name: combine
+  points:
+  - what
+  - who
+  - greeting
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Transform
+        args:
+        - greeting
+        name: Point
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - what
+      name: Point
+    - !!perl/hash:TestML::Transform
+      args:
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: and
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Transform
+          args:
+          - else
+          name: Point
+      explicit_call: 1
+      name: combine
+  points:
+  - what
+  - else
+  - greeting
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Transform
+        args:
+        - upper_greeting
+        name: Point
+    name: EQ
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - what
+      name: Point
+    - !!perl/hash:TestML::Transform
+      args:
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: and
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Transform
+          args:
+          - else
+          name: Point
+        - !!perl/hash:TestML::Transform
+          name: my_upper
+      explicit_call: 1
+      name: combine
+  points:
+  - what
+  - else
+  - upper_greeting
