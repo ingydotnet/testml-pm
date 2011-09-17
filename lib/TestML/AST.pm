@@ -1,9 +1,10 @@
 package TestML::AST;
-use Pegex::Receiver -base;
+use Pegex::Mo;
+extends 'Pegex::Receiver';
 
 use TestML::Runtime;
 
-has points => -init => '[]';
+has points => default => sub{[]};
 
 # sub final {
 #     my ($self, $match, $top) = @_;

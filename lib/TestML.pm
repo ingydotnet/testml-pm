@@ -9,18 +9,17 @@
 # - irc://irc.freenode.net#testml 
 
 use 5.006001;
+use Pegex 0.13 ();
+
 package TestML;
 use strict;
 use warnings;
 
 use TestML::Runtime;
 
-use Pegex 0.13 ();
-
 our $VERSION = '0.22';
 
-our @EXPORT = qw(str num bool list WWW XXX YYY ZZZ);
-
+use constant XXX_skip => 1;
 our $DumpModule = 'YAML::XS';
 sub WWW { require XXX; local $XXX::DumpModule = $DumpModule; XXX::WWW(@_) }
 sub XXX { require XXX; local $XXX::DumpModule = $DumpModule; XXX::XXX(@_) }
@@ -41,10 +40,6 @@ sub import {
 
     strict->import;
     warnings->import;
-
-    if (@_ > 1 and $_[1] eq '-base') {
-        goto &TestML::Base::import;
-    }
 
     my $pkg = shift;
     while (@_) {
@@ -114,9 +109,13 @@ sub import {
         }
     }
 
-    require Exporter;
-    @_ = ($pkg);
-    goto &Exporter::import;
+    no strict 'refs';
+    if (not defined &{$pkg.'::XXX'}) {
+        *{$pkg.'::WWW'} = \&WWW;
+        *{$pkg.'::XXX'} = \&XXX;
+        *{$pkg.'::YYY'} = \&YYY;
+        *{$pkg.'::ZZZ'} = \&ZZZ;
+    }
 }
 
 1;

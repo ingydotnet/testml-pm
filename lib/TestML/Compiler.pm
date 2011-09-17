@@ -1,10 +1,10 @@
 package TestML::Compiler;
 
-use TestML::Base -base;
+use TestML::Mo;
 use TestML::Grammar;
 use TestML::Receiver;
 
-has 'base';
+has base => ();
 
 sub compile {
     my $self = shift;

@@ -1,5 +1,6 @@
 package TestML::Runtime;
-use TestML::Base -base;
+use TestML::Mo;
+
 use TestML::Compiler;
 
 # Since there is only ever one test runtime, it makes things a LOT cleaner to
@@ -7,20 +8,19 @@ use TestML::Compiler;
 # put a reference to it into every object that needs to access it.
 our $self;
 
-has 'base', -init => '$0 =~ m!(.*)/! ? $1 : "."';   # Base directory
-has 'testml';           # TestML document filename, handle or text
-has 'bridge';           # Bridge transform module
+has base => default => sub {$0 =~ m!(.*)/! ? $1 : "."};   # Base directory
+has testml => ();       # TestML document filename, handle or text
+has bridge => ();       # Bridge transform module
 
 # XXX Add TestML.pm support for -library keyword.
-has 'library' => [];    # Transform library modules
+has library => default => sub {[]};    # Transform library modules
 
-has 'function';         # Current function executing
-has 'planned' => 0;     # plan() has been called
-has 'test_number' => 0; # Number of tests run so far
+has function => ();         # Current function executing
+has planned => default => sub {0};     # plan() has been called
+has test_number => default => sub {0}; # Number of tests run so far
 
-sub init {
+sub BUILD {
     my $self = $TestML::Runtime::self = shift;
-    $self->SUPER::init(@_);
     $self->function($self->compile_testml);
     $self->load_variables;
     $self->load_transform_module('TestML::Library::Standard');
@@ -28,7 +28,6 @@ sub init {
     if ($self->bridge) {
         $self->load_transform_module($self->bridge);
     }
-    return $self;
 }
 
 # XXX Move to TestML::Adapter
@@ -342,18 +341,18 @@ sub throw {
 
 #-----------------------------------------------------------------------------
 package TestML::Function;
-use TestML::Base -base;
+use TestML::Mo;
 
-has 'type' => 'Func';       # Functions are TestML typed objects
+has type => default => sub {'Func'};        # Functions are TestML typed objects
 # XXX Make this a featherweight reference.
-has 'signature' => [];      # Input variable names
-has 'namespace' => {};      # Lexical scoped variable stash
-has 'statements' => [];     # Exexcutable code statements
-has 'data' => [];           # Data section scoped to this function
+has signature => default => sub {[]};       # Input variable names
+has namespace => default => sub {{}};       # Lexical scoped variable stash
+has statements => default => sub {[]};      # Exexcutable code statements
+has data => default => sub{[]};             # Data section scoped to this function
 
 # Runtime pointers to current objects.
-has 'expression';
-has 'block';
+has expression => ();
+has block => ();
 
 my $outer = {};
 sub outer { @_ == 1 ? $outer->{$_[0]} : ($outer->{$_[0]} = $_[1]) }
@@ -387,46 +386,46 @@ sub forgetvar {
 
 #-----------------------------------------------------------------------------
 package TestML::Statement;
-use TestML::Base -base;
+use TestML::Mo;
 
-has 'expression', -init => 'TestML::Expression->new';
-has 'assertion';
-has 'points' => [];
+has expression => default => sub {TestML::Expression->new};
+has assertion => ();
+has points => default => sub {[]};
 
 #-----------------------------------------------------------------------------
 package TestML::Expression;
-use TestML::Base -base;
+use TestML::Mo;
 
-has 'units' => [];
-has 'error';
+has units => default => sub {[]};
+has error => ();
 
 #-----------------------------------------------------------------------------
 package TestML::Assertion;
-use TestML::Base -base;
+use TestML::Mo;
 
-has 'name';
-has 'expression', -init => 'TestML::Expression->new';
+has name => ();
+has expression => default => sub {TestML::Expression->new};
 
 #-----------------------------------------------------------------------------
 package TestML::Transform;
-use TestML::Base -base;
+use TestML::Mo;
 
-has 'name';
-has 'args' => [];
-has 'explicit_call' => 0;
+has name => ();
+has args => default => sub {[]};
+has explicit_call => default => 0;
 
 #-----------------------------------------------------------------------------
 package TestML::Block;
-use TestML::Base -base;
+use TestML::Mo;
 
-has 'label' => '';
-has 'points' => {};
+has label => default => sub {''};
+has points => default => sub {{}};
 
 #-----------------------------------------------------------------------------
 package TestML::Object;
-use TestML::Base -base;
+use TestML::Mo;
 
-has 'value';
+has value => ();
 
 sub type {
     my $type = ref(shift);
@@ -444,7 +443,8 @@ sub none { $TestML::Constant::None }
 
 #-----------------------------------------------------------------------------
 package TestML::Str;
-use TestML::Object -base;
+use TestML::Mo;
+extends 'TestML::Object';
 
 sub str { shift }
 sub num { TestML::Num->new(
@@ -457,7 +457,8 @@ sub list { TestML::List->new(value => [split //, $_[0]->value]) }
 
 #-----------------------------------------------------------------------------
 package TestML::Num;
-use TestML::Object -base;
+use TestML::Mo;
+extends 'TestML::Object';
 
 sub str { TestML::Str->new(value => $_[0]->value . "") }
 sub num { shift }
@@ -470,7 +471,8 @@ sub list {
 
 #-----------------------------------------------------------------------------
 package TestML::Bool;
-use TestML::Object -base;
+use TestML::Mo;
+extends 'TestML::Object';
 
 sub str { TestML::Str->new(value => $_[0]->value ? "1" : "") }
 sub num { TestML::Num->new(value => $_[0]->value ? 1 : 0) }
@@ -478,12 +480,14 @@ sub bool { shift }
 
 #-----------------------------------------------------------------------------
 package TestML::List;
-use TestML::Object -base;
+use TestML::Mo;
+extends 'TestML::Object';
 sub list { shift }
 
 #-----------------------------------------------------------------------------
 package TestML::None;
-use TestML::Object -base;
+use TestML::Mo;
+extends 'TestML::Object';
 
 sub str { Str('') }
 sub num { Num(0) }
@@ -492,11 +496,13 @@ sub list { List([]) }
 
 #-----------------------------------------------------------------------------
 package TestML::Error;
-use TestML::Object -base;
+use TestML::Mo;
+extends 'TestML::Object';
 
 #-----------------------------------------------------------------------------
 package TestML::Native;
-use TestML::Object -base;
+use TestML::Mo;
+extends 'TestML::Object';
 
 package TestML::Constant;
 

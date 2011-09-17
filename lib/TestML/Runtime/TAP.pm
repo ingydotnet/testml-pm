@@ -1,5 +1,6 @@
 package TestML::Runtime::TAP;
-use TestML::Runtime -base;
+use TestML::Mo;
+extends 'TestML::Runtime';
 
 use Test::Builder;
 

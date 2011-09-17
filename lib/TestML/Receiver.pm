@@ -1,5 +1,6 @@
 package TestML::Receiver;
-use TestML::Base -base;
+use TestML::Mo;
+extends 'Pegex::Receiver';
 
 use TestML::Runtime;
 

@@ -15,8 +15,8 @@ use IO::All;
 #     test($file);
 # }
 
-test('t/testml/basic.tml');
-# test('t/testml/arguments.tml');
+# test('t/testml/basic.tml');
+test('t/testml/arguments.tml');
 
 sub test {
     my $file = shift;
@@ -43,13 +43,13 @@ sub test {
         my $ast1 = $grammar1->parse($input, $rule);
         my $yaml1 = Dump($ast1);
 
-        my $grammar2 = TestML::Grammar->new(
-            receiver => TestML::Receiver->new,
-        );
-        $grammar2->parse($input, $rule);
-        my $ast2 = $grammar2->receiver->function;
-        my $yaml2 = Dump($ast2);
-
-        eq_or_diff $yaml1, $yaml2, $label;
+#         my $grammar2 = TestML::Grammar->new(
+#             receiver => TestML::Receiver->new,
+#         );
+#         $grammar2->parse($input, $rule);
+#         my $ast2 = $grammar2->receiver->function;
+#         my $yaml2 = Dump($ast2);
+# 
+#         eq_or_diff $yaml1, $yaml2, $label;
     }
 }

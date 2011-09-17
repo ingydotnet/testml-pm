@@ -1,6 +1,6 @@
 package TestML::Grammar;
-use base 'Pegex::Grammar::Bootstrap';
-use strict;
+use TestML::Mo;
+extends 'Pegex::Grammar';
 
 sub tree_ {
     return +{
@@ -134,7 +134,7 @@ sub tree_ {
         '.ref' => 'block_marker'
       },
       {
-        '+mod' => '?',
+        '+qty' => '?',
         '.all' => [
           {
             '.rgx' => qr/(?-xism:\G[\ \t]+)/
@@ -174,7 +174,7 @@ sub tree_ {
         '.ref' => 'code_object'
       },
       {
-        '+mod' => '*',
+        '+qty' => '*',
         '.ref' => 'unit_call'
       }
     ]
@@ -199,7 +199,7 @@ sub tree_ {
     ]
   },
   'code_section' => {
-    '+mod' => '*',
+    '+qty' => '*',
     '.any' => [
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
@@ -218,7 +218,7 @@ sub tree_ {
         '.ref' => 'code_expression'
       },
       {
-        '+mod' => '?',
+        '+qty' => '?',
         '.ref' => 'assertion_call'
       },
       {
@@ -238,7 +238,7 @@ sub tree_ {
         '.ref' => 'block_header'
       },
       {
-        '+mod' => '*',
+        '+qty' => '*',
         '.any' => [
           {
             '.ref' => 'blank_line'
@@ -249,13 +249,13 @@ sub tree_ {
         ]
       },
       {
-        '+mod' => '*',
+        '+qty' => '*',
         '.ref' => 'block_point'
       }
     ]
   },
   'data_section' => {
-    '+mod' => '*',
+    '+qty' => '*',
     '.ref' => 'data_block'
   },
   'double_quoted_string' => {
@@ -264,14 +264,14 @@ sub tree_ {
   'function_object' => {
     '.all' => [
       {
-        '+mod' => '?',
+        '+qty' => '?',
         '.ref' => 'function_signature'
       },
       {
         '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
       },
       {
-        '+mod' => '*',
+        '+qty' => '*',
         '.any' => [
           {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
@@ -295,7 +295,7 @@ sub tree_ {
         '.rgx' => qr/(?-xism:\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*)/
       },
       {
-        '+mod' => '?',
+        '+qty' => '?',
         '.ref' => 'function_variables'
       },
       {
@@ -312,7 +312,7 @@ sub tree_ {
         '.ref' => 'function_variable'
       },
       {
-        '+mod' => '*',
+        '+qty' => '*',
         '.all' => [
           {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
@@ -424,7 +424,7 @@ sub tree_ {
         '.rgx' => qr/(?-xism:\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*)/
       },
       {
-        '+mod' => '?',
+        '+qty' => '?',
         '.ref' => 'transform_arguments'
       },
       {
@@ -438,7 +438,7 @@ sub tree_ {
         '.ref' => 'transform_argument'
       },
       {
-        '+mod' => '*',
+        '+qty' => '*',
         '.all' => [
           {
             '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
@@ -466,7 +466,7 @@ sub tree_ {
         '.ref' => 'transform_name'
       },
       {
-        '+mod' => '?',
+        '+qty' => '?',
         '.ref' => 'transform_argument_list'
       }
     ]
@@ -474,7 +474,7 @@ sub tree_ {
   'unit_call' => {
     '.all' => [
       {
-        '+mod' => '!',
+        '+neg' => 1,
         '.ref' => 'assertion_call_test'
       },
       {
