@@ -2,7 +2,7 @@ package TestML::Compiler;
 
 use TestML::Mo;
 use TestML::Grammar;
-use TestML::Receiver;
+use TestML::AST;
 
 has base => ();
 
@@ -21,16 +21,9 @@ sub compile {
 
     my ($code, $data) = @$result{qw(code data)};
 
-#     my $debug = $self->debug;
-#     $debug = $result->{DebugPegex} if defined $result->{DebugPegex};
-
     my $grammar = TestML::Grammar->new(
-        receiver => TestML::Receiver->new,
+        receiver => TestML::AST->new,
     );
-#     my $parser = Pegex::Parser->new(
-#         grammar => 'TestML::Grammar',
-#         receiver => 'TestML::Receiver',
-#     );
     $grammar->parse($code, 'code_section')
         or die "Parse TestML code section failed";
 

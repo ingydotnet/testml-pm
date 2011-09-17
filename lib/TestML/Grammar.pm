@@ -250,6 +250,7 @@ sub tree_ {
         },
         {
           '+qty' => '*',
+          '-pass' => 1,
           '.ref' => 'block_point'
         }
       ]
@@ -387,14 +388,17 @@ sub tree_ {
       '.rgx' => qr/(?-xism:\G(\*[a-z]\w*))/
     },
     'point_phrase' => {
+      '-pass' => 1,
       '.ref' => 'unquoted_string'
     },
     'quoted_string' => {
       '.any' => [
         {
+          '-pass' => 1,
           '.ref' => 'single_quoted_string'
         },
         {
+          '-pass' => 1,
           '.ref' => 'double_quoted_string'
         }
       ]

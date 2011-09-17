@@ -7,7 +7,7 @@ blank_line: /<BLANK>*<EOL>/
 comment: /<HASH><line>/
 ws: /(?:<BLANK>|<EOL>|<comment>)/
 
-quoted_string: <single_quoted_string> | <double_quoted_string>
+quoted_string: -<single_quoted_string> | -<double_quoted_string>
 
 single_quoted_string: /(?:<SINGLE>((?:[^<BREAK><BACK><SINGLE>]|<BACK><SINGLE>|<BACK><BACK>)*?)<SINGLE>)/
 
@@ -137,7 +137,7 @@ data_section: <data_block>*
 data_block:
   <block_header>
   [ <blank_line> | <comment> ]*
-  <block_point>*
+  -<block_point>*
 
 block_header:
   <block_marker>
@@ -176,4 +176,4 @@ user_point_name:  /<LOWER><WORD>*/
 
 core_point_name:  /<UPPER><WORD>*/
 
-point_phrase: <unquoted_string>
+point_phrase: -<unquoted_string>

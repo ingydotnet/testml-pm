@@ -5,11 +5,13 @@ extends 'Pegex::Receiver';
 use TestML::Runtime;
 
 has points => default => sub{[]};
+has function => ();
 
 # sub final {
 #     my ($self, $match, $top) = @_;
 #     return $match
 # }
+# __END__
 
 sub got_code_section {
     my ($self, $code) = @_;
@@ -32,7 +34,7 @@ sub got_assignment_statement {
                     name => 'Set',
                     args => [
                         $match->[0]{variable_name}{1},
-                        $match->[2],
+                        $match->[1],
                     ],
                 ),
             ],
@@ -67,7 +69,7 @@ sub got_code_expression {
     push @$units, shift @$list if @$list;
     $list = shift @$list || [];
     for (@$list) {
-        my $unit = $_->{unit_call}[2][0];
+        my $unit = $_->{unit_call}[0][0];
         push @$units, $unit;
     }
     return TestML::Expression->new(
@@ -103,7 +105,7 @@ sub got_code_object {
 sub make_str {
     my ($self, $object) = @_;
     my $str;
-    if ($str = $object->{quoted_string}{single_quoted_string}) {
+    if ($str = $object->{quoted_string}) {
         $str = $str->{1};
     }
     return TestML::Str->new(
@@ -122,7 +124,7 @@ sub got_assertion_call {
         if ($assertion = $call->{$_}) {
             ($name = uc($_)) =~ s/.*_//;
             my $key = "assertion_operator_" . lc $name;
-            $assertion = $assertion->{$key}[1];
+            $assertion = $assertion->{$key}[0];
             last;
         }
     }
@@ -173,7 +175,7 @@ sub got_block_point {
 sub got_phrase_point {
     my ($self, $point) = @_;
     return {
-        $point->[2]{point_name}{1} => $point->[4]{point_phrase}{1},
+        $point->[0]{point_name}{1} => $point->[1]{point_phrase}{1},
     };
 }
 
