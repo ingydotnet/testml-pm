@@ -2,15 +2,14 @@ use Pegex::Compiler;
 
 my $perl = Pegex::Compiler->compile(shift)->to_perl;
 chomp($perl);
+$perl =~ s/^/  /gm;
 
 print <<"...";
 package TestML::Grammar;
-use base 'Pegex::Grammar';
-use strict;
+use TestML::Mo;
+extends 'Pegex::Grammar';
 
 sub tree_ {
-    return +$perl;
+$perl
 }
-
-1;
 ...

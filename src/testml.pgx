@@ -9,9 +9,9 @@ ws: /(?:<BLANK>|<EOL>|<comment>)/
 
 quoted_string: <single_quoted_string> | <double_quoted_string>
 
-single_quoted_string: /(?:<SINGLE>(([^<BREAK><BACK><SINGLE>]|<BACK><SINGLE>|<BACK><BACK>)*?)<SINGLE>)/
+single_quoted_string: /(?:<SINGLE>((?:[^<BREAK><BACK><SINGLE>]|<BACK><SINGLE>|<BACK><BACK>)*?)<SINGLE>)/
 
-double_quoted_string: /(?:<DOUBLE>(([^<BREAK><BACK><DOUBLE>]|<BACK><DOUBLE>|<BACK><BACK>|<BACK><escape>)*?)<DOUBLE>)/
+double_quoted_string: /(?:<DOUBLE>((?:[^<BREAK><BACK><DOUBLE>]|<BACK><DOUBLE>|<BACK><BACK>|<BACK><escape>)*?)<DOUBLE>)/
 
 unquoted_string: /([^<BLANKS><BREAK><HASH>](?:[^<BREAK><HASH>]*[^<BLANKS><BREAK><HASH>])?)/
 
@@ -176,4 +176,4 @@ user_point_name:  /<LOWER><WORD>*/
 
 core_point_name:  /<UPPER><WORD>*/
 
-point_phrase: /(<unquoted_string>)/
+point_phrase: <unquoted_string>
