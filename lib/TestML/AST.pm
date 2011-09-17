@@ -5,7 +5,7 @@ extends 'Pegex::Receiver';
 use TestML::Runtime;
 
 has points => default => sub{[]};
-has function => ();
+has function => default => sub { TestML::Function->new };
 
 # sub final {
 #     my ($self, $match, $top) = @_;
@@ -13,27 +13,20 @@ has function => ();
 # }
 # __END__
 
-sub got_testml_document {
-    my ($self, $document) = @_;
-    return TestML::Function->new(
-        statements => $document->[0]{statements},
-        data => $document->[1]{data},
-        namespace => {
-            TestML => TestML::Str->new(value => '1.0'),
-        },
-    );
-}
+# sub got_testml_document {
+#     my ($self, $document) = @_;
+#     return TestML::Function->new(
+#         statements => $document->[0]{statements},
+#         data => $document->[1]{data},
+#         namespace => {
+#             TestML => TestML::Str->new(value => '1.0'),
+#         },
+#     );
+# }
 
 sub got_code_section {
     my ($self, $code) = @_;
-    my $statements = [];
-    for (@$code) {
-        push @$statements, $_
-            if ref eq 'TestML::Statement';
-    }
-    return TestML::Function->new(
-        @$statements ? (statements => $statements) : (),
-    );
+    $self->function->statements($code);
 }
 
 sub got_assignment_statement {
@@ -164,9 +157,7 @@ sub got_semicolon { return }
 #----------------------------------------------------------
 sub got_data_section {
     my ($self, $data) = @_;
-    return TestML::Function->new(
-        data => $data,
-    );
+    $self->function->data($data);
 }
 
 sub got_data_block {

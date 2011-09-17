@@ -6,14 +6,8 @@ use Test::Differences;
 # use Test::Differences; *is = \&eq_or_diff;
 
 use TestML::Compiler;
-use TestML::Grammar;
 use YAML::XS;
 use XXX;
-use IO::All;
-
-# for my $file (<t/testml/*.tml>) {
-#     test($file);
-# }
 
 # test('t/testml/arguments.tml');
 test('t/testml/basic.tml');
@@ -21,14 +15,7 @@ test('t/testml/basic.tml');
 sub test {
     my $file = shift;
     (my $filename = $file) =~ s!.*/!!;
-    my $input = io($file)->all;
-    $input =~ s/^#.*//gm;
-    $input =~ s/^\%.*//gm;
-
-    my $grammar1 = TestML::Grammar->new(
-        receiver => 'TestML::AST',
-    );
-    my $ast1 = $grammar1->parse($input);
+    my $ast1 = TestML::Compiler->new->compile($file);
     my $yaml1 = Dump($ast1);
 
     my $ast2 = YAML::XS::LoadFile("bt/ast/$filename");
