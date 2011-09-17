@@ -13,7 +13,7 @@ if ($TestML::Test::Differences) {
     };
 }
 
-has 'test_builder' => -init => 'Test::Builder->new';
+has test_builder => default => sub { Test::Builder->new };
 
 sub title {
     my $self = shift;

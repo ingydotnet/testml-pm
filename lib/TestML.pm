@@ -110,11 +110,17 @@ sub import {
     }
 
     no strict 'refs';
+    my $p = caller;
+    *{$p.'::str'} = \&str;
+    *{$p.'::num'} = \&num;
+    *{$p.'::bool'} = \&bool;
+    *{$p.'::list'} = \&list;
+
     if (not defined &{$pkg.'::XXX'}) {
-        *{$pkg.'::WWW'} = \&WWW;
-        *{$pkg.'::XXX'} = \&XXX;
-        *{$pkg.'::YYY'} = \&YYY;
-        *{$pkg.'::ZZZ'} = \&ZZZ;
+        *{$p.'::WWW'} = \&WWW;
+        *{$p.'::XXX'} = \&XXX;
+        *{$p.'::YYY'} = \&YYY;
+        *{$p.'::ZZZ'} = \&ZZZ;
     }
 }
 
