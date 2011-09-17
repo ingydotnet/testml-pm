@@ -147,7 +147,11 @@ sub got_assertion_function_ok {
 
 sub got_transform_name {
     my ($self, $match) = @_;
-    if (my $transform = $match->{user_transform}) {
+    my $transform;
+    if ($transform = $match->{user_transform}) {
+        return TestML::Transform->new(name => $transform->{1});
+    }
+    elsif ($transform = $match->{core_transform}) {
         return TestML::Transform->new(name => $transform->{1});
     }
     else { XXX $match }
@@ -199,11 +203,12 @@ sub got_data_block {
     );
 }
 
-# sub got_block_point {
-#     my ($self, $point) = @_;
-#     
-#     return $point;
-# }
+sub got_lines_point {
+    my ($self, $point) = @_;
+    return {
+        $point->[0]{point_name}{1} => $point->[1]{point_lines}{1},
+    };
+}
 
 sub got_phrase_point {
     my ($self, $point) = @_;
