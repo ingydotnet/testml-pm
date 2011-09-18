@@ -2,7 +2,7 @@
 use Test::More tests => 12;
 use strict;
 
-use Test::Differences; *is = \&eq_or_diff;
+# use Test::Differences; *is = \&eq_or_diff;
 
 use TestML::Compiler;
 use YAML::XS;
@@ -27,7 +27,7 @@ sub test {
     my $ast1 = TestML::Compiler->new->compile($file);
     my $yaml1 = Dump($ast1);
 
-    my $ast2 = YAML::XS::LoadFile("bt/ast/$filename");
+    my $ast2 = YAML::XS::LoadFile("t/ast/$filename");
     my $yaml2 = Dump($ast2);
 
     is $yaml1, $yaml2, $filename;
