@@ -155,7 +155,7 @@ sub fixup_grammar {
     if ($point_marker) {
         $point_marker =~ s/([\$\%\^\*\+\?\|])/\\$1/g;
         $tree->{point_marker}{'.rgx'} = qr/\G$point_marker/;
-        $point_lines =~ s/---/$point_marker/;
+        $point_lines =~ s/\\-\\-\\-/$point_marker/;
     }
 
     $tree->{point_lines}{'.rgx'} = qr/$point_lines/;
