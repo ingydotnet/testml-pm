@@ -2,7 +2,7 @@
 use Test::More tests => 12;
 use strict;
 
-# use Test::Differences; *is = \&eq_or_diff;
+use Test::Differences; *is = \&eq_or_diff;
 
 use TestML::Compiler;
 use YAML::XS;

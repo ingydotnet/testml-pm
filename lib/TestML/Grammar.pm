@@ -256,7 +256,7 @@ sub tree_ {
           '.ref' => 'function_signature'
         },
         {
-          '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\{(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
+          '.ref' => 'function_start'
         },
         {
           '+qty' => '*',
@@ -290,6 +290,9 @@ sub tree_ {
           '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\))/
         }
       ]
+    },
+    'function_start' => {
+      '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*(\{)(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
     },
     'function_variable' => {
       '.rgx' => qr/(?-xism:\G([a-zA-Z]\w*))/

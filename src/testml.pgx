@@ -55,9 +55,11 @@ code_object:
 
 function_object:
   -<function_signature>?
-  /<ws>*<LCURLY><ws>*/
+  <function_start>
   [ /<ws>+/ | <assignment_statement> | <code_statement>]*
   /<ws>*<RCURLY>/
+
+function_start: /<ws>*(<LCURLY>)<ws>*/
 
 function_signature:
   /<LPAREN><ws>*/

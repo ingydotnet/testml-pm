@@ -15,13 +15,6 @@ has function => default => sub { TestML::Function->new };
 
 # sub got_testml_document {
 #     my ($self, $document) = @_;
-#     return TestML::Function->new(
-#         statements => $document->[0]{statements},
-#         data => $document->[1]{data},
-#         namespace => {
-#             TestML => TestML::Str->new(value => '1.0'),
-#         },
-#     );
 # }
 
 sub got_code_section {
@@ -145,13 +138,26 @@ sub got_assertion_function_ok {
     }
 }
 
+sub got_function_start {
+    my ($self) = @_;
+    my $function = TestML::Function->new();
+    $function->outer($self->function);
+    $self->function($function);
+    return 1;
+}
+
 sub got_function_object {
     my ($self, $object) = @_;
-    return TestML::Function->new(
-        (@{$object->[0]} and @{$object->[0][0]})
-            ? (signature => $object->[0][0]) : (),
-        statements => $object->[1],
-    );
+
+    my $function = $self->function;
+    $self->function($self->function->outer);
+
+    if (@{$object->[0]} and @{$object->[0][0]}) {
+        $function->signature($object->[0][0]);
+    }
+    $function->statements($object->[2]);
+
+    return $function;
 }
 
 sub got_function_variables {
