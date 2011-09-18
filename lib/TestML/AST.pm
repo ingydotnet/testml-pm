@@ -145,13 +145,17 @@ sub got_assertion_function_ok {
     }
 }
 
+sub got_function_object {
+    my ($self, $object) = @_;
+    return TestML::Function->new(
+        statements => $object->[1],
+    );
+}
+
 sub got_transform_name {
     my ($self, $match) = @_;
     my $transform;
-    if ($transform = $match->{user_transform}) {
-        return TestML::Transform->new(name => $transform->{1});
-    }
-    elsif ($transform = $match->{core_transform}) {
+    if ($transform = $match->{core_transform} || $match->{user_transform}) {
         return TestML::Transform->new(name => $transform->{1});
     }
     else { XXX $match }
@@ -163,8 +167,7 @@ sub got_transform_object {
     my $args = [];
     push @$args, $object->[1][0][0],
         if $object->[1][0][0];
-    push @$args, @{$object->[1][0][1][0]}
-        if $object->[1][0][1][0];
+    push @$args, map $_->[0], @{$object->[1][0][1]};
     $transform->args($args) if @$args;
     $transform->explicit_call(1)
         if $object->[1][1];
