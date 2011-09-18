@@ -63,7 +63,6 @@ statements:
           value: Fruity Tests
       name: Set
 - !!perl/hash:TestML::Statement
-  assertion: ~
   expression: !!perl/hash:TestML::Expression
     units:
     - !!perl/hash:TestML::Function
@@ -215,7 +214,6 @@ statements:
           value: $BlockLabel
       name: Set
 - !!perl/hash:TestML::Statement
-  assertion: ~
   expression: !!perl/hash:TestML::Expression
     units:
     - !!perl/hash:TestML::Transform
@@ -267,7 +265,6 @@ statements:
                 name: thing
       name: Set
 - !!perl/hash:TestML::Statement
-  assertion: ~
   expression: !!perl/hash:TestML::Expression
     units:
     - !!perl/hash:TestML::Transform
@@ -339,7 +336,6 @@ statements:
                 name: f2
       name: Set
 - !!perl/hash:TestML::Statement
-  assertion: ~
   expression: !!perl/hash:TestML::Expression
     units:
     - !!perl/hash:TestML::Transform
@@ -406,7 +402,6 @@ statements:
               - !!perl/hash:TestML::Transform
                 name: Type
           - !!perl/hash:TestML::Statement
-            assertion: ~
             expression: !!perl/hash:TestML::Expression
               units:
               - !!perl/hash:TestML::Transform
@@ -443,7 +438,6 @@ statements:
                 name: num
       name: Set
 - !!perl/hash:TestML::Statement
-  assertion: ~
   expression: !!perl/hash:TestML::Expression
     units:
     - !!perl/hash:TestML::Transform

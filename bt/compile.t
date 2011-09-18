@@ -1,8 +1,7 @@
 # BEGIN { $Pegex::Parser::Debug = 1 }
-use Test::More tests => 11;
+use Test::More tests => 12;
 use strict;
 
-use Test::Differences;
 # use Test::Differences; *is = \&eq_or_diff;
 
 use TestML::Compiler;
@@ -15,7 +14,7 @@ test('t/testml/basic.tml');
 test('t/testml/dataless.tml');
 test('t/testml/exceptions.tml');
 test('t/testml/external.tml');
-#     test('t/testml/function.tml');
+test('t/testml/function.tml');
 test('t/testml/label.tml');
 test('t/testml/markers.tml');
 test('t/testml/standard.tml');
@@ -31,5 +30,5 @@ sub test {
     my $ast2 = YAML::XS::LoadFile("bt/ast/$filename");
     my $yaml2 = Dump($ast2);
 
-    eq_or_diff $yaml1, $yaml2, $filename;
+    is $yaml1, $yaml2, $filename;
 }

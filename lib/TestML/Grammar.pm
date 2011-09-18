@@ -252,6 +252,7 @@ sub tree_ {
       '.all' => [
         {
           '+qty' => '?',
+          '-pass' => 1,
           '.ref' => 'function_signature'
         },
         {

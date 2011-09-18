@@ -54,7 +54,7 @@ code_object:
   <transform_object>
 
 function_object:
-  <function_signature>?
+  -<function_signature>?
   /<ws>*<LCURLY><ws>*/
   [ /<ws>+/ | <assignment_statement> | <code_statement>]*
   /<ws>*<RCURLY>/

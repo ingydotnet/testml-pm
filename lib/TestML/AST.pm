@@ -148,8 +148,18 @@ sub got_assertion_function_ok {
 sub got_function_object {
     my ($self, $object) = @_;
     return TestML::Function->new(
+        (@{$object->[0]} and @{$object->[0][0]})
+            ? (signature => $object->[0][0]) : (),
         statements => $object->[1],
     );
+}
+
+sub got_function_variables {
+    my ($self, $variables) = @_;
+    my $vars = [];
+    push @$vars, $variables->[0]{function_variable}{1};
+    push @$vars, map $_->[0]{function_variable}{1}, @{$variables->[1]};
+    return $vars;
 }
 
 sub got_transform_name {
