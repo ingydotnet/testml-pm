@@ -6,7 +6,6 @@ use strict;
 
 use TestML::Compiler;
 use YAML::XS;
-use XXX;
 
 test('t/testml/arguments.tml');
 test('t/testml/assertions.tml');
