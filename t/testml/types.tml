@@ -1,6 +1,6 @@
 %TestML 1.0
 
-Plan = 11;
+Plan = 14;
 
 Label = 'Test $TestNumber';
 
@@ -11,6 +11,9 @@ List(1,2,3).Type == 'List';
 # [].Type == 'List';
 {}.Type == 'Func';
 (){}.Type == 'Func';
+(a){}.Type == 'Func';
+(a,b){}.Type == 'Func';
+(a, b){}.Type == 'Func';
 
 s = 'Foo';
 s.Type == 'Str';

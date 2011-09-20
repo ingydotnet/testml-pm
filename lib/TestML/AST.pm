@@ -66,7 +66,6 @@ sub got_code_expression {
     push @$units, shift @$list if @$list;
     $list = shift @$list || [];
     for (@$list) {
-#         WWW $_;
         my $unit = $_->[0]; #->{unit_call}[0][0];
         push @$units, $unit;
     }
@@ -152,10 +151,10 @@ sub got_function_object {
     my $function = $self->function;
     $self->function($self->function->outer);
 
-    if (@{$object->[0]} and @{$object->[0][0]}) {
+    if (ref($object->[0]) and ref($object->[0][0])) {
         $function->signature($object->[0][0]);
     }
-    $function->statements($object->[2]);
+    $function->statements($object->[-1]);
 
     return $function;
 }
@@ -180,13 +179,15 @@ sub got_transform_name {
 sub got_transform_object {
     my ($self, $object) = @_;
     my $transform = $object->[0];
+    if ($object->[1][-1] and $object->[1][-1] eq 'explicit') {
+        $transform->explicit_call(1);
+        splice @{$object->[1]}, -1, 1;
+    }
     my $args = [];
     push @$args, $object->[1][0][0],
         if $object->[1][0][0];
     push @$args, map $_->[0], @{$object->[1][0][1]};
     $transform->args($args) if @$args;
-    $transform->explicit_call(1)
-        if $object->[1][1];
     return $transform;
 }
 
