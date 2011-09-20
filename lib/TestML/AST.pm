@@ -6,6 +6,7 @@ use TestML::Runtime;
 
 has points => default => sub{[]};
 has function => default => sub { TestML::Function->new };
+use constant wrap => 1;
 
 # sub final {
 #     my ($self, $match, $top) = @_;
