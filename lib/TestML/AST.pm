@@ -30,7 +30,7 @@ sub got_assignment_statement {
                 TestML::Transform->new(
                     name => 'Set',
                     args => [
-                        $match->[0]{variable_name}{1},
+                        $match->[0]{variable_name},
                         $match->[1],
                     ],
                 ),
@@ -76,8 +76,8 @@ sub got_code_expression {
 
 sub got_code_object {
     my ($self, $code) = @_;
-    if (my $point = $code->{point_object}) {
-        my $name = $point->{1};
+    if (exists $code->{point_object}) {
+        my $name = $code->{point_object};
         $name =~ s/^\*// or die;
         push @{$self->points}, $name;
         return TestML::Transform->new(
@@ -93,7 +93,7 @@ sub got_code_object {
     }
     if (my $number = $code->{number_object}) {
         return TestML::Num->new(
-            value => $number->{number}{1},
+            value => $number->{number},
         );
     }
     else { $code }
@@ -101,12 +101,8 @@ sub got_code_object {
 
 sub make_str {
     my ($self, $object) = @_;
-    my $str;
-    if ($str = $object->{quoted_string}) {
-        $str = $str->{1};
-    }
     return TestML::Str->new(
-        value => $str,
+        value => $object->{quoted_string},
     );
 }
 sub got_assertion_call {
@@ -162,8 +158,8 @@ sub got_function_object {
 sub got_function_variables {
     my ($self, $variables) = @_;
     my $vars = [];
-    push @$vars, $variables->[0]{function_variable}{1};
-    push @$vars, map $_->[0]{function_variable}{1}, @{$variables->[1]};
+    push @$vars, $variables->[0]{function_variable};
+    push @$vars, map $_->[0]{function_variable}, @{$variables->[1]};
     return $vars;
 }
 
@@ -171,7 +167,7 @@ sub got_transform_name {
     my ($self, $match) = @_;
     my $transform;
     if ($transform = $match->{core_transform} || $match->{user_transform}) {
-        return TestML::Transform->new(name => $transform->{1});
+        return TestML::Transform->new(name => $transform);
     }
     else { XXX $match }
 }
@@ -204,7 +200,7 @@ sub got_transform_argument {
 
 sub got_unquoted_string {
     my ($self, $match) = @_;
-    return $match->{1};
+    return $match;
 }
 
 sub got_semicolon { return }
@@ -226,14 +222,14 @@ sub got_data_block {
 sub got_lines_point {
     my ($self, $point) = @_;
     return {
-        $point->[0]{point_name}{1} => $point->[1]{point_lines}{1},
+        $point->[0]{point_name} => $point->[1]{point_lines},
     };
 }
 
 sub got_phrase_point {
     my ($self, $point) = @_;
     return {
-        $point->[0]{point_name}{1} => $point->[1]{point_phrase},
+        $point->[0]{point_name} => $point->[1]{point_phrase},
     };
 }
 
