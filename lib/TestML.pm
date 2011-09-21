@@ -9,7 +9,14 @@
 # - irc://irc.freenode.net#testml 
 
 use 5.006001;
+
 use Pegex 0.13 ();
+my $require = "
+use Pegex::Mo 0 ();
+use Pegex::Grammar 0 ();
+use Pegex::Parser 0 ();
+use Pegex::Receiver 0 ();
+";
 
 package TestML;
 use strict;

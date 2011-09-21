@@ -25,10 +25,13 @@ sub use_testml {
     my $self = shift;
 
     $self->include('Pegex::Grammar');
+    $self->include('Pegex::Parser');
+    $self->include('Pegex::Receiver');
     $self->include('Pegex::Mo');
 
     $self->include('TestML');
     $self->include('TestML::Mo');
+    $self->include('TestML::AST');
     $self->include('TestML::Compiler');
     $self->include('TestML::Grammar');
     $self->include('TestML::Library::Debug');
