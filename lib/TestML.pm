@@ -9,22 +9,16 @@
 # - irc://irc.freenode.net#testml 
 
 use 5.006001;
-
-use Pegex 0.13 ();
-my $require = "
-use Pegex::Mo 0 ();
-use Pegex::Grammar 0 ();
-use Pegex::Parser 0 ();
-use Pegex::Receiver 0 ();
-";
-
-package TestML;
 use strict;
 use warnings;
 
+use Pegex 0.13 ();
+
+package TestML;
+
 use TestML::Runtime;
 
-our $VERSION = '0.22';
+our $VERSION = '0.23';
 
 use constant XXX_skip => 1;
 our $DumpModule = 'YAML::XS';

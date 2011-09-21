@@ -1,4 +1,10 @@
 ---
+version: 0.23
+date:    Wed Sep 21 23:47:33 CEST 2011
+changes:
+- Totally refactored Pegex grammar.
+- Released from Whoopie's room in Liz++ and Wendy++'s house.
+---
 version: 0.22
 date:    Fri Aug 19 20:54:29 EEST 2011
 changes:
