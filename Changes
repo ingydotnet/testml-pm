@@ -1,4 +1,9 @@
 ---
+version: 0.24
+date:    
+changes:
+- Use new Mo, inlined.
+---
 version: 0.23
 date:    Wed Sep 21 23:47:33 CEST 2011
 changes:

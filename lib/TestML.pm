@@ -18,7 +18,7 @@ package TestML;
 
 use TestML::Runtime;
 
-our $VERSION = '0.23';
+our $VERSION = '0.24';
 
 use constant XXX_skip => 1;
 our $DumpModule = 'YAML::XS';
