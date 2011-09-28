@@ -118,7 +118,7 @@ sub tree_ {
           '.ref' => 'block_marker'
         },
         {
-          '+qty' => '?',
+          '+max' => 1,
           '.all' => [
             {
               '.rgx' => qr/(?-xism:\G[\ \t]+)/
@@ -158,7 +158,7 @@ sub tree_ {
           '.ref' => 'code_object'
         },
         {
-          '+qty' => '*',
+          '+min' => 0,
           '-pass' => 1,
           '.ref' => 'unit_call'
         }
@@ -184,7 +184,7 @@ sub tree_ {
       ]
     },
     'code_section' => {
-      '+qty' => '*',
+      '+min' => 0,
       '.any' => [
         {
           '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
@@ -203,7 +203,7 @@ sub tree_ {
           '.ref' => 'code_expression'
         },
         {
-          '+qty' => '?',
+          '+max' => 1,
           '.ref' => 'assertion_call'
         },
         {
@@ -223,7 +223,7 @@ sub tree_ {
           '.ref' => 'block_header'
         },
         {
-          '+qty' => '*',
+          '+min' => 0,
           '-skip' => 1,
           '.any' => [
             {
@@ -235,14 +235,14 @@ sub tree_ {
           ]
         },
         {
-          '+qty' => '*',
+          '+min' => 0,
           '-pass' => 1,
           '.ref' => 'block_point'
         }
       ]
     },
     'data_section' => {
-      '+qty' => '*',
+      '+min' => 0,
       '.ref' => 'data_block'
     },
     'double_quoted_string' => {
@@ -251,7 +251,7 @@ sub tree_ {
     'function_object' => {
       '.all' => [
         {
-          '+qty' => '?',
+          '+max' => 1,
           '-pass' => 1,
           '.ref' => 'function_signature'
         },
@@ -259,7 +259,7 @@ sub tree_ {
           '.ref' => 'function_start'
         },
         {
-          '+qty' => '*',
+          '+min' => 0,
           '.any' => [
             {
               '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
@@ -283,7 +283,7 @@ sub tree_ {
           '.rgx' => qr/(?-xism:\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*)/
         },
         {
-          '+qty' => '?',
+          '+max' => 1,
           '.ref' => 'function_variables'
         },
         {
@@ -303,7 +303,7 @@ sub tree_ {
           '.ref' => 'function_variable'
         },
         {
-          '+qty' => '*',
+          '+min' => 0,
           '.all' => [
             {
               '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
@@ -415,7 +415,7 @@ sub tree_ {
           '.ref' => 'code_section'
         },
         {
-          '+qty' => '?',
+          '+max' => 1,
           '.ref' => 'data_section'
         }
       ]
@@ -429,7 +429,7 @@ sub tree_ {
           '.rgx' => qr/(?-xism:\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*)/
         },
         {
-          '+qty' => '?',
+          '+max' => 1,
           '-pass' => 1,
           '.ref' => 'transform_arguments'
         },
@@ -444,7 +444,7 @@ sub tree_ {
           '.ref' => 'transform_argument'
         },
         {
-          '+qty' => '*',
+          '+min' => 0,
           '.all' => [
             {
               '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*)/
@@ -472,7 +472,7 @@ sub tree_ {
           '.ref' => 'transform_name'
         },
         {
-          '+qty' => '?',
+          '+max' => 1,
           '.ref' => 'transform_argument_list'
         }
       ]
