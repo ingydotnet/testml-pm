@@ -12,7 +12,7 @@ use 5.006001;
 use strict;
 use warnings;
 
-use Pegex 0.13 ();
+use Pegex 0.18 ();
 
 package TestML;
 
