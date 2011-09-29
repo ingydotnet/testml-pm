@@ -6,17 +6,12 @@ use TestML::Runtime;
 
 has points => default => sub{[]};
 has function => default => sub { TestML::Function->new };
-use constant wrap => 1;
 
 # sub final {
 #     my ($self, $match, $top) = @_;
 #     XXX $match;
 # }
 # __END__
-
-# sub got_testml_document {
-#     my ($self, $document) = @_;
-# }
 
 sub got_code_section {
     my ($self, $code) = @_;
@@ -153,11 +148,6 @@ sub got_function_object {
     return $function;
 }
 
-sub got_function_variables {
-    my ($self, $variables) = @_;
-    return $variables;
-}
-
 sub got_transform_name {
     my ($self, $match) = @_;
     return TestML::Transform->new(name => $match);
@@ -182,18 +172,6 @@ sub got_transform_argument_list {
     return $list;
 }
 
-sub got_transform_argument {
-    my ($self, $arg) = @_;
-    return $arg;
-}
-
-sub got_unquoted_string {
-    my ($self, $match) = @_;
-    return $match;
-}
-
-sub got_semicolon { return }
-
 #----------------------------------------------------------
 sub got_data_section {
     my ($self, $data) = @_;
@@ -208,14 +186,7 @@ sub got_data_block {
     );
 }
 
-sub got_lines_point {
-    my ($self, $point) = @_;
-    return {
-        $point->[0] => $point->[1],
-    };
-}
-
-sub got_phrase_point {
+sub got_block_point {
     my ($self, $point) = @_;
     return {
         $point->[0] => $point->[1],

@@ -1,4 +1,4 @@
-testml_document: -<code_section> -<data_section>?
+testml_document: <code_section> <data_section>?
 
 # General Tokens
 escape: /[0nt]/
@@ -7,7 +7,7 @@ blank_line: /<BLANK>*<EOL>/
 comment: /<HASH><line>/
 ws: /(?:<BLANK>|<EOL>|<comment>)/
 
-quoted_string: -<single_quoted_string> | -<double_quoted_string>
+quoted_string: <single_quoted_string> | <double_quoted_string>
 
 single_quoted_string: /(?:<SINGLE>((?:[^<BREAK><BACK><SINGLE>]|<BACK><SINGLE>|<BACK><BACK>)*?)<SINGLE>)/
 
@@ -19,69 +19,69 @@ number: /(<DIGIT>+)/
 
 
 # TestML Code Section
-code_section: [ /<ws>+/ | -<assignment_statement> | -<code_statement> ]*
+code_section: [ /<ws>+/ | <assignment_statement> | <code_statement> ]*
 
 assignment_statement:
-  -<variable_name>
+  <variable_name>
   /<WS>+<EQUAL><WS>+/
-  -<code_expression> 
-  -<semicolon>
+  <code_expression> 
+  <semicolon>
 
 variable_name: /(<ALPHA><WORD>*)/
 
 code_statement:
-  -<code_expression>
-  -<assertion_call>?
-  -<semicolon>
+  <code_expression>
+  <assertion_call>?
+  <semicolon>
 
 semicolon:
   [ /<SEMI>/ | `You seem to be missing a semicolon` ]
 
 code_expression:
-  -<code_object>
-  -<unit_call>*
+  <code_object>
+  <unit_call>*
 
 unit_call:
   !<assertion_call_test>
-  -<call_indicator>
-  -<code_object>
+  <call_indicator>
+  <code_object>
 
 code_object:
-  -<function_object> |
-  -<point_object> |
-  -<string_object> |
-  -<number_object> |
-  -<transform_object>
+  <function_object> |
+  <point_object> |
+  <string_object> |
+  <number_object> |
+  <transform_object>
 
 function_object:
-  -<function_signature>?
-  -<function_start>
-  [ /<ws>+/ | -<assignment_statement> | -<code_statement>]*
+  <function_signature>?
+  <function_start>
+  [ /<ws>+/ | <assignment_statement> | <code_statement>]*
   /<ws>*<RCURLY>/
 
 function_start: /<ws>*(<LCURLY>)<ws>*/
 
 function_signature:
   /<LPAREN><ws>*/
-  -<function_variables>?
+  <function_variables>?
   /<ws>*<RPAREN>/
 
 function_variables: 
-  -<function_variable>+ % /<ws>*<COMMA><ws>*/
+  <function_variable>+ % /<ws>*<COMMA><ws>*/
 
 function_variable: /(<ALPHA><WORD>*)/
 
 point_object: /(<STAR><LOWER><WORD>*)/
 
-string_object: -<quoted_string>
+string_object: <quoted_string>
 
-number_object: -<number>
+number_object: <number>
 
 transform_object:
-  -<transform_name>
-  -<transform_argument_list>?
+  <transform_name>
+  <transform_argument_list>?
 
-transform_name: -<user_transform> | -<core_transform>
+transform_name: <user_transform> | <core_transform>
 
 user_transform: /(<LOWER><WORD>*)/
 
@@ -91,10 +91,10 @@ call_indicator: /(?:<DOT><ws>*|<ws>*<DOT>)/
 
 transform_argument_list:
   /<LPAREN><ws>*/
-  -<transform_argument>* % /<ws>*<COMMA><ws>*/
+  <transform_argument>* % /<ws>*<COMMA><ws>*/
   /<ws>*<RPAREN>/
 
-transform_argument: -<code_expression>
+transform_argument: <code_expression>
 
 assertion_call_test: /<call_indicator>(?:EQ|OK|HAS)/
 
@@ -104,14 +104,14 @@ assertion_eq: +<assertion_operator_eq> | +<assertion_function_eq>
 
 assertion_operator_eq:
   /<ws>+<EQUAL><EQUAL><ws>+/
-  -<code_expression>
+  <code_expression>
 
 assertion_function_eq:
   /<call_indicator>EQ<LPAREN>/
-  -<code_expression>
+  <code_expression>
   /<RPAREN>/
 
-assertion_ok: -<assertion_function_ok>
+assertion_ok: <assertion_function_ok>
 
 assertion_function_ok: /<call_indicator>(OK)<empty_parens>?/
 
@@ -119,49 +119,49 @@ assertion_has: +<assertion_operator_has> | +<assertion_function_has>
 
 assertion_operator_has:
   /<ws>+<TILDE><TILDE><ws>+/
-  -<code_expression>
+  <code_expression>
 
 assertion_function_has:
   /<call_indicator>HAS<LPAREN>/
-  -<code_expression>
+  <code_expression>
   /<RPAREN>/
 
 empty_parens: /(?:<LPAREN><ws>*<RPAREN>)/
 
 # TestML Data Section
-data_section: -<data_block>*
+data_section: <data_block>*
 
 data_block:
-  -<block_header>
-  .[ -<blank_line> | -<comment> ]*
-  -<block_point>*
+  <block_header>
+  .[ <blank_line> | <comment> ]*
+  <block_point>*
 
 block_header:
-  -<block_marker>
-  [ /<BLANK>+/ -<block_label> ]?
+  <block_marker>
+  [ /<BLANK>+/ <block_label> ]?
   /<BLANK>*<EOL>/
 
 block_marker: /<EQUAL><EQUAL><EQUAL>/
 
-block_label: -<unquoted_string>
+block_label: <unquoted_string>
 
-block_point: -<lines_point> | -<phrase_point>
+block_point: <lines_point> | <phrase_point>
 
 lines_point:
-  -<point_marker>
+  <point_marker>
   /<BLANK>+/
-  -<point_name>
+  <point_name>
   /<BLANK>*<EOL>/
-  -<point_lines>
+  <point_lines>
 
 point_lines: /((?:(?!<block_marker>|<point_marker>)<line>)*)/
 
 phrase_point:
-  -<point_marker>
+  <point_marker>
   /<BLANK>+/
-  -<point_name>
+  <point_name>
   /<COLON><BLANK>/
-  -<point_phrase>
+  <point_phrase>
   /<EOL>/
   /(?:<comment>|<blank_line>)*/
 
@@ -173,4 +173,4 @@ user_point_name:  /<LOWER><WORD>*/
 
 core_point_name:  /<UPPER><WORD>*/
 
-point_phrase: -<unquoted_string>
+point_phrase: <unquoted_string>
