@@ -1,4 +1,9 @@
 ---
+version: 0.25
+date:    
+changes:
+- Don't actually use Pegex.pm to get it in the META.
+---
 version: 0.24
 date:    Fri Sep 30 00:47:16 CEST 2011
 changes:

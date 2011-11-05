@@ -1,7 +1,14 @@
 # BEGIN { $Pegex::Parser::Debug = 1 }
 # use Test::Differences; *is = \&eq_or_diff;
-use Test::More tests => 12;
+use Test::More;
 use strict;
+
+BEGIN {
+    if (not eval "require YAML::XS") {
+        plan skip_all => "YAML::XS required";
+    }
+    plan tests => 12;
+}
 
 use TestML::Compiler;
 use YAML::XS;
