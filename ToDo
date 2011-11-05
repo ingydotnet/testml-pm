@@ -1,0 +1,3 @@
+- We should run the 'plan' right away (not as a side-effect of the first test)
+- Remove src/ directory and just use:
+    perl -Ilib -MTestML::Grammar=compile
