@@ -5,7 +5,7 @@ use strict;
 
 BEGIN {
     if (not eval "require YAML::XS") {
-        plan skip_all => "YAML::XS required";
+        plan skip_all => "requires YAML::XS";
     }
     plan tests => 12;
 }

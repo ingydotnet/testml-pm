@@ -1,6 +1,6 @@
 ---
 version: 0.25
-date:    
+date:    Sat Nov  5 01:11:22 PDT 2011
 changes:
 - Don't actually use Pegex.pm to get it in the META.
 ---
