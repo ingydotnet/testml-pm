@@ -6,7 +6,7 @@ use Module::Install::Base;
 
 use vars qw($VERSION @ISA);
 BEGIN {
-    $VERSION = '0.20';
+    $VERSION = '0.26';
     @ISA     = 'Module::Install::Base';
 }
 
@@ -25,6 +25,7 @@ sub use_testml {
     my $self = shift;
 
     $self->include('Pegex::Grammar');
+    $self->include('Pegex::Input');
     $self->include('Pegex::Parser');
     $self->include('Pegex::Receiver');
     $self->include('Pegex::Mo');

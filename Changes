@@ -1,4 +1,9 @@
 ---
+version: 0.26
+date:    Mon Nov  7 20:27:00 PST 2011
+changes:
+- Module::Install::TestML includes Pegex::Input.
+---
 version: 0.25
 date:    Sat Nov  5 01:11:22 PDT 2011
 changes:

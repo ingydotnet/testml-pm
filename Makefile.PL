@@ -1,1 +1,1 @@
-use inc::Module::Package 'Ingy:modern 0.16';
+use inc::Module::Package 'Ingy:modern 0.18';
