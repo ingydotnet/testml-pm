@@ -10,15 +10,15 @@ False.Not.OK;
 Label = 'None.OK';
 None.Not.OK;
 
-Label = '.Lines.Count — $BlockLabel';
+Label = '.Lines.Count -- $BlockLabel';
 *lines.Lines.Count == 12;
-Label = '.Lines.Join — $BlockLabel';
+Label = '.Lines.Join -- $BlockLabel';
 *foo.Lines.Join(' - ')  == *bar;
-Label = '.Lines.Reverse.Text — $BlockLabel';
+Label = '.Lines.Reverse.Text -- $BlockLabel';
 *foo.Lines.Reverse.Text == *baz;
-Label = '.Lines.Sort.Text — $BlockLabel';
+Label = '.Lines.Sort.Text -- $BlockLabel';
 *foo.Lines.Sort.Text    == *baz.Lines.Sort.Text;
-Label = '.Lines.Text — $BlockLabel';
+Label = '.Lines.Text -- $BlockLabel';
 *foo.Lines.Text         == *foo;
 
 === List
