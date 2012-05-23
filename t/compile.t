@@ -32,6 +32,10 @@ sub test {
     my $ast1 = TestML::Compiler->new->compile($file);
     my $yaml1 = Dump($ast1);
 
+    # snapshot:
+#     use IO::All;
+#     $yaml1 > io("t/ast/$filename");
+
     my $ast2 = YAML::XS::LoadFile("t/ast/$filename");
     my $yaml2 = Dump($ast2);
 
