@@ -1,0 +1,6 @@
+#!/bin/sh -xe
+[ -n $1 ]
+vim -o \
+    lib/TestML/Library/Standard.pm \
+    t/testml/$1.tml \
+    +'wa|!prove -lv t/'$1'.t'
