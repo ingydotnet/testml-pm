@@ -119,7 +119,7 @@ sub import {
     *{$p.'::bool'} = \&bool;
     *{$p.'::list'} = \&list;
 
-    if (not defined &{$pkg.'::XXX'}) {
+    if (not defined &{$p.'::XXX'}) {
         *{$p.'::WWW'} = \&WWW;
         *{$p.'::XXX'} = \&XXX;
         *{$p.'::YYY'} = \&YYY;
