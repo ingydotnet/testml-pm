@@ -1,15 +1,24 @@
 %TestML 1.0
 
 Title = 'Test the TestML Standard Library';
-Plan = 10;
+Plan = 12;
 
+Label = 'True.OK';
 True.OK;
+Label = 'False.OK';
 False.Not.OK;
+Label = 'None.OK';
 None.Not.OK;
-*lines.Lines.Count == 5;
+
+Label = '.Lines.Count -- $BlockLabel';
+*lines.Lines.Count == 12;
+Label = '.Lines.Join -- $BlockLabel';
 *foo.Lines.Join(' - ')  == *bar;
+Label = '.Lines.Reverse.Text -- $BlockLabel';
 *foo.Lines.Reverse.Text == *baz;
+Label = '.Lines.Sort.Text -- $BlockLabel';
 *foo.Lines.Sort.Text    == *baz.Lines.Sort.Text;
+Label = '.Lines.Text -- $BlockLabel';
 *foo.Lines.Text         == *foo;
 
 === List

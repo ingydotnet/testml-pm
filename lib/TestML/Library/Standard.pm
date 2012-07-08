@@ -63,7 +63,8 @@ sub List {
 sub Join {
     my $context = shift;
     my $separator = @_ ? shift->value : '';
-    return join $separator, map $_->value, @{$context->list->value};
+    my @strings = map $_->value, @{$context->list->value};
+    return join $separator, @strings;
 }
 
 sub Strip {
@@ -163,39 +164,43 @@ sub Pass {
 #     my $context = shift;
 #     $context->set(None => $context);
 # }
-# 
-# sub Text {
-#     my $context = shift;
-#     my $value = $context->assert_type('List');
-#     $context->set(Str => join "\n", @$value, '');
-# }
-# 
-# sub Lines {
-#     my $context = shift;
-#     my $value = $context->value || '';
-#     $value = [ split /\n/, $value ];
-#     $context->set(List => $value);
-# }
-# 
+
+sub Text {
+    my $context = shift;
+    my $value = $context->list->value;
+    return str(join "\n", map($_->value, @$value), '');
+}
+
+sub Count {
+    my $context = shift;
+    return num scalar @{$context->list->value};
+}
+
+sub Lines {
+    my $context = shift;
+    my $value = $context->value || '';
+    return list([ map str($_), split /\n/, $value ]);
+}
+
 # sub Join {
 #     my $context = shift;
 #     my $value = $context->assert_type('List');
 #     my $string = @_ ? (shift)->value : '';
 #     $context->set(Str => join $string, @$value);
 # }
-# 
-# sub Reverse {
-#     my $context = shift;
-#     my $value = $context->assert_type('List');
-#     return [ reverse @$value ];
-# }
-# 
-# sub Sort {
-#     my $context = shift;
-#     my $value = $context->assert_type('List');
-#     return [ sort @$value ];
-# }
-# 
+
+sub Reverse {
+    my $context = shift;
+    my $value = $context->list->value;
+    return list([ reverse @$value ]);
+}
+
+sub Sort {
+    my $context = shift;
+    my $value = $context->list->value;
+    return list([ sort { $a->value cmp $b->value } @$value ]);
+}
+
 # sub BoolStr {
 #     my $context = shift;
 #     return $context->value ? 'True' : 'False';

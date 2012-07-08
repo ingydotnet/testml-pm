@@ -12,7 +12,7 @@ statements:
       - !!perl/hash:TestML::Expression
         units:
         - !!perl/hash:TestML::Num
-          value: '14'
+          value: '11'
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
@@ -114,53 +114,6 @@ statements:
   expression: !!perl/hash:TestML::Expression
     units:
     - !!perl/hash:TestML::Function
-      statements: []
-    - !!perl/hash:TestML::Transform
-      name: Type
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      units:
-      - !!perl/hash:TestML::Str
-        value: Func
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
-    units:
-    - !!perl/hash:TestML::Function
-      signature:
-      - a
-      statements: []
-    - !!perl/hash:TestML::Transform
-      name: Type
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      units:
-      - !!perl/hash:TestML::Str
-        value: Func
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
-    units:
-    - !!perl/hash:TestML::Function
-      signature:
-      - a
-      - b
-      statements: []
-    - !!perl/hash:TestML::Transform
-      name: Type
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      units:
-      - !!perl/hash:TestML::Str
-        value: Func
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
-    units:
-    - !!perl/hash:TestML::Function
-      signature:
-      - a
-      - b
       statements: []
     - !!perl/hash:TestML::Transform
       name: Type

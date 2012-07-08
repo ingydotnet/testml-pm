@@ -86,7 +86,18 @@ statements:
       - !!perl/hash:TestML::Expression
         units:
         - !!perl/hash:TestML::Num
-          value: '10'
+          value: '12'
+      name: Set
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: True.OK
       name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -96,6 +107,17 @@ statements:
     units:
     - !!perl/hash:TestML::Transform
       name: True
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: False.OK
+      name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression {}
@@ -107,6 +129,17 @@ statements:
     - !!perl/hash:TestML::Transform
       name: Not
 - !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: None.OK
+      name: Set
+- !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression {}
     name: OK
@@ -117,11 +150,22 @@ statements:
     - !!perl/hash:TestML::Transform
       name: Not
 - !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: .Lines.Count -- $BlockLabel
+      name: Set
+- !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
       - !!perl/hash:TestML::Num
-        value: '5'
+        value: '12'
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
@@ -135,6 +179,17 @@ statements:
       name: Count
   points:
   - lines
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: .Lines.Join -- $BlockLabel
+      name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
@@ -164,6 +219,17 @@ statements:
   - foo
   - bar
 - !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: .Lines.Reverse.Text -- $BlockLabel
+      name: Set
+- !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
@@ -187,6 +253,17 @@ statements:
   points:
   - foo
   - baz
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: .Lines.Sort.Text -- $BlockLabel
+      name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
@@ -217,6 +294,17 @@ statements:
   points:
   - foo
   - baz
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Transform
+      args:
+      - Label
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: .Lines.Text -- $BlockLabel
+      name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
