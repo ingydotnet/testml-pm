@@ -93,7 +93,7 @@ sub tree_ {
     'assertion_operator_has' => {
       '.all' => [
         {
-          '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+~~(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
+          '.rgx' => qr/(?-xism:\G(?:[\ \t]|\r?\n|\#.*\r?\n)+\~\~(?:[\ \t]|\r?\n|\#.*\r?\n)+)/
         },
         {
           '.ref' => 'code_expression'

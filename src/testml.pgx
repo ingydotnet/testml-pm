@@ -19,7 +19,7 @@ number: /(<DIGIT>+)/
 
 
 # TestML Code Section
-code_section: [ /<ws>+/ | <assignment_statement> | <code_statement> ]*
+code_section: ( /<ws>+/ | <assignment_statement> | <code_statement> )*
 
 assignment_statement:
   <variable_name>
@@ -35,7 +35,7 @@ code_statement:
   <semicolon>
 
 semicolon:
-  [ /<SEMI>/ | `You seem to be missing a semicolon` ]
+  ( /<SEMI>/ | `You seem to be missing a semicolon` )
 
 code_expression:
   <code_object>
@@ -56,7 +56,7 @@ code_object:
 function_object:
   <function_signature>?
   <function_start>
-  [ /<ws>+/ | <assignment_statement> | <code_statement>]*
+  ( /<ws>+/ | <assignment_statement> | <code_statement> )*
   /<ws>*<RCURLY>/
 
 function_start: /<ws>*(<LCURLY>)<ws>*/
@@ -133,12 +133,12 @@ data_section: <data_block>*
 
 data_block:
   <block_header>
-  .[ <blank_line> | <comment> ]*
+  .( <blank_line> | <comment> )*
   <block_point>*
 
 block_header:
   <block_marker>
-  [ /<BLANK>+/ <block_label> ]?
+  ( /<BLANK>+/ <block_label> )?
   /<BLANK>*<EOL>/
 
 block_marker: /<EQUAL><EQUAL><EQUAL>/
