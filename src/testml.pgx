@@ -19,7 +19,7 @@ number: /(<DIGIT>+)/
 
 
 # TestML Code Section
-code_section: ( /<ws>+/ | <assignment_statement> | <code_statement> )*
+code_section: ( ~~ | <assignment_statement> | <code_statement> )*
 
 assignment_statement:
   <variable_name>
@@ -56,18 +56,18 @@ code_object:
 function_object:
   <function_signature>?
   <function_start>
-  ( /<ws>+/ | <assignment_statement> | <code_statement> )*
-  /<ws>*<RCURLY>/
+  ( ~~ | <assignment_statement> | <code_statement> )*
+  /~<RCURLY>/
 
-function_start: /<ws>*(<LCURLY>)<ws>*/
+function_start: /~(<LCURLY>)~/
 
 function_signature:
-  /<LPAREN><ws>*/
+  /<LPAREN>~/
   <function_variables>?
-  /<ws>*<RPAREN>/
+  /~<RPAREN>/
 
 function_variables: 
-  <function_variable>+ % /<ws>*<COMMA><ws>*/
+  <function_variable>+ % /~<COMMA>~/
 
 function_variable: /(<ALPHA><WORD>*)/
 
@@ -87,12 +87,12 @@ user_transform: /(<LOWER><WORD>*)/
 
 core_transform: /(<UPPER><WORD>*)/
 
-call_indicator: /(?:<DOT><ws>*|<ws>*<DOT>)/
+call_indicator: /(?:<DOT>~|~<DOT>)/
 
 transform_argument_list:
-  /<LPAREN><ws>*/
-  <transform_argument>* % /<ws>*<COMMA><ws>*/
-  /<ws>*<RPAREN>/
+  /<LPAREN>~/
+  <transform_argument>* % /~<COMMA>~/
+  /~<RPAREN>/
 
 transform_argument: <code_expression>
 
@@ -103,7 +103,7 @@ assertion_call: +<assertion_eq> | +<assertion_ok> | +<assertion_has>
 assertion_eq: +<assertion_operator_eq> | +<assertion_function_eq>
 
 assertion_operator_eq:
-  /<ws>+<EQUAL><EQUAL><ws>+/
+  /~~<EQUAL><EQUAL>~~/
   <code_expression>
 
 assertion_function_eq:
@@ -118,7 +118,7 @@ assertion_function_ok: /<call_indicator>(OK)<empty_parens>?/
 assertion_has: +<assertion_operator_has> | +<assertion_function_has>
 
 assertion_operator_has:
-  /<ws>+<TILDE><TILDE><ws>+/
+  /~~<TILDE><TILDE>~~/
   <code_expression>
 
 assertion_function_has:
@@ -126,7 +126,7 @@ assertion_function_has:
   <code_expression>
   /<RPAREN>/
 
-empty_parens: /(?:<LPAREN><ws>*<RPAREN>)/
+empty_parens: /(?:<LPAREN>~<RPAREN>)/
 
 # TestML Data Section
 data_section: <data_block>*
