@@ -2,7 +2,9 @@ package TestML::Grammar;
 use TestML::Mo;
 extends 'Pegex::Grammar';
 
-sub tree_ {
+use constant text => '../testml-pgx/testml.pgx';
+
+sub tree {
   {
     '+top' => 'testml_document',
     'assertion_call' => {
