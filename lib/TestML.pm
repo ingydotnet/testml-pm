@@ -3,7 +3,7 @@
 # author:    Ingy döt Net <ingy@cpan.org>
 # abstract:  A Generic Software Testing Meta Language
 # license:   perl
-# copyright: 2009, 2010, 2011
+# copyright: 2009, 2010, 2011, 2012
 # see:
 # - http://www.testml.org/
 # - irc://irc.freenode.net#testml 
@@ -13,7 +13,7 @@ use strict;
 use warnings;
 
 my $requires = "
-use Pegex 0.19 ();
+use Pegex 0.20 ();
 ";
 
 package TestML;
