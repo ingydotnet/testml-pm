@@ -4,9 +4,9 @@ extends 'Pegex::Grammar';
 
 use constant text => '../testml-pgx/testml.pgx';
 
-sub tree {
+sub make_tree {
   {
-    '+top' => 'testml_document',
+    '+toprule' => 'testml_document',
     'assertion_call' => {
       '.any' => [
         {
