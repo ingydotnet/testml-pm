@@ -2,7 +2,7 @@ package TestML::Grammar;
 use TestML::Mo;
 extends 'Pegex::Grammar';
 
-use constant text => '../testml-pgx/testml.pgx';
+use constant file => '../testml-pgx/testml.pgx';
 
 sub make_tree {
   {

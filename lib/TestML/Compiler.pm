@@ -3,6 +3,7 @@ package TestML::Compiler;
 use TestML::Mo;
 use TestML::Grammar;
 use TestML::AST;
+use Pegex::Parser;
 
 has base => ();
 
@@ -21,24 +22,26 @@ sub compile {
 
     my ($code, $data) = @$result{qw(code data)};
 
-    my $grammar = TestML::Grammar->new(
+    my $parser = Pegex::Parser->new(
+        grammar => TestML::Grammar->new,
         receiver => TestML::AST->new,
     );
-    $grammar->parse($code, 'code_section')
+
+    $parser->parse($code, 'code_section')
         or die "Parse TestML code section failed";
 
-    $self->fixup_grammar($grammar, $result);
+    $parser = $self->fixup_grammar($parser, $result);
 
     if (length $data) {
-        $grammar->parse($data, 'data_section')
+        $parser->parse($data, 'data_section')
             or die "Parse TestML data section failed";
     }
 
     if ($result->{DumpAST}) {
-        XXX($grammar->receiver->function);
+        XXX($parser->receiver->function);
     }
 
-    my $function = $grammar->receiver->function;
+    my $function = $parser->receiver->function;
     $function->outer(TestML::Function->new());
 
     return $function;
@@ -133,14 +136,12 @@ sub preprocess {
 }
 
 sub fixup_grammar {
-    my $self = shift;
-    my $grammar = shift;
-    my $hash = shift;
+    my ($self, $parser, $hash) = @_;
 
-    my $namespace = $grammar->receiver->function->namespace;
+    my $namespace = $parser->receiver->function->namespace;
     $namespace->{TestML} = $hash->{TestML};
 
-    my $tree = $grammar->tree;
+    my $tree = $parser->grammar->tree;
 
     my $point_lines = $tree->{point_lines}{'.rgx'};
 
@@ -159,6 +160,12 @@ sub fixup_grammar {
     }
 
     $tree->{point_lines}{'.rgx'} = qr/$point_lines/;
+
+    Pegex::Parser->new(
+        grammar => $parser->grammar,
+        receiver => $parser->receiver,
+    );
+
 }
 
 sub slurp {
