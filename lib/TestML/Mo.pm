@@ -3,7 +3,7 @@
 # abstract:  Mo Base Class for TestML
 # author:    Ingy döt Net <ingy@cpan.org>
 # license:   perl
-# copyright: 2010, 2011
+# copyright: 2010, 2011, 2012
 
 package TestML::Mo;
 # use Mo qw'build default builder xxx import';

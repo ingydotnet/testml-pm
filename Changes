@@ -1,4 +1,9 @@
 ---
+version: 0.27
+date:    Thu Aug 30 00:07:58 PDT 2012
+changes:
+- Use new Pegex version
+---
 version: 0.26
 date:    Mon Nov  7 20:27:00 PST 2011
 changes:

@@ -1,3 +1,10 @@
+##
+# name:      TestML::Setup
+# author:    Ingy döt Net <ingy@cpan.org>
+# abstract:  Generate Test Files for a TestML Suite
+# license:   perl
+# copyright: 2010-2012
+
 package TestML::Setup;
 use strict;
 use warnings;
@@ -30,7 +37,7 @@ sub testml_setup {
 
         my $src = "$base/$conf->{testml}/$testml_file";
         my $dest = "$base/$conf->{local}/$testml_file";
-        
+
         if (@{$conf->{include}}) {
             next unless grep {$name eq $_} @{$conf->{include}};
         }
@@ -66,7 +73,7 @@ sub init {
     die "Missing or invalid 'local' directory in $config_file"
         unless $conf->{local} and -d "$base/$conf->{local}";
     $conf->{testname} ||= '$name.t';
-    
+
     if ($conf->{template}) {
         $template = io("$base/$conf->{template}")->all;
     }
@@ -109,12 +116,6 @@ TestML::Runner::TAP.new(
 
 1;
 
-=encoding utf-8
-
-=head1 NAME
-
-TestML::Setup - Generate Test Files for a TestML Suite
-
 =head1 SYNOPSIS
 
     perl -MTestML::Setup -e setup testml.yaml
@@ -127,18 +128,3 @@ and runs it.
 
 This module does that for you. By providing a small YAML file, this
 module will generate all your testml runtime programs for you.
-
-=head1 AUTHOR
-
-Ingy döt Net <ingy@cpan.org>
-
-=head1 COPYRIGHT
-
-Copyright (c) 2010. Ingy döt Net.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-See http://www.perl.com/perl/misc/Artistic.html
-
-=cut
