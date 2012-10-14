@@ -1,5 +1,5 @@
 package TestML::AST;
-use Pegex::Mo;
+use TestML::Mo;
 extends 'Pegex::Receiver';
 
 use TestML::Runtime;
