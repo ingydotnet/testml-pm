@@ -13,7 +13,7 @@ use strict;
 use warnings;
 
 my $requires = "
-use Pegex 0.20 ();
+use Pegex 0.21 ();
 ";
 
 package TestML;
