@@ -27,6 +27,7 @@ sub use_testml {
     $self->include('Pegex::Grammar');
     $self->include('Pegex::Input');
     $self->include('Pegex::Parser');
+    $self->include('Pegex::Tree');
     $self->include('Pegex::Receiver');
 
     $self->include('TestML');
