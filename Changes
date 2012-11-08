@@ -1,4 +1,9 @@
 ---
+version: 0.28
+date:    Thu Nov  8 10:49:04 PST 2012
+changes:
+- Require Pegex-0.21 API changes
+---
 version: 0.27
 date:    Thu Aug 30 00:07:58 PDT 2012
 changes:
