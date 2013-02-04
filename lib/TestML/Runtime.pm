@@ -1,6 +1,7 @@
 package TestML::Runtime;
 use TestML::Mo;
 
+# TODO TestML should require the compiler and create the runtime object with it
 use TestML::Compiler;
 
 # Since there is only ever one test runtime, it makes things a LOT cleaner to

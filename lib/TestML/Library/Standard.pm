@@ -1,5 +1,7 @@
+# TODO - This should be an object class ($self, TestML::Mo, etc)
+
 package TestML::Library::Standard;
-use TestML;
+use TestML::Library;
 
 sub Point {
     my $context = shift;

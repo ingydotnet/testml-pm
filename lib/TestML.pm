@@ -3,10 +3,12 @@
 # author:    Ingy döt Net <ingy@cpan.org>
 # abstract:  A Generic Software Testing Meta Language
 # license:   perl
-# copyright: 2009, 2010, 2011, 2012
+# copyright: 2009, 2010, 2011, 2012, 2013
 # see:
 # - http://www.testml.org/
 # - irc://irc.freenode.net#testml
+
+# TODO comment this code.
 
 use 5.006001;
 use strict;
@@ -18,25 +20,14 @@ use Pegex 0.21 ();
 
 package TestML;
 
+# XXX Dynamically load runtime class?
 use TestML::Runtime;
 
 our $VERSION = '0.28';
 
-use constant XXX_skip => 1;
-our $DumpModule = 'YAML::XS';
-sub WWW { require XXX; local $XXX::DumpModule = $DumpModule; XXX::WWW(@_) }
-sub XXX { require XXX; local $XXX::DumpModule = $DumpModule; XXX::XXX(@_) }
-sub YYY { require XXX; local $XXX::DumpModule = $DumpModule; XXX::YYY(@_) }
-sub ZZZ { require XXX; local $XXX::DumpModule = $DumpModule; XXX::ZZZ(@_) }
-
-sub str { TestML::Str->new(value => $_[0]) }
-sub num { TestML::Num->new(value => $_[0]) }
-sub bool { TestML::Bool->new(value => $_[0]) }
-sub list { TestML::List->new(value => $_[0]) }
-
 my $skipped;
 sub import {
-    my $run;
+    my $run;        # $runtime?
     my $bridge = '';
     my $testml;
     $skipped = 0;
@@ -86,6 +77,7 @@ sub import {
         }
     }
 
+    # XXX should be moved to Runtime::TAP
     sub skip_all {
         return if $skipped;
         my $reason = shift;
@@ -101,29 +93,14 @@ sub import {
         return if $skipped;
         if ($run) {
             eval "require $run; 1" or die $@;
-            $bridge ||= 'main';
             $run->new(
                 testml => ($testml || \ *main::DATA),
-                bridge => $bridge,
+                bridge => ($bridge || 'main'),
             )->run();
         }
         elsif ($testml or $bridge) {
             die "-testml or -bridge option used without -run option\n";
         }
-    }
-
-    no strict 'refs';
-    my $p = caller;
-    *{$p.'::str'} = \&str;
-    *{$p.'::num'} = \&num;
-    *{$p.'::bool'} = \&bool;
-    *{$p.'::list'} = \&list;
-
-    if (not defined &{$p.'::XXX'}) {
-        *{$p.'::WWW'} = \&WWW;
-        *{$p.'::XXX'} = \&XXX;
-        *{$p.'::YYY'} = \&YYY;
-        *{$p.'::ZZZ'} = \&ZZZ;
     }
 }
 
