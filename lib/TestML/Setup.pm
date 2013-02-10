@@ -3,7 +3,7 @@
 # author:    Ingy döt Net <ingy@cpan.org>
 # abstract:  Generate Test Files for a TestML Suite
 # license:   perl
-# copyright: 2010-2012
+# copyright: 2010-2013
 
 package TestML::Setup;
 use strict;
@@ -27,16 +27,15 @@ sub setup {
 sub testml_setup {
     my $conf = init(@_);
     my %data = %$conf;
-    $data{bridge} ||= '';
 
-    for my $file (io("$base/$conf->{testml}")->all_files) {
+    for my $file (io("$base/$conf->{source}")->all_files) {
         my $testml_file = $data{testml_file} = $file->filename;
-        $data{testml_dir} = $conf->{local};
+        $data{testml_dir} = $conf->{target};
         my $name = $testml_file;
         $name =~ s/\.tml$// or next;
 
-        my $src = "$base/$conf->{testml}/$testml_file";
-        my $dest = "$base/$conf->{local}/$testml_file";
+        my $src = "$base/$conf->{source}/$testml_file";
+        my $dest = "$base/$conf->{target}/$testml_file";
 
         if (@{$conf->{include}}) {
             next unless grep {$name eq $_} @{$conf->{include}};
@@ -68,10 +67,10 @@ sub init {
     $config_file =~ /(.*)\//;
     $base = $1 || '.';
     my $conf = YAML::XS::LoadFile("$config_file");
-    die "Missing or invalid 'testml' directory in $config_file"
-        unless $conf->{testml} and -d "$base/$conf->{testml}";
-    die "Missing or invalid 'local' directory in $config_file"
-        unless $conf->{local} and -d "$base/$conf->{local}";
+    die "Missing or invalid 'source' directory in $config_file"
+        unless $conf->{source} and -d "$base/$conf->{source}";
+    die "Missing or invalid 'target' directory in $config_file"
+        unless $conf->{target} and -d "$base/$conf->{target}";
     $conf->{testname} ||= '$name.t';
 
     if ($conf->{template}) {
@@ -88,30 +87,6 @@ sub init {
     $conf->{skip} ||= [];
 
     return $conf;
-}
-
-sub template_pm5 {
-    return <<'...';
-use TestML -run,
-[% IF bridge -%]
-    -bridge => '[% bridge %]',
-[% END -%]
-    -testml => '[% testml_dir %]/[% testml_file %]';
-...
-}
-
-sub template_pm6 {
-    return <<'...';
-use v6;
-use TestML::Runner::TAP;
-
-TestML::Runner::TAP.new(
-    testml => '[% testml_dir %]/[% testml_file %]',
-[% IF bridge -%]
-    bridge => '[% bridge %]',
-[% END -%]
-).run();
-...
 }
 
 1;

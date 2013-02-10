@@ -1,11 +1,15 @@
-testml: ../../testml-tml
-local: testml
-lang: pm5
-bridge: t::Bridge
+source: ../../testml-tml
+target: testml
+template: |
+  use TestML;
+  TestML->run(
+      bridge => 't::Bridge',
+      testml => '[% file %]',
+  );
 skip:
-- comments
-- data
-- external1
-- external2
-- syntax
-- topic
+- comments.tml
+- data.tml
+- external1.tml
+- external2.tml
+- syntax.tml
+- topic.tml

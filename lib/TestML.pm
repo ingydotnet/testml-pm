@@ -3,7 +3,7 @@
 # author:    Ingy döt Net <ingy@cpan.org>
 # abstract:  A Generic Software Testing Meta Language
 # license:   perl
-# copyright: 2009, 2010, 2011, 2012, 2013
+# copyright: 2009-2013
 # see:
 # - http://www.testml.org/
 # - irc://irc.freenode.net#testml
