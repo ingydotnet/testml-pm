@@ -4,14 +4,13 @@ test_file_template: |
   use TestML;
   use t::Bridge;
 
-  TestML->new(
+  TestML::Lite->new(
       testml => '[% file %]',
       bridge => 't::Bridge',
   )->run;
-exclude_testml_files:
-- comments.tml
-- data.tml
-- external1.tml
-- external2.tml
-- syntax.tml
-- topic.tml
+test_file_dir: lite
+include_testml_files:
+- arguments.tml
+- basic.tml
+- exceptions.tml
+- semicolons.tml
