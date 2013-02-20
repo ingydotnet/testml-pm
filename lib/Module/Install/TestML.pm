@@ -47,11 +47,9 @@ sub testml_setup {
     my $config = shift;
     die "setup_config requires a yaml file argument"
         unless $config;
-    die "'$config' is not an existing file"
-        unless -f $config;
     print "testml_setup\n";
     require TestML::Setup;
-    TestML::Setup::testml_setup($config);
+    TestML::Setup->new->setup($config);
 }
 
 1;
