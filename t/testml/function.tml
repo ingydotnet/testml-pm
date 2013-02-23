@@ -1,52 +1,52 @@
-%TestML 1.0
+%TestML 0.1.0
 # %DumpAst 1
 
-Plan = 21;
+Plan = 21
 
-Label = 'Fruity Tests';
+Label = 'Fruity Tests'
 
 {
-    Label = 'Anonymous function never called';
-    True == False;
-};
+    Label = 'Anonymous function never called'
+    True == False
+}
 
 test1 = (f, c, t) {
-    List(f, '->', c).Join == t;
-    t.Strip(f).Strip('->') == c;
-    t.Strip('->') == List(f, c).Join;
-};
+    List(f, '->', c).Join == t
+    t.Strip(f).Strip('->') == c
+    t.Strip('->') == List(f, c).Join
+}
 
-test1.Type == 'Func';
+test1.Type == 'Func'
 
-Label = '$BlockLabel';
+Label = '$BlockLabel'
 
-test1(*fruit, *color, *thing);
+test1(*fruit, *color, *thing)
 
 test2 = {
-    thing ~~ color;
-};
- 
-test2(*color, *thing);
+    thing ~~ color
+}
+
+test2(*color, *thing)
 
 test3 = (a, b, c) {
-    f1(a) == b;
-    f2(a) == c;
-};
+    f1(a) == b
+    f2(a) == c
+}
 
-test3(*input, *output1, *output2);
+test3(*input, *output1, *output2)
 
-Label = 'Passing functions as objects';
+Label = 'Passing functions as objects'
 
 test4 = (func, num) {
-    func.Type == 'Func';
-    func(num);
-};
+    func.Type == 'Func'
+    func(num)
+}
 
 test5 = (num) {
-    num == 42;
-};
+    num == 42
+}
 
-test4(test5, 42);
+test4(test5, 42)
 
 === Red Apple
 --- fruit: apple

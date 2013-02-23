@@ -75,7 +75,7 @@ sub preprocess {
             $text .= "\n";
             if ($directive eq 'TestML') {
                 die "Invalid TestML directive"
-                    unless $value =~ /^\d+\.\d+$/;
+                    unless $value =~ /^\d+\.\d+\.\d+$/;
                 die "More than one TestML directive found"
                     if $result->{TestML};
                 $result->{TestML} = TestML::Str->new(value => $value);

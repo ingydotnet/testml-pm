@@ -1,11 +1,11 @@
 package t::Bridge;
 
-sub my_lower {
+sub lowercase {
     my $context = shift;
     return lc($context->value);
 }
 
-sub my_upper {
+sub uppercase {
     my $context = shift;
     return uc($context->value);
 }

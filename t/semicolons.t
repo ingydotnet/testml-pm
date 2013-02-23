@@ -2,6 +2,6 @@ use TestML;
 use t::Bridge;
 
 TestML->new(
-    testml => 'testml/markers.tml',
+    testml => 'testml/semicolons.tml',
     bridge => 't::Bridge',
 )->run;

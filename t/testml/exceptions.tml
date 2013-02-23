@@ -1,29 +1,16 @@
-%TestML 1.0
+%TestML 0.1.0
 
-Plan = 3;
+Plan = 2
 
-*testml_stream.compile_testml().Catch().msg() ~~ *error;
+Throw(*error).NonExistingMethod.Catch ~~ *match
 
-=== No TestML directive
---- testml_stream
-# A comment
-*foo == *bar;
---- error: No TestML directive found
---- line: 2
+message = "blowed up"
 
-=== Missing semicolon
---- testml_stream
-\%TestML 1.0
-*foo == *bar
-*foo == *bar;
---- error: You seem to be missing a semicolon
---- line: 2
+Throw(message).Catch == message
 
-=== Missing semicolon on a non assertion
---- testml_stream
-\%TestML 1.0
-*foo == *bar;
-*foo()
-*foo == *bar;
---- error: You seem to be missing a semicolon
---- line: 2
+=== Error message from data
+--- error
+O NOES!
+
+Something went wrong
+--- match: Something

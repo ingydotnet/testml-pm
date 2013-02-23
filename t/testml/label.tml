@@ -1,12 +1,12 @@
-%TestML 1.0
+%TestML 0.1.0
 
-Plan = 4;
+Plan = 4
 
-Label = 'My label';
-Get('Label') == 'My label';
+Label = 'My label'
+Get('Label') == 'My label'
 
-Label = '$BlockLabel: $num) The $fruit';
-GetLabel == *text;
+Label = '$BlockLabel: $num) The $fruit'
+GetLabel == *text
 
 === A Fruity Test
 --- num: 14

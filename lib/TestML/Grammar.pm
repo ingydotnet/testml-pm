@@ -114,7 +114,7 @@ sub make_tree {
           '.ref' => 'code_expression'
         },
         {
-          '.ref' => 'semicolon'
+          '.ref' => 'ending'
         }
       ]
     },
@@ -215,7 +215,7 @@ sub make_tree {
           '.ref' => 'assertion_call'
         },
         {
-          '.ref' => 'semicolon'
+          '.ref' => 'ending'
         }
       ]
     },
@@ -254,6 +254,9 @@ sub make_tree {
     },
     'double_quoted_string' => {
       '.rgx' => qr/\G(?:"((?:[^\n\\"]|\\"|\\\\|\\[0nt])*?)")/
+    },
+    'ending' => {
+      '.rgx' => qr/\G(?:;|\r?\n)/
     },
     'function_object' => {
       '.all' => [
@@ -382,16 +385,6 @@ sub make_tree {
         },
         {
           '.ref' => 'double_quoted_string'
-        }
-      ]
-    },
-    'semicolon' => {
-      '.any' => [
-        {
-          '.rgx' => qr/\G;/
-        },
-        {
-          '.err' => 'You seem to be missing a semicolon'
         }
       ]
     },

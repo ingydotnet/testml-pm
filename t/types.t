@@ -1,3 +1,7 @@
-use TestML -run,
-    -bridge => 't::Bridge',
-    -testml => 'testml/types.tml';
+use TestML;
+use t::Bridge;
+
+TestML->new(
+    testml => 'testml/types.tml',
+    bridge => 't::Bridge',
+)->run;

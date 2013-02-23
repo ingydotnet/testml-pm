@@ -1,7 +1,7 @@
 use TestML;
 use t::Bridge;
 
-TestML->new(
-    testml => 'testml/markers.tml',
+TestML::Lite->new(
+    testml => 'testml/arguments.tml',
     bridge => 't::Bridge',
 )->run;

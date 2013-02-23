@@ -1,3 +1,7 @@
-use TestML -run,
-    -bridge => 't::Bridge',
-    -testml => 'testml/arguments.tml';
+use TestML;
+use t::Bridge;
+
+TestML->new(
+    testml => 'testml/arguments.tml',
+    bridge => 't::Bridge',
+)->run;

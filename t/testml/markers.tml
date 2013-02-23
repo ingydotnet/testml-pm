@@ -1,10 +1,10 @@
-%TestML 1.0
+%TestML 0.1.0
 %BlockMarker +++
 %PointMarker ???
 
-Plan = 2;
+Plan = 2
 
-*foo == *bar;
+*foo == *bar
 
 
 +++ Test One

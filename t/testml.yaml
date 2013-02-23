@@ -14,4 +14,5 @@ exclude_testml_files:
 - external1.tml
 - external2.tml
 - syntax.tml
+- syntax2.tml
 - topic.tml

@@ -1,8 +1,8 @@
-%TestML 1.0
+%TestML 0.1.0
 
-Plan = 4;
+Plan = 4
 
-*foo == *bar;
+*foo == *bar
 
 %Include external2.tml
 %Include external1.tml

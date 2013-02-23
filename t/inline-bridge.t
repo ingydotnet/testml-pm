@@ -1,13 +1,15 @@
-use TestML -run, -bridge => 'main';
+use TestML;
+TestML->new->run;
 
 sub upper {
     my $self = shift;
     return uc($self->value);
 }
-__DATA__
-%TestML 1.0
 
-*foo.upper() == *bar;
+__DATA__
+%TestML 0.1.0
+
+*foo.upper() == *bar
 
 === Foo for thought
 --- foo: o hai

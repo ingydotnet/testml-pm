@@ -20,7 +20,7 @@ data:
     text: 'Last Test: 99) The tomato'
 namespace:
   TestML: !!perl/hash:TestML::Str
-    value: '1.0'
+    value: '0.1.0'
 statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression

@@ -1,10 +1,10 @@
-%TestML 1.0
+%TestML 0.1.0
 
-Plan = 3;
+Plan = 3
 
-*what.combine(*who) == *greeting;
-*what.combine('and', *else) == *greeting;
-*what.combine('and', *else.my_upper) == *upper_greeting;
+*what.combine(*who) == *greeting
+*what.combine('and', *else) == *greeting
+*what.combine('and', *else.uppercase) == *upper_greeting
 
 === Dear John
 --- what: Dear

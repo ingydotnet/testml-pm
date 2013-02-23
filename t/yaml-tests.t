@@ -1,8 +1,9 @@
-use TestML -run;
+use TestML;
 
+TestML->new->run;
 
 __END__
-%TestML 1.0
+%TestML 0.1.0
 %PointMarker +++
 
 *perl == *perl;

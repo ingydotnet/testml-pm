@@ -8,7 +8,12 @@
 # - http://www.testml.org/
 # - irc://irc.freenode.net#testml
 
-# TODO comment this code.
+# TODO
+# - comment this code.
+# - Note major API change in 0.30
+# - Switch TestML::$VERSION to 0.0.x
+#   - Maybe try JSONY first
+# - Handle uncaught errors in testml
 
 use 5.006001;
 use strict;
@@ -19,88 +24,34 @@ use Pegex 0.21 ();
 ";
 
 package TestML;
+use TestML::Mo;
 
-# XXX Dynamically load runtime class?
-use TestML::Runtime;
+has testml => ( default => sub {''} );
+has bridge => ( default => sub {'main'} );
+has runtime => ( default => sub {'TestML::Runtime::TAP'} );
+has skip_all => ();
+has required => ( default => sub {[]} );
 
-our $VERSION = '0.28';
+our $VERSION = '0.30';
 
-my $skipped;
-sub import {
-    my $run;        # $runtime?
-    my $bridge = '';
-    my $testml;
-    $skipped = 0;
-
-    strict->import;
-    warnings->import;
-
-    my $pkg = shift;
-    while (@_) {
-        my $option = shift(@_);
-        my $value = (@_ and $_[0] !~ /^-/) ? shift(@_) : '';
-        if ($option eq '-run') {
-            $run = $value || 'TestML::Runtime::TAP';
-        }
-        elsif ($option eq '-testml') {
-            $testml = $value;
-        }
-        elsif ($option eq '-bridge') {
-            $bridge = $value;
-        }
-        # XXX skip_all should call skip_all() from runner subclass
-        elsif ($option eq '-dev_test') {
-            if (-e 'inc' and not -e 'inc/.author') {
-                skip_all('This is a developer test');
-            }
-        }
-        elsif ($option eq '-skip_all') {
-            my $reason = $value;
-            die "-skip_all option requires a reason argument"
-                unless $reason;
-            skip_all($reason);
-        }
-        elsif ($option eq '-require_or_skip') {
-            my $module = $value;
-            die "-require_or_skip option requires a module argument"
-                unless $module and $module !~ /^-/;
-            eval "require $module; 1" or do {
-                $skipped = 1;
-                require Test::More;
-                Test::More::plan(
-                    skip_all => "$module failed to load"
-                );
-            }
-        }
-        else {
-            die "Unknown option '$option'";
-        }
-    }
-
-    # XXX should be moved to Runtime::TAP
-    sub skip_all {
-        return if $skipped;
-        my $reason = shift;
-        $skipped = 1;
-        require Test::More;
-        Test::More::plan(
-            skip_all => $reason,
+sub run {
+    my ($self) = @_;
+    my $runtime = $self->runtime;
+    if (not ref $runtime) {
+        eval "require $runtime";
+        $runtime = $self->runtime->new(
+            testml => $self->testml || \*main::DATA,
+            bridge => $self->bridge || 'main',
         );
     }
-
-    sub END {
-        no warnings;
-        return if $skipped;
-        if ($run) {
-            eval "require $run; 1" or die $@;
-            $run->new(
-                testml => ($testml || \ *main::DATA),
-                bridge => ($bridge || 'main'),
-            )->run();
-        }
-        elsif ($testml or $bridge) {
-            die "-testml or -bridge option used without -run option\n";
-        }
+    if (my $message = $self->skip_all) {
+        $runtime->skip_all($message);
+    }
+    elsif (@{$self->required}) {
+        die "not supported";
+    }
+    else {
+        $runtime->run;
     }
 }
 

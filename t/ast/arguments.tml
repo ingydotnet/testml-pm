@@ -15,7 +15,7 @@ data:
     what: Greetings
 namespace:
   TestML: !!perl/hash:TestML::Str
-    value: '1.0'
+    value: '0.1.0'
 statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
@@ -118,7 +118,7 @@ statements:
           - else
           name: Point
         - !!perl/hash:TestML::Transform
-          name: my_upper
+          name: uppercase
       explicit_call: 1
       name: combine
   points:

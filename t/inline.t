@@ -1,8 +1,11 @@
-use TestML -run, -bridge => 't::Bridge';
+use TestML;
+TestML->new(
+    bridge => 't::Bridge',
+)->run;
 
 __DATA__
 
-%TestML 1.0
+%TestML 0.1.0
 
 Title = "Ingy's Test";
 Plan = 4;

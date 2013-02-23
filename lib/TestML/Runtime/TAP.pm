@@ -29,6 +29,11 @@ sub title {
     }
 }
 
+sub skip_all {
+    my ($self, $reason) = @_;
+    $self->test_builder->plan(skip_all => $reason);
+}
+
 sub plan_begin {
     my $self = shift;
     if (defined (my $tests = $self->function->getvar('Plan'))) {
