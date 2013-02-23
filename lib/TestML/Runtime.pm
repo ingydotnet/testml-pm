@@ -422,6 +422,12 @@ has label => default => sub {''};
 has points => default => sub {{}};
 
 #-----------------------------------------------------------------------------
+package TestML::Point;
+use TestML::Mo;
+
+has name => ();
+
+#-----------------------------------------------------------------------------
 package TestML::Object;
 use TestML::Mo;
 

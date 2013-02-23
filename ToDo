@@ -1,0 +1,10 @@
+= TODO
+
+- port testml-lite to perl from ruby
+- comment code.
+- Note major API change in 0.30
+- Switch TestML::$VERSION to 0.0.x
+  - Maybe try JSONY first
+- Handle uncaught errors in testml
+
+
