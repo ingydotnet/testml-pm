@@ -1,9 +1,6 @@
 package TestML::Runtime;
 use TestML::Mo;
 
-# TODO TestML should require the compiler and create the runtime object with it
-use TestML::Compiler;
-
 # Since there is only ever one test runtime, it makes things a LOT cleaner to
 # keep the reference to it in a global variable accessed by a method, than to
 # put a reference to it into every object that needs to access it.
@@ -12,6 +9,7 @@ our $self;
 has base => default => sub {$0 =~ m!(.*)/! ? $1 : "."};   # Base directory
 has testml => ();       # TestML document filename, handle or text
 has bridge => ();       # Bridge transform module
+has compiler => ();     # TestML Compiler module
 
 # XXX Add TestML.pm support for -library keyword.
 has library => default => sub {[]};    # Transform library modules
@@ -251,10 +249,11 @@ sub object_from_native {
 
 sub compile_testml {
     my $self = shift;
-    my $path = ref($self->testml)
-        ? $self->testml
-        : join '/', $self->base, $self->testml;
-    my $function = TestML::Compiler->new(base => $self->base)->compile($path)
+    my $compiler = $self->compiler;
+    eval "require $compiler; 1" or die "Can't load '$compiler'";
+    my $function = $compiler->new(
+        base => $self->base,
+    )->compile($self->testml)
         or die "TestML document failed to compile";
     return $function;
 }

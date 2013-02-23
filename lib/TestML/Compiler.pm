@@ -9,14 +9,7 @@ has base => ();
 
 sub compile {
     my $self = shift;
-    my $file = shift;
-    if (not ref $file and $file !~ /\n/) {
-        $file =~ s/(.*)\/(.*)/$2/ or die;
-        $self->base($1);
-    }
-    my $input = (not ref($file) and $file =~ /\n/)
-        ? $file
-        : $self->slurp($file);
+    my $input = shift;
 
     my $result = $self->preprocess($input, 'top');
 
@@ -83,7 +76,8 @@ sub preprocess {
             }
             $order_error = 1 unless $result->{TestML};
             if ($directive eq 'Include') {
-                my $sub_result = $self->preprocess($self->slurp($value));
+                my $sub_result =
+                    $self->preprocess(TestML->slurp($value, $self->base));
                 $text .= $sub_result->{text};
                 $result->{DataMarker} = $sub_result->{DataMarker};
                 $result->{BlockMarker} = $sub_result->{BlockMarker};
@@ -166,22 +160,6 @@ sub fixup_grammar {
         receiver => $parser->receiver,
     );
 
-}
-
-sub slurp {
-    my $self = shift;
-    my $file = shift;
-    my $fh;
-    if (ref($file)) {
-        $fh = $file;
-    }
-    else {
-        my $path = join '/', $self->base, $file;
-        open $fh, $path
-            or die "Can't open '$path' for input: $!";
-    }
-    local $/;
-    return <$fh>;
 }
 
 1;

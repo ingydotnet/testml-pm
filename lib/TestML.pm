@@ -8,13 +8,6 @@
 # - http://www.testml.org/
 # - irc://irc.freenode.net#testml
 
-# TODO
-# - comment this code.
-# - Note major API change in 0.30
-# - Switch TestML::$VERSION to 0.0.x
-#   - Maybe try JSONY first
-# - Handle uncaught errors in testml
-
 use 5.006001;
 use strict;
 use warnings;
@@ -29,6 +22,7 @@ use TestML::Mo;
 has testml => ( default => sub {''} );
 has bridge => ( default => sub {'main'} );
 has runtime => ( default => sub {'TestML::Runtime::TAP'} );
+has compiler => ( default => sub {'TestML::Compiler'} );
 has skip_all => ();
 has required => ( default => sub {[]} );
 
@@ -37,11 +31,24 @@ our $VERSION = '0.30';
 sub run {
     my ($self) = @_;
     my $runtime = $self->runtime;
+
+    my $testml = $self->testml || \*main::DATA;
+    my $base = ($0 =~ m!(.*)/! ? $1 : ".");   # Base directory
+    if (not ref $testml and $testml !~ /\n/) {
+        $testml =~ s/(.*)\/(.*)/$2/ or die;
+        ($base, $testml) = ("$base/$1", $2);
+    }
+    $testml = (not ref($testml) and $testml =~ /\n/)
+        ? $testml
+        : $self->slurp($testml, $base);
+
     if (not ref $runtime) {
         eval "require $runtime";
         $runtime = $self->runtime->new(
-            testml => $self->testml || \*main::DATA,
-            bridge => $self->bridge || 'main',
+            testml => $testml,
+            bridge => $self->bridge,
+            compiler => $self->compiler,
+            base => $base,
         );
     }
     if (my $message = $self->skip_all) {
@@ -54,6 +61,28 @@ sub run {
         $runtime->run;
     }
 }
+
+sub slurp {
+    my ($self, $file, $base) = @_;
+    $base ||= '.';
+    my $fh;
+    if (ref($file)) {
+        $fh = $file;
+    }
+    else {
+        my $path = join '/', $base, $file;
+        open $fh, $path
+            or die "Can't open '$path' for input: $!";
+    }
+    local $/;
+    return <$fh>;
+}
+
+package TestML::Lite;
+use TestML::Mo;
+extends 'TestML';
+
+has compiler => ( default => sub {'TestML::Lite::Compiler'} );
 
 1;
 

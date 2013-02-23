@@ -5,7 +5,7 @@ test_file_template: |
   use t::Bridge;
 
   TestML::Lite->new(
-      testml => '[% file %]',
+      testml => '../[% file %]',
       bridge => 't::Bridge',
   )->run;
 test_file_dir: lite
