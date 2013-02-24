@@ -33,17 +33,13 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Call
-        args:
-        - bar
-        name: Point
+      - !!perl/hash:TestML::Point
+        name: bar
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Call
-      args:
-      - foo
-      name: Point
+    - !!perl/hash:TestML::Point
+      name: foo
   points:
   - foo
   - bar

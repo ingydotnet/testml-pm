@@ -33,16 +33,16 @@ is join('-', @{$statement->points}), 'input-output',
 
 is scalar(@{$statement->expression->units}), 2, 'Expression has two units';
 my $expression = $statement->expression;
-is $expression->units->[0]->name, 'Point', 'First sub is a Point';
-is $expression->units->[0]->args->[0], 'input', 'Point name is "input"';
+ok $expression->units->[0]->isa('TestML::Point'), 'First sub is a Point';
+is $expression->units->[0]->name, 'input', 'Point name is "input"';
 is $expression->units->[1]->name, 'uppercase', 'Second sub is "uppercase"';
 
 is $statement->assertion->name, 'EQ', 'Assertion is "EQ"';
 
 $expression = $statement->assertion->expression;
 is scalar(@{$expression->units}), 1, 'Right side has one part';
-is $expression->units->[0]->name, 'Point', 'First sub is a Point';
-is $expression->units->[0]->args->[0], 'output', 'Point name is "output"';
+ok $expression->units->[0]->isa('TestML::Point'), 'First sub is a Point';
+is $expression->units->[0]->name, 'output', 'Point name is "output"';
 
 is scalar(@{$func->data}), 2, 'Two data blocks';
 my ($block1, $block2) = @{$func->data};

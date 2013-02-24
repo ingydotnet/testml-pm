@@ -220,22 +220,16 @@ statements:
       args:
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - fruit
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: fruit
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - color
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: color
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - thing
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: thing
       explicit_call: 1
       name: test1
   points:
@@ -271,16 +265,12 @@ statements:
       args:
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - color
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: color
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - thing
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: thing
       explicit_call: 1
       name: test2
   points:
@@ -342,22 +332,16 @@ statements:
       args:
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - input
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: input
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - output1
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: output1
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - output2
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: output2
       explicit_call: 1
       name: test3
   points:

@@ -1,44 +1,18 @@
 --- !!perl/hash:TestML::Function
 data:
 - !!perl/hash:TestML::Block
-  label: No TestML directive
+  label: Error message from data
   points:
-    error: No TestML directive found
-    line: '2'
-    testml_stream: '
+    error: 'O NOES!
 
-      *foo == *bar;
+
+      Something went wrong
 
 '
-- !!perl/hash:TestML::Block
-  label: Missing semicolon
-  points:
-    error: You seem to be missing a semicolon
-    line: '2'
-    testml_stream: '%TestML 1.0
-
-      *foo == *bar
-
-      *foo == *bar;
-
-'
-- !!perl/hash:TestML::Block
-  label: Missing semicolon on a non assertion
-  points:
-    error: You seem to be missing a semicolon
-    line: '2'
-    testml_stream: '%TestML 1.0
-
-      *foo == *bar;
-
-      *foo()
-
-      *foo == *bar;
-
-'
+    match: Something
 namespace:
   TestML: !!perl/hash:TestML::Str
-    value: '1.0'
+    value: 0.1.0
 statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
@@ -49,32 +23,59 @@ statements:
       - !!perl/hash:TestML::Expression
         units:
         - !!perl/hash:TestML::Num
-          value: '3'
+          value: '2'
+      name: Set
+- !!perl/hash:TestML::Statement
+  assertion: !!perl/hash:TestML::Assertion
+    expression: !!perl/hash:TestML::Expression
+      units:
+      - !!perl/hash:TestML::Point
+        name: match
+    name: HAS
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Call
+      args:
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Point
+          name: error
+      explicit_call: 1
+      name: Throw
+    - !!perl/hash:TestML::Call
+      name: NonExistingMethod
+    - !!perl/hash:TestML::Call
+      name: Catch
+  points:
+  - error
+  - match
+- !!perl/hash:TestML::Statement
+  expression: !!perl/hash:TestML::Expression
+    units:
+    - !!perl/hash:TestML::Call
+      args:
+      - message
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Str
+          value: blowed up
       name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
       - !!perl/hash:TestML::Call
-        args:
-        - error
-        name: Point
-    name: HAS
+        name: message
+    name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
     - !!perl/hash:TestML::Call
       args:
-      - testml_stream
-      name: Point
-    - !!perl/hash:TestML::Call
+      - !!perl/hash:TestML::Expression
+        units:
+        - !!perl/hash:TestML::Call
+          name: message
       explicit_call: 1
-      name: compile_testml
+      name: Throw
     - !!perl/hash:TestML::Call
-      explicit_call: 1
       name: Catch
-    - !!perl/hash:TestML::Call
-      explicit_call: 1
-      name: msg
-  points:
-  - testml_stream
-  - error

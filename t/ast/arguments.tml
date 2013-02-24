@@ -32,25 +32,19 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Call
-        args:
-        - greeting
-        name: Point
+      - !!perl/hash:TestML::Point
+        name: greeting
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Call
-      args:
-      - what
-      name: Point
+    - !!perl/hash:TestML::Point
+      name: what
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - who
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: who
       explicit_call: 1
       name: combine
   points:
@@ -61,17 +55,13 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Call
-        args:
-        - greeting
-        name: Point
+      - !!perl/hash:TestML::Point
+        name: greeting
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Call
-      args:
-      - what
-      name: Point
+    - !!perl/hash:TestML::Point
+      name: what
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
@@ -80,10 +70,8 @@ statements:
           value: and
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - else
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: else
       explicit_call: 1
       name: combine
   points:
@@ -94,17 +82,13 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Call
-        args:
-        - upper_greeting
-        name: Point
+      - !!perl/hash:TestML::Point
+        name: upper_greeting
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Call
-      args:
-      - what
-      name: Point
+    - !!perl/hash:TestML::Point
+      name: what
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
@@ -113,10 +97,8 @@ statements:
           value: and
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Call
-          args:
-          - else
-          name: Point
+        - !!perl/hash:TestML::Point
+          name: else
         - !!perl/hash:TestML::Call
           name: uppercase
       explicit_call: 1

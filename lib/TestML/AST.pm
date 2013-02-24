@@ -86,9 +86,8 @@ sub got_point_object {
     my ($self, $point) = @_;
     $point =~ s/^\*// or die;
     push @{$self->points}, $point;
-    return TestML::Call->new(
-        name => 'Point',
-        args => [$point],
+    return TestML::Point->new(
+        name => $point,
     );
 }
 

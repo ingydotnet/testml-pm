@@ -203,6 +203,9 @@ sub run_expression {
 sub get_point {
     my ($self, $point) = @_;
     my $value = $self->function->getvar('Block')->{points}{$point};
+    if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
+        $value = '';
+    }
     return TestML::Str->new(value => $value);
 }
 

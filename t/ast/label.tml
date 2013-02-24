@@ -76,10 +76,8 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Call
-        args:
-        - text
-        name: Point
+      - !!perl/hash:TestML::Point
+        name: text
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
