@@ -69,7 +69,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Title
       - !!perl/hash:TestML::Expression
@@ -80,7 +80,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
@@ -91,7 +91,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -105,12 +105,12 @@ statements:
     name: OK
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: True
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -124,14 +124,14 @@ statements:
     name: OK
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: False
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -145,14 +145,14 @@ statements:
     name: OK
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: None
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -169,20 +169,20 @@ statements:
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - lines
       name: Point
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Lines
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Count
   points:
   - lines
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -194,20 +194,20 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         args:
         - bar
         name: Point
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - foo
       name: Point
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Lines
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
         units:
@@ -221,7 +221,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -233,22 +233,22 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         args:
         - baz
         name: Point
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - foo
       name: Point
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Lines
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Reverse
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Text
   points:
   - foo
@@ -256,7 +256,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -268,28 +268,28 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         args:
         - baz
         name: Point
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         name: Lines
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         name: Sort
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         name: Text
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - foo
       name: Point
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Lines
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Sort
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Text
   points:
   - foo
@@ -297,7 +297,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -309,20 +309,20 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         args:
         - foo
         name: Point
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - foo
       name: Point
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Lines
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Text
   points:
   - foo

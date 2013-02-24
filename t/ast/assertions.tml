@@ -6,7 +6,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
@@ -17,7 +17,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -50,7 +50,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -83,7 +83,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression

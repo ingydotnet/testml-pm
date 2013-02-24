@@ -74,12 +74,12 @@ sub compile_assertion {
                       : $self->make_unit($_, $points);
                 } @args
             ];
-            my $transform = TestML::Transform->new(
+            my $call = TestML::Call->new(
                 name => $token->[0],
                 args => $args,
                 explicit_call => 1,
             );
-            push @{$side->units}, $transform;
+            push @{$side->units}, $call;
         } ||
         $token->isa('TestML::Object') && do {
             push @{$side->units}, $token;

@@ -18,7 +18,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Title
       - !!perl/hash:TestML::Expression
@@ -29,7 +29,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
@@ -41,18 +41,18 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         args:
         - lower
         name: Point
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - text
       name: Point
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: my_lower
   points:
   - text
@@ -61,18 +61,18 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         args:
         - upper
         name: Point
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - text
       name: Point
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: my_upper
   points:
   - text

@@ -110,11 +110,11 @@ has compiler => ( default => sub {'TestML::Lite::Compiler'} );
     --- text: soopersekrit
     --- md5: 64002c26dcc62c1d6d0f1cb908de1435
 
-This TestML document defines 2 assertions, and defines 2 data blocks.
-The first block has 3 data points, but the second one has only 2.
-Therefore the rot13 assertion applies only to the first block, while the
-the md5 assertion applies to both. This results in a total of 3 tests,
-which is specified in the meta Plan statement in the document.
+This TestML document defines 2 assertions, and defines 2 data blocks.  The
+first block has 3 data points, but the second one has only 2.  Therefore the
+rot13 assertion applies only to the first block, while the the md5 assertion
+applies to both. This results in a total of 3 tests, which is specified in the
+meta Plan statement in the document.
 
 To run this test you would have a normal test file that looks like this:
 
@@ -131,23 +131,21 @@ or more simply:
         -testml => 'testml/encode.tml',
         -bridge => 't::Bridge';
 
-The apply_* transform functions are defined in the bridge class that is
-specified outside this test (t/Bridge.pm).
+The apply_* functions are defined in the bridge class that is specified outside
+this test (t/Bridge.pm).
 
 =head1 DESCRIPTION
 
-TestML is a generic, programming language agnostic, meta language for
-writing unit tests. The idea is that you can use the same test files in
-multiple implementations of a given programming idea. Then you can be
-more certain that your application written in, say, Python matches your
-Perl implementation.
+TestML is a generic, programming language agnostic, meta language for writing
+unit tests. The idea is that you can use the same test files in multiple
+implementations of a given programming idea. Then you can be more certain that
+your application written in, say, Python matches your Perl implementation.
 
-In a nutshell you write a bunch of data tests that have inputs and
-expected results. Using a simple syntax, you specify what functions the
-data must pass through to produce the expected results. You use a bridge
-class to write the data transform functions that pass the data through
-your application.
+In a nutshell you write a bunch of data tests that have inputs and expected
+results. Using a simple syntax, you specify what functions the data must pass
+through to produce the expected results. You use a bridge class to write the
+data functions that pass the data through your application.
 
 In Perl 5, TestML is the evolution of the L<Test::Base> module. It has a
-superset of Test:Base's goals. The data markup syntax is currently
-exactly the same as Test::Base.
+superset of Test:Base's goals. The data markup syntax is currently exactly the
+same as Test::Base.

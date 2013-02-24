@@ -10,11 +10,11 @@ our $self;
 
 has base => default => sub {$0 =~ m!(.*)/! ? $1 : "."};   # Base directory
 has testml => ();       # TestML document filename, handle or text
-has bridge => ();       # Bridge transform module
+has bridge => ();       # Bridge call module
 has compiler => ();     # TestML Compiler module
 
 # XXX Add TestML.pm support for -library keyword.
-has library => default => sub {[]};    # Transform library modules
+has library => default => sub {[]};    # Call library modules
 
 has function => ();         # Current function executing
 has planned => default => sub {0};     # plan() has been called
@@ -35,11 +35,11 @@ sub run {
     $self->{function} = $self->compile_testml;
     $self->load_variables;
 
-    $self->load_transform_module('TestML::Library::Standard');
-    $self->load_transform_module('TestML::Library::Debug');
+    $self->load_call_module('TestML::Library::Standard');
+    $self->load_call_module('TestML::Library::Debug');
 
     if ($self->bridge) {
-        $self->load_transform_module($self->bridge);
+        $self->load_call_module($self->bridge);
     }
 
     my $context = TestML::None->new;
@@ -146,7 +146,7 @@ sub run_expression {
         my $unit = $units->[$i];
         if ($expression->error) {
             next unless
-                $unit->isa('TestML::Transform') and
+                $unit->isa('TestML::Call') and
                 $unit->name eq 'Catch';
         }
         if ($unit->isa('TestML::Point')) {
@@ -161,9 +161,9 @@ sub run_expression {
             $context = $unit;
             next;
         }
-        die "Unexpected unit: $unit" unless $unit->isa('TestML::Transform');
+        die "Unexpected unit: $unit" unless $unit->isa('TestML::Call');
         my $callable = $self->function->getvar($unit->name)
-            or die "Can't find transform '${\$unit->name}'";
+            or die "Can't find callable '${\$unit->name}'";
         my $args = [
             map {
                 $_->isa('TestML::Point')
@@ -287,7 +287,7 @@ sub load_variables {
     $global->setvar(None => $TestML::Constant::None);
 }
 
-sub load_transform_module {
+sub load_call_module {
     my $self = shift;
     my $module_name = shift;
     if ($module_name ne 'main') {
@@ -426,7 +426,7 @@ has name => ();
 has expression => default => sub {TestML::Expression->new};
 
 #-----------------------------------------------------------------------------
-package TestML::Transform;
+package TestML::Call;
 use TestML::Mo;
 
 has name => ();

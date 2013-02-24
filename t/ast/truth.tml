@@ -6,7 +6,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
@@ -17,7 +17,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -31,7 +31,7 @@ statements:
     name: OK
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: True
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -39,9 +39,9 @@ statements:
     name: OK
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: False
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -49,16 +49,16 @@ statements:
     name: OK
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: True
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Not
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -82,7 +82,7 @@ statements:
     units:
     - !!perl/hash:TestML::Str
       value: ''
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -95,7 +95,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -111,7 +111,7 @@ statements:
     units:
     - !!perl/hash:TestML::Num
       value: '0'
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion

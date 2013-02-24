@@ -6,7 +6,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
@@ -17,7 +17,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
@@ -36,7 +36,7 @@ statements:
     units:
     - !!perl/hash:TestML::Str
       value: Foo
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -49,7 +49,7 @@ statements:
     units:
     - !!perl/hash:TestML::Num
       value: '42'
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -60,9 +60,9 @@ statements:
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: True
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -73,7 +73,7 @@ statements:
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
         units:
@@ -89,7 +89,7 @@ statements:
           value: '3'
       explicit_call: 1
       name: List
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -102,7 +102,7 @@ statements:
     units:
     - !!perl/hash:TestML::Function
       statements: []
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
@@ -115,12 +115,12 @@ statements:
     units:
     - !!perl/hash:TestML::Function
       statements: []
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - s
       - !!perl/hash:TestML::Expression
@@ -137,14 +137,14 @@ statements:
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: s
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - n
       - !!perl/hash:TestML::Expression
@@ -161,19 +161,19 @@ statements:
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: n
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - b
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Transform
+        - !!perl/hash:TestML::Call
           name: False
       name: Set
 - !!perl/hash:TestML::Statement
@@ -185,19 +185,19 @@ statements:
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: b
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - l
       - !!perl/hash:TestML::Expression
         units:
-        - !!perl/hash:TestML::Transform
+        - !!perl/hash:TestML::Call
           explicit_call: 1
           name: List
       name: Set
@@ -210,14 +210,14 @@ statements:
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: l
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - f
       - !!perl/hash:TestML::Expression
@@ -234,7 +234,7 @@ statements:
     name: EQ
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: f
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       name: Type

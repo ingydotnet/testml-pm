@@ -43,7 +43,7 @@ statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
@@ -55,24 +55,24 @@ statements:
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
       units:
-      - !!perl/hash:TestML::Transform
+      - !!perl/hash:TestML::Call
         args:
         - error
         name: Point
     name: HAS
   expression: !!perl/hash:TestML::Expression
     units:
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       args:
       - testml_stream
       name: Point
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       explicit_call: 1
       name: compile_testml
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       explicit_call: 1
       name: Catch
-    - !!perl/hash:TestML::Transform
+    - !!perl/hash:TestML::Call
       explicit_call: 1
       name: msg
   points:

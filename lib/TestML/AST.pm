@@ -23,7 +23,7 @@ sub got_assignment_statement {
     return TestML::Statement->new(
         expression => TestML::Expression->new(
             units => [
-                TestML::Transform->new(
+                TestML::Call->new(
                     name => 'Set',
                     args => [
                         $match->[0],
@@ -86,7 +86,7 @@ sub got_point_object {
     my ($self, $point) = @_;
     $point =~ s/^\*// or die;
     push @{$self->points}, $point;
-    return TestML::Transform->new(
+    return TestML::Call->new(
         name => 'Point',
         args => [$point],
     );
@@ -148,22 +148,23 @@ sub got_function_object {
     return $function;
 }
 
+# XXX Change 'transform' to 'call' (requires change in grammar).
 sub got_transform_name {
     my ($self, $match) = @_;
-    return TestML::Transform->new(name => $match);
+    return TestML::Call->new(name => $match);
 }
 
 sub got_transform_object {
     my ($self, $object) = @_;
-    my $transform = $object->[0];
+    my $call = $object->[0];
     if ($object->[1][-1] and $object->[1][-1] eq 'explicit') {
-        $transform->explicit_call(1);
+        $call->explicit_call(1);
         splice @{$object->[1]}, -1, 1;
     }
     my $args = [];
     $args = $object->[1][0] if $object->[1][0];
-    $transform->args($args) if @$args;
-    return $transform;
+    $call->args($args) if @$args;
+    return $call;
 }
 
 sub got_transform_argument_list {

@@ -16,7 +16,7 @@
 + Rename TestML::Parser::Grammar to TestML::Grammar
 + Delete t/runner.t
 + Put TestML::AST into TestML::Runtime
-+ Rename TestML::Transform::* -> TestML::Library
++ Rename TestML::Call::* -> TestML::Library
 + True/False/None can be singleton objects
 + Make TestML::Object::type a method that returns type based on class.
 + Add getvar / setvar in Function for variable access.
@@ -45,7 +45,7 @@
 - XXX, et al are not reporting the correct line they came from.
 
 == Standard
-- Add a standard transform for data parse
+- Add a standard call for data parse
 
 - Allow quotes for line points
 - Support Native objects
