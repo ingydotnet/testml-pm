@@ -22,13 +22,6 @@ has test_number => default => sub {0}; # Number of tests run so far
 
 sub BUILD {
     my $self = $TestML::Runtime::self = shift;
-    $self->function($self->compile_testml);
-    $self->load_variables;
-    $self->load_transform_module('TestML::Library::Standard');
-    $self->load_transform_module('TestML::Library::Debug');
-    if ($self->bridge) {
-        $self->load_transform_module($self->bridge);
-    }
 }
 
 # XXX Move to TestML::Adapter
@@ -39,11 +32,20 @@ sub plan_end { }
 sub run {
     my $self = shift;
 
-    my $function = $self->function;
+    $self->{function} = $self->compile_testml;
+    $self->load_variables;
+
+    $self->load_transform_module('TestML::Library::Standard');
+    $self->load_transform_module('TestML::Library::Debug');
+
+    if ($self->bridge) {
+        $self->load_transform_module($self->bridge);
+    }
+
     my $context = TestML::None->new;
     my $args = [];
 
-    $self->run_function($self->function, $context, $args);
+    $self->run_function($self->{function}, $context, $args);
 
     $self->run_plan();
     $self->plan_end();
@@ -205,19 +207,17 @@ sub get_point {
 }
 
 sub run_native {
-    my $self = shift;
-    my $function = shift;
-    my $context = shift;
-    my $args = shift;
+    my ($self, $function, $context, $args) = @_;
+    $args = [
+        map {
+            (ref($_) eq 'TestML::Expression')
+            ? $self->run_expression($_)
+            : $_
+        } @$args
+    ];
+    unshift @$args, $context if $context;
     my $value = eval {
-        &$function(
-            $context,
-            map {
-                (ref($_) eq 'TestML::Expression')
-                ? $self->run_expression($_)
-                : $_
-            } @$args
-        );
+        &$function(@$args)
     };
     if ($@) {
         $self->function->expression->error($@);
@@ -516,6 +516,7 @@ extends 'TestML::Object';
 sub list { shift }
 
 #-----------------------------------------------------------------------------
+# XXX Change None to Null
 package TestML::None;
 use TestML::Mo;
 extends 'TestML::Object';

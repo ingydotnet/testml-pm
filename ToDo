@@ -1,7 +1,9 @@
 = TODO
 
-- port testml-lite to perl from ruby
-- comment code.
+- Make Bridge and Library be real classes.
+- Make TestML::Util for str num bool list exports.
+
+- Comment code.
 - Note major API change in 0.30
 - Switch TestML::$VERSION to 0.0.x
   - Maybe try JSONY first

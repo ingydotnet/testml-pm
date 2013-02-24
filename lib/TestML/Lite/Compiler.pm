@@ -5,29 +5,21 @@
 package TestML::Lite::Compiler;
 use TestML::Mo;
 
-has function => ();
-# TODO put plan into Plan var in @function
-has plan => ();
-has testml_version => ();
-
 use constant POINT => qr/^\*(\w+)/;
 
 # support assignment statement for any variable
 sub compile {
     my ($self, $document) = @_;
-    $self->{function} = TestML::Function->new;
-    my @lines = split /\r?\n/, $document;
-    # pop ?
-    while (@lines) {
-        my $line = shift @lines;
-        next unless $line =~ /\S/;
-        next if $line =~ /^\s*#/;
-        if ($line =~ /^===/) {
-            unshift @lines, $line;
-            last;
-        }
+    my $function = TestML::Function->new;
+    $document =~ /\A(.*?)(^===.*)?\z/ms or die;
+    my ($code, $data) = ($1, $2);
+    while ($code =~ s{(.*)$/}{}) {
+        my $line = $1;
+        next if $line =~ /^\s*(#|$)/;
         if ($line =~ /^%TestML +(\d+\.\d+\.\d+)\s*$/) {
-            $self->{testml_version} = $1;
+            $function->setvar(
+                'TestMLVersion' => TestML::Str->new(value => $1),
+            );
         }
         elsif ($line =~ /^\s*(\w+) *= *(.+?);?\s*$/) {
             my ($key, $value) = ($1, $2);
@@ -35,23 +27,21 @@ sub compile {
             $value = $value =~ /^\d+$/
               ? TestML::Num->new(value => $value)
               : TestML::Str->new(value => $value);
-            $self->function->setvar($key, $value);
+            $function->setvar($key, $value);
         }
         elsif ($line =~ /^.*(?:==|~~).*;?\s*$/) {
             $line =~ s/;$//;
-            push @{$self->function->statements}, $self->compile_assertion($line);
+            push @{$function->statements}, $self->compile_assertion($line);
         }
         else {
-            unshift @lines, $line;
-            die "Failed to parse TestML::Lite document, here:\n" .
-                join($/, @lines);
+            die "Failed to parse TestML::Lite document, here:\n$code";
         }
     }
-    if (@lines) {
-        $self->function->{data} = $self->compile_data(join($/, @lines, ''));
+    if ($data) {
+        $function->{data} = $self->compile_data($data);
     }
-    $self->function->outer(TestML::Function->new());
-    return $self->function;
+    $function->outer(TestML::Function->new());
+    return $function;
 }
 
 sub compile_assertion {
@@ -192,3 +182,5 @@ sub compile_data {
     }
     return $data;
 }
+
+1;
