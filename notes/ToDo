@@ -38,8 +38,8 @@
 - Allow functions to return values.
 
 == Refactoring
-- Rename transform to 'call'
-  - expression: <object> <call>*
++ Rename transform to 'call'
+  + expression: <object> <call>*
 
 == Debugging
 - XXX, et al are not reporting the correct line they came from.
@@ -56,8 +56,8 @@
 == Tests
 - Data types
 - List assertions
-- Standard string transforms
-- Standard list transforms
+- Standard string calls
+- Standard list calls
 - Functions
 
 == Application Tests

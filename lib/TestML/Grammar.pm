@@ -158,8 +158,49 @@ sub make_tree {
         }
       ]
     },
+    'call_argument' => {
+      '.ref' => 'code_expression'
+    },
+    'call_argument_list' => {
+      '.all' => [
+        {
+          '.rgx' => qr/\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*/
+        },
+        {
+          '+min' => 0,
+          '.ref' => 'call_argument',
+          '.sep' => {
+            '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*/
+          }
+        },
+        {
+          '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\)/
+        }
+      ]
+    },
     'call_indicator' => {
       '.rgx' => qr/\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.)/
+    },
+    'call_name' => {
+      '.any' => [
+        {
+          '.ref' => 'user_call'
+        },
+        {
+          '.ref' => 'core_call'
+        }
+      ]
+    },
+    'call_object' => {
+      '.all' => [
+        {
+          '.ref' => 'call_name'
+        },
+        {
+          '+max' => 1,
+          '.ref' => 'call_argument_list'
+        }
+      ]
     },
     'code_expression' => {
       '.all' => [
@@ -187,7 +228,7 @@ sub make_tree {
           '.ref' => 'number_object'
         },
         {
-          '.ref' => 'transform_object'
+          '.ref' => 'call_object'
         }
       ]
     },
@@ -222,7 +263,7 @@ sub make_tree {
     'comment' => {
       '.rgx' => qr/\G\#.*\r?\n/
     },
-    'core_transform' => {
+    'core_call' => {
       '.rgx' => qr/\G([A-Z]\w*)/
     },
     'data_block' => {
@@ -405,47 +446,6 @@ sub make_tree {
         }
       ]
     },
-    'transform_argument' => {
-      '.ref' => 'code_expression'
-    },
-    'transform_argument_list' => {
-      '.all' => [
-        {
-          '.rgx' => qr/\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*/
-        },
-        {
-          '+min' => 0,
-          '.ref' => 'transform_argument',
-          '.sep' => {
-            '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*/
-          }
-        },
-        {
-          '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\)/
-        }
-      ]
-    },
-    'transform_name' => {
-      '.any' => [
-        {
-          '.ref' => 'user_transform'
-        },
-        {
-          '.ref' => 'core_transform'
-        }
-      ]
-    },
-    'transform_object' => {
-      '.all' => [
-        {
-          '.ref' => 'transform_name'
-        },
-        {
-          '+max' => 1,
-          '.ref' => 'transform_argument_list'
-        }
-      ]
-    },
     'unit_call' => {
       '.all' => [
         {
@@ -463,7 +463,7 @@ sub make_tree {
     'unquoted_string' => {
       '.rgx' => qr/\G([^\ \t\n\#](?:[^\n\#]*[^\ \t\n\#])?)/
     },
-    'user_transform' => {
+    'user_call' => {
       '.rgx' => qr/\G([a-z]\w*)/
     },
     'variable_name' => {

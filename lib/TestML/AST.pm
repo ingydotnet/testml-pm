@@ -148,13 +148,12 @@ sub got_function_object {
     return $function;
 }
 
-# XXX Change 'transform' to 'call' (requires change in grammar).
-sub got_transform_name {
+sub got_call_name {
     my ($self, $match) = @_;
     return TestML::Call->new(name => $match);
 }
 
-sub got_transform_object {
+sub got_call_object {
     my ($self, $object) = @_;
     my $call = $object->[0];
     if ($object->[1][-1] and $object->[1][-1] eq 'explicit') {
@@ -167,7 +166,7 @@ sub got_transform_object {
     return $call;
 }
 
-sub got_transform_argument_list {
+sub got_call_argument_list {
     my ($self, $list) = @_;
     push @$list, 'explicit';
     return $list;
