@@ -77,11 +77,13 @@ sub compile_assertion {
         ref($token) eq 'ARRAY' && do {
             my @args = @$token;
             shift @args;
-            my $args = map {
-                /\./
-                    ? $self->compile_assertion($_)
-                    : $self->make_unit($_, $points);
-            } @args;
+            my $args = [
+                map {
+                  /\./
+                      ? $self->compile_assertion($_)
+                      : $self->make_unit($_, $points);
+                } @args
+            ];
             my $transform = TestML::Transform->new(
                 name => $token->[0],
                 args => $args,
@@ -89,7 +91,7 @@ sub compile_assertion {
             );
             push @{$side->units}, $transform;
         } ||
-        ref($token) eq 'TestML::Object' && do {
+        $token->isa('TestML::Object') && do {
             push @{$side->units}, $token;
         } ||
         do {
@@ -99,8 +101,6 @@ sub compile_assertion {
 
     $right = $side if $right;
     return $left unless $right;
-    $left = ${$left->units}[0] if @{$left->units} == 1;
-    $right = ${$right->units}[0] if @{$right->units} == 1;
     return TestML::Statement->new(
         expression => $left,
         assertion => $assertion,
@@ -119,7 +119,7 @@ sub make_unit {
         return TestML::Str->new(value => $token);
     }
     else {
-        XXX $token;
+        return $token;
     }
 }
 
@@ -129,7 +129,8 @@ sub get_token {
     if ($_[1] =~ s/^(\w+)\(([^\)]+)\)\.?//) {
         ($token, $args) = ([$1], $2);
         push @$token, map {
-            s/^(['"])(.*)\1$/$2/;
+            /^\w+$/ ? TestML::Variable->new(name => $_) :
+            /^(['"])(.*)\1$/ ? $2 :
             $_;
         } split /,\s*/, $args;
     }
@@ -156,9 +157,9 @@ sub get_token {
 
 sub compile_data {
     my ($self, $string);
-    $_[1] =~ s/^#.*\n//g;
-    $_[1] =~ s/^\\//g;
-    $_[1] =~ s/^\s*\n//g;
+    $_[1] =~ s/^#.*\n//mg;
+    $_[1] =~ s/^\\//mg;
+    $_[1] =~ s/^\s*\n//mg;
     my @blocks = grep $_, split /(^===.*?(?=^===|\z))/ms, $_[1];
     for my $block (@blocks) {
         $block =~ s/\n+\z/\n/;
@@ -173,7 +174,7 @@ sub compile_data {
         while (length $string_block) {
             my ($key, $value);
             if ($string_block =~ s/\A---\ +(\w+):\ +(.*)\n//g or
-                $string_block =~ s/\A---\ +(\w+)\n(.*?)(?=^---|\z)//gsm
+                $string_block =~ s/\A---\ +(\w+)\n(.*?)(?=^---|\z)//msg
             ) {
                 ($key, $value) = ($1, $2);
             }

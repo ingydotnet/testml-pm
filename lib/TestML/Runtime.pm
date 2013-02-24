@@ -1,6 +1,8 @@
 package TestML::Runtime;
 use TestML::Mo;
 
+        use XXX; $YAML::DumpCode = 1;
+
 # Since there is only ever one test runtime, it makes things a LOT cleaner to
 # keep the reference to it in a global variable accessed by a method, than to
 # put a reference to it into every object that needs to access it.
@@ -110,7 +112,6 @@ sub run_assertion {
         TestNumber => TestML::Num->new(value => $self->test_number),
     );
 
-    # TODO - Should check 
     my $results = ($left->type eq 'List')
         ? $left->value
         : [ $left ];
@@ -146,6 +147,10 @@ sub run_expression {
                 $unit->isa('TestML::Transform') and
                 $unit->name eq 'Catch';
         }
+        if ($unit->isa('TestML::Point')) {
+            $context = $self->get_point($unit->name);
+            next;
+        }
         if ($unit->isa('TestML::Object')) {
             $context = $unit;
             next;
@@ -157,7 +162,15 @@ sub run_expression {
         die "Unexpected unit: $unit" unless $unit->isa('TestML::Transform');
         my $callable = $self->function->getvar($unit->name)
             or die "Can't find transform '${\$unit->name}'";
-        my $args = $unit->args;
+        my $args = [
+            map {
+                $_->isa('TestML::Point')
+                    ? $self->get_point($_->name) :
+                $_->isa('TestML::Variable')
+                    ? $self->function->getvar($_->name) :
+                $_;
+            } @{$unit->args}
+        ];
         if ($callable->isa('TestML::Native')) {
             $context = $self->run_native($callable->value, $context, $args);
         }
@@ -183,6 +196,12 @@ sub run_expression {
     }
     $self->function->expression($prev_expression);
     return $context;
+}
+
+sub get_point {
+    my ($self, $point) = @_;
+    my $value = $self->function->getvar('Block')->{points}{$point};
+    return TestML::Str->new(value => $value);
 }
 
 sub run_native {
@@ -423,6 +442,12 @@ has points => default => sub {{}};
 
 #-----------------------------------------------------------------------------
 package TestML::Point;
+use TestML::Mo;
+
+has name => ();
+
+#-----------------------------------------------------------------------------
+package TestML::Variable;
 use TestML::Mo;
 
 has name => ();
