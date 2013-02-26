@@ -77,7 +77,7 @@ sub preprocess {
             $order_error = 1 unless $result->{TestML};
             if ($directive eq 'Include') {
                 my $sub_result =
-                    $self->preprocess(TestML->slurp($value, $self->base));
+                    $self->preprocess(TestML::Runtime->slurp($value, $self->base));
                 $text .= $sub_result->{text};
                 $result->{DataMarker} = $sub_result->{DataMarker};
                 $result->{BlockMarker} = $sub_result->{BlockMarker};

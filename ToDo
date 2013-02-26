@@ -1,9 +1,10 @@
 = TODO
 
-- Change Call/Point to Point in AST
++ Change Call/Point to Point in AST
   - Review AST for ugliness
 - Make Bridge and Library be real classes.
 - Make TestML::Util for str num bool list exports.
+  - Consider testml_str or tml_str
 
 - Comment code.
 - Note major API change in 0.30

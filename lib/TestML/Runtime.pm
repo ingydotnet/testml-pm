@@ -1,20 +1,21 @@
 package TestML::Runtime;
 use TestML::Mo;
 
-        use XXX; $YAML::DumpCode = 1;
-
 # Since there is only ever one test runtime, it makes things a LOT cleaner to
 # keep the reference to it in a global variable accessed by a method, than to
 # put a reference to it into every object that needs to access it.
 our $self;
 
-has base => default => sub {$0 =~ m!(.*)/! ? $1 : "."};   # Base directory
-has testml => ();       # TestML document filename, handle or text
-has bridge => ();       # Bridge call module
-has compiler => ();     # TestML Compiler module
-
-# XXX Add TestML.pm support for -library keyword.
-has library => default => sub {[]};    # Call library modules
+has testml => ();
+has bridge => ( default => sub {'main'} );
+has library => ( default => sub {[
+    'TestML::Library::Standard',
+    'TestML::Library::Debug',
+]} );
+has compiler => ( default => sub {'TestML::Compiler'} );
+has base => ();
+has skip => ();
+has required => ( default => sub {[]} );
 
 has function => ();         # Current function executing
 has planned => default => sub {0};     # plan() has been called
@@ -31,6 +32,16 @@ sub plan_end { }
 
 sub run {
     my $self = shift;
+
+    my $base = ($0 =~ m!(.*)/! ? $1 : ".");   # Base directory
+    my $testml = $self->testml
+        or die "'testml' document required but not found";
+    if ($testml !~ /\n/) {
+        $testml =~ s/(.*)\/(.*)/$2/ or die;
+        ($base, $testml) = ("$base/$1", $2);
+        $self->{base} = $base;
+        $self->{testml} = $self->slurp($testml, $base);
+    }
 
     $self->{function} = $self->compile_testml;
     $self->load_variables;
@@ -359,6 +370,16 @@ sub clear_error {
 sub throw {
     require Carp;
     Carp::croak $_[1];
+}
+
+sub slurp {
+    my ($self, $file, $base) = @_;
+    $base ||= '.';
+    my $path = "$base/$file";
+    open my $fh, $path
+        or die "Can't open '$path' for input: $!";
+    local $/;
+    return <$fh>;
 }
 
 #-----------------------------------------------------------------------------

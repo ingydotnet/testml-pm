@@ -9,93 +9,57 @@
 # - irc://irc.freenode.net#testml
 
 use 5.006001;
-use strict;
-use warnings;
-
-my $requires = "
-use Pegex 0.21 ();
-";
-
+use strict; use warnings;
 package TestML;
 use TestML::Mo;
 
-has testml => ( default => sub {''} );
-has bridge => ( default => sub {'main'} );
-has runtime => ( default => sub {'TestML::Runtime::TAP'} );
-has compiler => ( default => sub {'TestML::Compiler'} );
-has skip_all => ();
-has required => ( default => sub {[]} );
-
 our $VERSION = '0.30';
+
+# New Mo should get rid of 'default' junk.
+has runtime => ( default => sub {'TestML::Runtime::TAP'} );
 
 sub run {
     my ($self) = @_;
     my $runtime = $self->runtime;
-
-    my $testml = $self->testml || \*main::DATA;
-    my $base = ($0 =~ m!(.*)/! ? $1 : ".");   # Base directory
-    if (not ref $testml and $testml !~ /\n/) {
-        $testml =~ s/(.*)\/(.*)/$2/ or die;
-        ($base, $testml) = ("$base/$1", $2);
-    }
-    $testml = (not ref($testml) and $testml =~ /\n/)
-        ? $testml
-        : $self->slurp($testml, $base);
-
     if (not ref $runtime) {
         eval "require $runtime";
         $runtime = $self->runtime->new(
-            testml => $testml,
-            bridge => $self->bridge,
-            compiler => $self->compiler,
-            base => $base,
+            %$self,
+            testml => $self->{testml} || $self->read_inline_data,
         );
     }
-    if (my $message = $self->skip_all) {
-        $runtime->skip_all($message);
-    }
-    elsif (@{$self->required}) {
-        die "not supported";
-    }
-    else {
-        $runtime->run;
-    }
+    $runtime->run;
 }
 
-sub slurp {
-    my ($self, $file, $base) = @_;
-    $base ||= '.';
-    my $fh;
-    if (ref($file)) {
-        $fh = $file;
-    }
-    else {
-        my $path = join '/', $base, $file;
-        open $fh, $path
-            or die "Can't open '$path' for input: $!";
-    }
+sub read_inline_data {
     local $/;
-    return <$fh>;
+    no warnings 'once';
+    return <main::DATA>;
 }
 
 package TestML::Lite;
 use TestML::Mo;
 extends 'TestML';
 
-has compiler => ( default => sub {'TestML::Lite::Compiler'} );
+has compiler => ( default => sub {'TestML::Compiler::Lite'} );
+has library => ( default => sub {[
+    'TestML::Library::Lite',
+    'TestML::Library::Debug',
+]} );
+# TODO - We *might* want a TestML::Runtime::Lite
 
 1;
 
 =head1 SYNOPSIS
 
     # file t/testml/encode.tml
-    %TestML 1.0
+    %TestML 0.1.0
 
-    Title = 'Tests for AcmeEncode';
-    Plan = 3;
+    Title = 'Tests for AcmeEncode'
+    Plan = 3
 
-    *text.apply_rot13 == *rot13;
-    *text.apply_md5   == *md5;
+    *text.apply_rot13 == *rot13
+    *text.apply_md5   == *md5
 
     === Encode some poetry
     --- text
@@ -118,18 +82,13 @@ meta Plan statement in the document.
 
 To run this test you would have a normal test file that looks like this:
 
-    use TestML::Runtime::TAP;
+    use TestML;
+    use t::Bridge;
 
-    TestML::Runtime::TAP->new(
+    TestML->new(
         testml => 'testml/encode.tml',
         bridge => 't::Bridge',
-    )->run();
-
-or more simply:
-
-    use TestML -run,
-        -testml => 'testml/encode.tml',
-        -bridge => 't::Bridge';
+    )->run;
 
 The apply_* functions are defined in the bridge class that is specified outside
 this test (t/Bridge.pm).

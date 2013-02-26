@@ -27,12 +27,11 @@ test('t/testml/markers.tml');
 test('t/testml/truth.tml');
 test('t/testml/types.tml');
 
-use XXX;
 sub test {
     my $file = shift;
     (my $filename = $file) =~ s!(.*)/!!;
     my $base = $1;
-    my $testml = TestML->slurp($filename, $base);
+    my $testml = TestML::Runtime->slurp($filename, $base);
     my $ast1 = TestML::Compiler->new(
         base => $base,
     )->compile($testml);

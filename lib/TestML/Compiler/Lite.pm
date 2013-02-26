@@ -2,7 +2,7 @@
 # This is the Lite version of the TestML compiler. It can parse simple
 # statements and assertions and also parse the TestML data format.
 
-package TestML::Lite::Compiler;
+package TestML::Compiler::Lite;
 use TestML::Mo;
 
 use constant POINT => qr/^\*(\w+)/;
@@ -34,7 +34,7 @@ sub compile {
             push @{$function->statements}, $self->compile_assertion($line);
         }
         else {
-            die "Failed to parse TestML::Lite document, here:\n$code";
+            die "Failed to parse TestML document, here:\n$code";
         }
     }
     if ($data) {
