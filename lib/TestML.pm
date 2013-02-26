@@ -40,11 +40,11 @@ package TestML::Lite;
 use TestML::Mo;
 extends 'TestML';
 
-has compiler => ( default => sub {'TestML::Compiler::Lite'} );
-has library => ( default => sub {[
+has compiler => 'TestML::Compiler::Lite';
+has library => [
     'TestML::Library::Lite',
     'TestML::Library::Debug',
-]} );
+];
 # TODO - We *might* want a TestML::Runtime::Lite
 
 1;

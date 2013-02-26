@@ -5,7 +5,7 @@ use TestML::Grammar;
 use TestML::AST;
 use Pegex::Parser;
 
-has base => ();
+has base => '.';
 
 sub compile {
     my $self = shift;

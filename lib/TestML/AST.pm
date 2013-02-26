@@ -4,8 +4,8 @@ extends 'Pegex::Tree';
 
 use TestML::Runtime;
 
-has points => default => sub{[]};
-has function => default => sub { TestML::Function->new };
+has points => [];
+has function => sub { TestML::Function->new };
 
 # sub final {
 #     my ($self, $match, $top) = @_;

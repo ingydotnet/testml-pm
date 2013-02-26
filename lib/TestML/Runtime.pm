@@ -7,19 +7,19 @@ use TestML::Mo;
 our $self;
 
 has testml => ();
-has bridge => ( default => sub {'main'} );
-has library => ( default => sub {[
+has bridge => 'main';
+has library => [
     'TestML::Library::Standard',
     'TestML::Library::Debug',
-]} );
-has compiler => ( default => sub {'TestML::Compiler'} );
-has base => ();
-has skip => ();
-has required => ( default => sub {[]} );
+];
+has compiler => 'TestML::Compiler';
+has base => '.';
+has skip => 0;
+has required => [];
 
-has function => ();         # Current function executing
-has planned => default => sub {0};     # plan() has been called
-has test_number => default => sub {0}; # Number of tests run so far
+has function => ();
+has planned => 0;
+has test_number => 0;
 
 sub BUILD {
     my $self = $TestML::Runtime::self = shift;
@@ -386,12 +386,11 @@ sub slurp {
 package TestML::Function;
 use TestML::Mo;
 
-has type => default => sub {'Func'};        # Functions are TestML typed objects
-# XXX Make this a featherweight reference.
-has signature => default => sub {[]};       # Input variable names
-has namespace => default => sub {{}};       # Lexical scoped variable stash
-has statements => default => sub {[]};      # Exexcutable code statements
-has data => default => sub{[]};             # Data section scoped to this function
+has type => 'Func';     # Functions are TestML typed objects
+has signature => [];    # Input variable names
+has namespace => {};    # Lexical scoped variable stash
+has statements => [];   # Exexcutable code statements
+has data => [];         # Data section scoped to this function
 
 # Runtime pointers to current objects.
 has expression => ();
@@ -431,15 +430,15 @@ sub forgetvar {
 package TestML::Statement;
 use TestML::Mo;
 
-has expression => default => sub {TestML::Expression->new};
+has expression => sub {TestML::Expression->new};
 has assertion => ();
-has points => default => sub {[]};
+has points => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Expression;
 use TestML::Mo;
 
-has units => default => sub {[]};
+has units => [];
 has error => ();
 
 #-----------------------------------------------------------------------------
@@ -447,22 +446,22 @@ package TestML::Assertion;
 use TestML::Mo;
 
 has name => ();
-has expression => default => sub {TestML::Expression->new};
+has expression => sub {TestML::Expression->new};
 
 #-----------------------------------------------------------------------------
 package TestML::Call;
 use TestML::Mo;
 
 has name => ();
-has args => default => sub {[]};
-has explicit_call => default => 0;
+has args => [];
+has explicit_call => 0;
 
 #-----------------------------------------------------------------------------
 package TestML::Block;
 use TestML::Mo;
 
-has label => default => sub {''};
-has points => default => sub {{}};
+has label => '';
+has points => {};
 
 #-----------------------------------------------------------------------------
 package TestML::Point;
