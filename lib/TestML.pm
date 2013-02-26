@@ -15,8 +15,7 @@ use TestML::Mo;
 
 our $VERSION = '0.30';
 
-# New Mo should get rid of 'default' junk.
-has runtime => ( default => sub {'TestML::Runtime::TAP'} );
+has runtime => 'TestML::Runtime::TAP';
 
 sub run {
     my ($self) = @_;
