@@ -8,7 +8,7 @@ has library => [
     'TestML::Library::Debug',
 ];
 has compiler => 'TestML::Compiler';
-has base => '.';
+has base => sub { $0 =~ m!(.*)/! ? $1 : "." };
 has skip => 0;
 has required => [];
 
@@ -34,25 +34,14 @@ sub plan_end { }
 sub run {
     my ($self) = @_;
 
-    my $base = ($0 =~ m!(.*)/! ? $1 : ".");   # Base directory
-    my $testml = $self->testml
-        or die "'testml' document required but not found";
-    if ($testml !~ /\n/) {
-        $testml =~ s/(.*)\/(.*)/$2/ or die;
-        ($base, $testml) = ("$base/$1", $2);
-        $self->{base} = $base;
-        $self->{testml} = $self->slurp($testml, $base);
-    }
-
-    $self->{function} = $self->compile_testml;
-    $self->load_variables;
-
-    $self->load_call_module('TestML::Library::Standard');
-    $self->load_call_module('TestML::Library::Debug');
+    $self->compile_testml;
+    $self->initialize_global_namespace;
 
     if ($self->bridge) {
         $self->load_call_module($self->bridge);
     }
+    $self->load_call_module('TestML::Library::Standard');
+    $self->load_call_module('TestML::Library::Debug');
 
     my $context = TestML::None->new;
     my $args = [];
@@ -276,16 +265,27 @@ sub object_from_native {
 
 sub compile_testml {
     my ($self) = @_;
+
+    my $testml = $self->testml
+        or die "'testml' document required but not found";
+    if ($testml !~ /\n/) {
+        my $base = $self->base;
+        $testml =~ s/(.*)\/(.*)/$2/ or die;
+        $testml = $2;
+        $self->{base} = "$base/$1";
+        $self->{testml} = $self->read_testml_file($testml);
+    }
+
     my $compiler = $self->compiler;
     eval "require $compiler; 1" or die "Can't load '$compiler'";
     my $function = $compiler->new(
-        base => $self->base,
+        runtime => $self,
     )->compile($self->testml)
         or die "TestML document failed to compile";
-    return $function;
+    $self->{function} = $function;
 }
 
-sub load_variables {
+sub initialize_global_namespace {
     my ($self) = @_;
     my $global = $self->function->outer;
     $global->setvar(Block => TestML::Block->new);
@@ -364,11 +364,9 @@ sub throw {
     Carp::croak $_[1];
 }
 
-# TODO base should come from runtime attribute.
-sub slurp {
-    my ($self, $file, $base) = @_;
-    $base ||= '.';
-    my $path = "$base/$file";
+sub read_testml_file {
+    my ($self, $file) = @_;
+    my $path = join '/', $self->base, $file;
     open my $fh, $path
         or die "Can't open '$path' for input: $!";
     local $/;

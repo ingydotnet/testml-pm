@@ -5,9 +5,7 @@ use TestML::Grammar;
 use TestML::AST;
 use Pegex::Parser;
 
-# XXX Compiler should have a (optional) runtime reference instead and use that
-# to slurp, thus not needing the base here.
-has base => '.';
+has runtime => ();
 
 # XXX This code is too complicated. It preprocesses the TestML code, splits it
 # into 2 sections and calls a separate Pegex parse on each. This could all be
@@ -80,8 +78,10 @@ sub preprocess {
             }
             $order_error = 1 unless $result->{TestML};
             if ($directive eq 'Include') {
+                my $runtime = $self->runtime
+                    or die "Can't process Include. No runtime available";
                 my $sub_result =
-                    $self->preprocess(TestML::Runtime->slurp($value, $self->base));
+                    $self->preprocess($runtime->read_testml_file($value));
                 $text .= $sub_result->{text};
                 $result->{DataMarker} = $sub_result->{DataMarker};
                 $result->{BlockMarker} = $sub_result->{BlockMarker};

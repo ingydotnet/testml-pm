@@ -31,9 +31,10 @@ sub test {
     my $file = shift;
     (my $filename = $file) =~ s!(.*)/!!;
     my $base = $1;
-    my $testml = TestML::Runtime->slurp($filename, $base);
+    my $runtime = TestML::Runtime->new(base => $base);
+    my $testml = $runtime->read_testml_file($filename);
     my $ast1 = TestML::Compiler->new(
-        base => $base,
+        runtime => $runtime,
     )->compile($testml);
     my $yaml1 = Dump($ast1);
 
