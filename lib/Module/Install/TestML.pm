@@ -1,3 +1,4 @@
+# XXX This module should be deprecated or at least moved to a separate dist.
 package Module::Install::TestML;
 use strict;
 use warnings;
@@ -11,7 +12,7 @@ BEGIN {
 }
 
 sub use_testml_tap {
-    my $self = shift;
+    my ($self) = @_;
 
     $self->use_testml;
 
@@ -22,7 +23,7 @@ sub use_testml_tap {
 }
 
 sub use_testml {
-    my $self = shift;
+    my ($self) = @_;
 
     $self->include('Pegex::Grammar');
     $self->include('Pegex::Input');
@@ -42,9 +43,8 @@ sub use_testml {
 }
 
 sub testml_setup {
-    my $self = shift;
+    my ($self, $config) = @_;
     return unless $self->is_admin;
-    my $config = shift;
     die "setup_config requires a yaml file argument"
         unless $config;
     print "testml_setup\n";

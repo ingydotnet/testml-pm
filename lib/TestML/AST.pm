@@ -18,6 +18,7 @@ sub got_code_section {
     $self->function->statements($code);
 }
 
+# TODO - 'units' should be 'calls'.
 sub got_assignment_statement {
     my ($self, $match) = @_;
     return TestML::Statement->new(
@@ -70,16 +71,18 @@ sub got_code_expression {
     );
 }
 
+sub got_string_object {
+    my ($self, $string) = @_;
+    return TestML::Str->new(
+        value => $string,
+    );
+}
+
 sub got_number_object {
     my ($self, $number) = @_;
     return TestML::Num->new(
         value => $number,
     );
-}
-
-sub got_string_object {
-    my ($self, $string) = @_;
-    return $self->make_str($string);
 }
 
 sub got_point_object {
@@ -91,12 +94,6 @@ sub got_point_object {
     );
 }
 
-sub make_str {
-    my ($self, $object) = @_;
-    return TestML::Str->new(
-        value => $object,
-    );
-}
 sub got_assertion_call {
     my ($self, $call) = @_;
     my ($name, $assertion);
@@ -148,8 +145,8 @@ sub got_function_object {
 }
 
 sub got_call_name {
-    my ($self, $match) = @_;
-    return TestML::Call->new(name => $match);
+    my ($self, $name) = @_;
+    return TestML::Call->new(name => $name);
 }
 
 sub got_call_object {

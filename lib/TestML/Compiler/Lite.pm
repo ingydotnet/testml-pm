@@ -5,10 +5,13 @@
 package TestML::Compiler::Lite;
 use TestML::Mo;
 
+# TODO Use more constants for regexes
 use constant POINT => qr/^\*(\w+)/;
 
-# support assignment statement for any variable
+
+# Take a TestML(Lite) document and compile to a TestML::Function.
 sub compile {
+# TODO refactor to more subs
     my ($self, $document) = @_;
     my $function = TestML::Function->new;
     $document =~ /\A(.*?)(^===.*)?\z/ms or die;

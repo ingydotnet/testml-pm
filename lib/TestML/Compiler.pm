@@ -5,11 +5,17 @@ use TestML::Grammar;
 use TestML::AST;
 use Pegex::Parser;
 
+# XXX Compiler should have a (optional) runtime reference instead and use that
+# to slurp, thus not needing the base here.
 has base => '.';
 
+# XXX This code is too complicated. It preprocesses the TestML code, splits it
+# into 2 sections and calls a separate Pegex parse on each. This could all be
+# handled in Pegex, but probably not worth it just yet.
+
+# Take a TestML document and compile it into a TestML::Function object.
 sub compile {
-    my $self = shift;
-    my $input = shift;
+    my ($self, $input) = @_;
 
     my $result = $self->preprocess($input, 'top');
 
@@ -41,9 +47,7 @@ sub compile {
 }
 
 sub preprocess {
-    my $self = shift;
-    my $text = shift;
-    my $top = shift;
+    my ($self, $text, $top) = @_;
 
     my @parts = split /^((?:\%\w+.*|\#.*|\ *)\n)/m, $text;
 
@@ -129,6 +133,7 @@ sub preprocess {
     return $result;
 }
 
+# TODO This can be moved to the AST some day.
 sub fixup_grammar {
     my ($self, $parser, $hash) = @_;
 

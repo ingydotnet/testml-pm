@@ -8,34 +8,46 @@
 # - http://www.testml.org/
 # - irc://irc.freenode.net#testml
 
+# TODO Maybe switch to 5.8.5 requirement.
 use 5.006001;
 use strict; use warnings;
 package TestML;
+# XXX TestML::Mo could have more Acmeist name.
 use TestML::Mo;
 
+# TODO Need to switch VERSION to semvar (x.x.x).
 our $VERSION = '0.30';
 
+# Accessors for TestML objects:
 has runtime => 'TestML::Runtime::TAP';
+has bridge => ();
+has library => ();
+has testml => ();
 
+# This is the method to run a TestML test program. `runtime` will be a runtime
+# class. Load the library as a nicety, then construct a Runtime object with the
+# user supplied data, and call the run method.
 sub run {
     my ($self) = @_;
     my $runtime = $self->runtime;
-    if (not ref $runtime) {
-        eval "require $runtime";
-        $runtime = $self->runtime->new(
-            %$self,
-            testml => $self->{testml} || $self->read_inline_data,
-        );
-    }
-    $runtime->run;
+    eval "require $runtime";
+    $self->runtime->new(
+        %$self,
+        testml => $self->{testml} || $self->read_inline_data,
+    )->run;
 }
 
+# XXX This is a Perl specific affordance, but very nice for Perl.
+# TODO Figure out how to support this in C'Dent.
 sub read_inline_data {
     local $/;
     no warnings 'once';
     return <main::DATA>;
 }
 
+# TestML::Lite is just like TestML but uses a compiler that is simpler to port
+# since it does not require Pegex. Lite only supports basic TestML statements.
+# It is used by Pegex to avoid a circular dependency.
 package TestML::Lite;
 use TestML::Mo;
 extends 'TestML';
@@ -48,6 +60,9 @@ has library => [
 # TODO - We *might* want a TestML::Runtime::Lite
 
 1;
+
+# TODO Move this doc toa TestML overview, and then use StarDoc inline doc for
+# the module.
 
 =head1 SYNOPSIS
 

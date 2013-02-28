@@ -1,11 +1,6 @@
 package TestML::Runtime;
 use TestML::Mo;
 
-# Since there is only ever one test runtime, it makes things a LOT cleaner to
-# keep the reference to it in a global variable accessed by a method, than to
-# put a reference to it into every object that needs to access it.
-our $self;
-
 has testml => ();
 has bridge => 'main';
 has library => [
@@ -21,17 +16,23 @@ has function => ();
 has planned => 0;
 has test_number => 0;
 
+# Since there is only ever one test runtime, it makes things a LOT cleaner to
+# keep the reference to it in a global variable accessed by a method, than to
+# put a reference to it into every object that needs to access it.
+our $self;
 sub BUILD {
-    my $self = $TestML::Runtime::self = shift;
+    # Put current Runtime singleton object into a global variable.
+    $TestML::Runtime::self = $_[0];
 }
 
-# XXX Move to TestML::Adapter
+# Default methods for Runtimes that don't support these things:
+# TODO May wish to emulate them by default.
 sub title { }
 sub plan_begin { }
 sub plan_end { }
 
 sub run {
-    my $self = shift;
+    my ($self) = @_;
 
     my $base = ($0 =~ m!(.*)/! ? $1 : ".");   # Base directory
     my $testml = $self->testml
@@ -65,10 +66,7 @@ sub run {
 # XXX - TestML exception handling needs to happen at the function level, not
 # just at the expression level. Not yet handled here.
 sub run_function {
-    my $self = shift;
-    my $function = shift;
-    my $context = shift;
-    my $args = shift;
+    my ($self, $function, $context, $args) = @_;
 
     my $signature = $function->signature;
     die sprintf(
@@ -97,8 +95,7 @@ sub run_function {
 }
 
 sub run_statement {
-    my $self = shift;
-    my $statement = shift;
+    my ($self, $statement) = @_;
     my $blocks = @{$statement->points}
         ? $self->select_blocks($statement->points)
         : [1];
@@ -112,9 +109,7 @@ sub run_statement {
 }
 
 sub run_assertion {
-    my $self = shift;
-    my $left = shift;
-    my $assertion = shift;
+    my ($self, $left, $assertion) = @_;
     my $method = 'assert_' . $assertion->name;
 
     # Run this as late as possible.
@@ -144,10 +139,11 @@ sub run_assertion {
     }
 }
 
+# TODO Simplify this
 sub run_expression {
-    my $self = shift;
+    my ($self, $expression) = @_;
+
     my $prev_expression = $self->function->expression;
-    my $expression = shift;
     $self->function->expression($expression);
 
     my $units = $expression->units;
@@ -247,8 +243,7 @@ sub run_native {
 }
 
 sub select_blocks {
-    my $self = shift;
-    my $wanted = shift;
+    my ($self, $wanted) = @_;
     my $selected = [];
 
     OUTER: for my $block (@{$self->function->data}) {
@@ -268,8 +263,7 @@ sub select_blocks {
 }
 
 sub object_from_native {
-    my $self = shift;
-    my $value = shift;
+    my ($self, $value) = @_;
     return
         not(defined $value) ? TestML::None->new :
         ref($value) eq 'ARRAY' ? TestML::List->new(value => $value) :
@@ -281,7 +275,7 @@ sub object_from_native {
 }
 
 sub compile_testml {
-    my $self = shift;
+    my ($self) = @_;
     my $compiler = $self->compiler;
     eval "require $compiler; 1" or die "Can't load '$compiler'";
     my $function = $compiler->new(
@@ -292,7 +286,7 @@ sub compile_testml {
 }
 
 sub load_variables {
-    my $self = shift;
+    my ($self) = @_;
     my $global = $self->function->outer;
     $global->setvar(Block => TestML::Block->new);
     $global->setvar(Label => TestML::Str->new(value => '$BlockLabel'));
@@ -302,8 +296,7 @@ sub load_variables {
 }
 
 sub load_call_module {
-    my $self = shift;
-    my $module_name = shift;
+    my ($self, $module_name) = @_;
     if ($module_name ne 'main') {
         eval "require $module_name; 1"
             or die "Can't use $module_name:\n$@";
@@ -328,11 +321,10 @@ sub load_call_module {
 }
 
 sub get_label {
-    my $self = shift;
+    my ($self) = @_;
     my $label = $self->function->getvar('Label')->value;
     sub label {
-        my $self = shift;
-        my $var = shift;
+        my ($self, $var) = @_;
         my $block = $self->function->getvar('Block');
         return $block->label if $var eq 'BlockLabel';
         if (my $v = $block->points->{$var}) {
@@ -349,7 +341,7 @@ sub get_label {
 }
 
 sub run_plan {
-    my $self = shift;
+    my ($self) = @_;
     if (! $self->planned) {
         $self->title();
         $self->plan_begin();
@@ -358,12 +350,12 @@ sub run_plan {
 }
 
 sub get_error {
-    my $self = shift;
+    my ($self) = @_;
     return $self->function->expression->error;
 }
 
 sub clear_error {
-    my $self = shift;
+    my ($self) = @_;
     return $self->function->expression->error(undef);
 }
 
@@ -372,6 +364,7 @@ sub throw {
     Carp::croak $_[1];
 }
 
+# TODO base should come from runtime attribute.
 sub slurp {
     my ($self, $file, $base) = @_;
     $base ||= '.';
@@ -385,6 +378,7 @@ sub slurp {
 #-----------------------------------------------------------------------------
 package TestML::Function;
 use TestML::Mo;
+# XXX should extend TestML::Object (maybe).
 
 has type => 'Func';     # Functions are TestML typed objects
 has signature => [];    # Input variable names
@@ -400,8 +394,7 @@ my $outer = {};
 sub outer { @_ == 1 ? $outer->{$_[0]} : ($outer->{$_[0]} = $_[1]) }
 
 sub getvar {
-    my $self = shift;
-    my $name = shift;
+    my ($self, $name) = @_;
     while ($self) {
         if (my $object = $self->namespace->{$name}) {
             return $object;
@@ -412,16 +405,13 @@ sub getvar {
 }
 
 sub setvar {
-    my $self = shift;
-    my $name = shift;
-    my $object = shift;
-    $self->namespace->{$name} = $object;
+    my ($self, $name, $value) = @_;
+    $self->namespace->{$name} = $value;
     return;
 }
 
 sub forgetvar {
-    my $self = shift;
-    my $name = shift;
+    my ($self, $name) = @_;
     delete $self->namespace->{$name};
     return;
 }
@@ -482,11 +472,12 @@ use TestML::Mo;
 has value => ();
 
 sub type {
-    my $type = ref(shift);
+    my $type = ref($_[0]);
     $type =~ s/^TestML::// or die "Can't find type of '$type'";
     return $type;
 }
 
+# XXX Move this to TestML::Library and TestML::Bridge
 sub runtime { return $TestML::Runtime::self }
 
 sub str { my $t = $_[0]->type; die "Cast from $t to Str is not supported" }
@@ -500,7 +491,7 @@ package TestML::Str;
 use TestML::Mo;
 extends 'TestML::Object';
 
-sub str { shift }
+sub str { $_[0] }
 sub num { TestML::Num->new(
     value => ($_[0]->value =~ /^-?\d+(?:\.\d+)$/ ? ($_[0]->value + 0) : 0),
 )}
@@ -515,7 +506,7 @@ use TestML::Mo;
 extends 'TestML::Object';
 
 sub str { TestML::Str->new(value => $_[0]->value . "") }
-sub num { shift }
+sub num { $_[0] }
 sub bool { ($_[0]->value != 0) ? $TestML::Constant::True : $TestML::Constant::False }
 sub list {
     my $list = [];
@@ -530,13 +521,13 @@ extends 'TestML::Object';
 
 sub str { TestML::Str->new(value => $_[0]->value ? "1" : "") }
 sub num { TestML::Num->new(value => $_[0]->value ? 1 : 0) }
-sub bool { shift }
+sub bool { $_[0] }
 
 #-----------------------------------------------------------------------------
 package TestML::List;
 use TestML::Mo;
 extends 'TestML::Object';
-sub list { shift }
+sub list { $_[0] }
 
 #-----------------------------------------------------------------------------
 # XXX Change None to Null
@@ -555,10 +546,12 @@ use TestML::Mo;
 extends 'TestML::Object';
 
 #-----------------------------------------------------------------------------
+# XXX Do we want/need this?
 package TestML::Native;
 use TestML::Mo;
 extends 'TestML::Object';
 
+#-----------------------------------------------------------------------------
 package TestML::Constant;
 
 our $True = TestML::Bool->new(value => 1);
