@@ -180,6 +180,20 @@ sub make_tree {
         }
       ]
     },
+    'call_call' => {
+      '.all' => [
+        {
+          '+asr' => -1,
+          '.ref' => 'assertion_call_test'
+        },
+        {
+          '.ref' => 'call_indicator'
+        },
+        {
+          '.ref' => 'code_object'
+        }
+      ]
+    },
     'call_indicator' => {
       '.rgx' => qr/\G(?:\.(?:[\ \t]|\r?\n|\#.*\r?\n)*|(?:[\ \t]|\r?\n|\#.*\r?\n)*\.)/
     },
@@ -211,7 +225,7 @@ sub make_tree {
         },
         {
           '+min' => 0,
-          '.ref' => 'unit_call'
+          '.ref' => 'call_call'
         }
       ]
     },
@@ -445,20 +459,6 @@ sub make_tree {
         {
           '+max' => 1,
           '.ref' => 'data_section'
-        }
-      ]
-    },
-    'unit_call' => {
-      '.all' => [
-        {
-          '+asr' => -1,
-          '.ref' => 'assertion_call_test'
-        },
-        {
-          '.ref' => 'call_indicator'
-        },
-        {
-          '.ref' => 'code_object'
         }
       ]
     },

@@ -110,7 +110,7 @@ sub run_assertion {
         ? $left->value
         : [ $left ];
     for my $result (@$results) {
-        if (@{$assertion->expression->units}) {
+        if (@{$assertion->expression->calls}) {
             my $right = $self->run_expression($assertion->expression);
             my $matches = ($right->type eq 'List')
                 ? $right->value
@@ -132,31 +132,31 @@ sub run_expression {
     my $prev_expression = $self->function->expression;
     $self->function->expression($expression);
 
-    my $units = $expression->units;
+    my $calls = $expression->calls;
     my $context = TestML::None->new;
 
-    for (my $i = 0; $i < @$units; $i++) {
-        my $unit = $units->[$i];
+    for (my $i = 0; $i < @$calls; $i++) {
+        my $call = $calls->[$i];
         if ($expression->error) {
             next unless
-                $unit->isa('TestML::Call') and
-                $unit->name eq 'Catch';
+                $call->isa('TestML::Call') and
+                $call->name eq 'Catch';
         }
-        if ($unit->isa('TestML::Point')) {
-            $context = $self->get_point($unit->name);
+        if ($call->isa('TestML::Point')) {
+            $context = $self->get_point($call->name);
             next;
         }
-        if ($unit->isa('TestML::Object')) {
-            $context = $unit;
+        if ($call->isa('TestML::Object')) {
+            $context = $call;
             next;
         }
-        if ($unit->isa('TestML::Function')) {
-            $context = $unit;
+        if ($call->isa('TestML::Function')) {
+            $context = $call;
             next;
         }
-        die "Unexpected unit: $unit" unless $unit->isa('TestML::Call');
-        my $callable = $self->function->getvar($unit->name)
-            or die "Can't find callable '${\$unit->name}'";
+        die "Unexpected call: $call" unless $call->isa('TestML::Call');
+        my $callable = $self->function->getvar($call->name)
+            or die "Can't find callable '${\$call->name}'";
         my $args = [
             map {
                 $_->isa('TestML::Point')
@@ -164,7 +164,7 @@ sub run_expression {
                 $_->isa('TestML::Variable')
                     ? $self->function->getvar($_->name) :
                 $_;
-            } @{$unit->args}
+            } @{$call->args}
         ];
         if ($callable->isa('TestML::Native')) {
             $context = $self->run_native($callable->value, $context, $args);
@@ -173,7 +173,7 @@ sub run_expression {
             $context = $callable;
         }
         elsif ($callable->isa('TestML::Function')) {
-            if ($i or $unit->explicit_call) {
+            if ($i or $call->explicit_call) {
                 my $points = $self->function->getvar('Block')->points;
                 for my $key (keys %$points) {
                     $callable->setvar($key, TestML::Str->new(value => $points->{$key}));
@@ -183,7 +183,7 @@ sub run_expression {
             $context = $callable;
         }
         else {
-            ZZZ $expression, $unit, $callable;
+            ZZZ $expression, $call, $callable;
         }
     }
     if ($expression->error) {
@@ -433,7 +433,7 @@ has points => [];
 package TestML::Expression;
 use TestML::Mo;
 
-has units => [];
+has calls => [];
 has error => ();
 
 #-----------------------------------------------------------------------------

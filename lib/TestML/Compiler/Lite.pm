@@ -56,7 +56,7 @@ sub compile_assertion {
     while (length $expr) {
         my $token = $self->get_token($expr);
         $token =~ POINT && do {
-            push @{$side->units}, $self->make_unit($token, $points);
+            push @{$side->calls}, $self->make_call($token, $points);
         } ||
         $token =~ /^(==|~~)$/ && do {
             my $name = $token eq '==' ? 'EQ' : 'HAS';
@@ -74,7 +74,7 @@ sub compile_assertion {
                 map {
                   /\./
                       ? $self->compile_assertion($_)
-                      : $self->make_unit($_, $points);
+                      : $self->make_call($_, $points);
                 } @args
             ];
             my $call = TestML::Call->new(
@@ -82,10 +82,10 @@ sub compile_assertion {
                 args => $args,
                 explicit_call => 1,
             );
-            push @{$side->units}, $call;
+            push @{$side->calls}, $call;
         } ||
         $token->isa('TestML::Object') && do {
-            push @{$side->units}, $token;
+            push @{$side->calls}, $token;
         } ||
         do {
             XXX $expr, $token;
@@ -101,7 +101,7 @@ sub compile_assertion {
     );
 }
 
-sub make_unit {
+sub make_call {
     my ($self, $token, $points) = @_;
     if ($token =~ POINT) {
         my $name = $1;

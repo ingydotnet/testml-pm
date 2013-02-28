@@ -20,24 +20,24 @@ namespace:
 statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Num
           value: '2'
       name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
-      units:
+      calls:
       - !!perl/hash:TestML::Point
         name: bar
     name: EQ
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Point
       name: foo
   points:

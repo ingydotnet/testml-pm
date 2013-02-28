@@ -42,61 +42,61 @@ namespace:
 statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Num
           value: '21'
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Str
           value: Fruity Tests
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Function
       statements:
       - !!perl/hash:TestML::Statement
         expression: !!perl/hash:TestML::Expression
-          units:
+          calls:
           - !!perl/hash:TestML::Call
             args:
             - Label
             - !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Str
                 value: Anonymous function never called
             name: Set
       - !!perl/hash:TestML::Statement
         assertion: !!perl/hash:TestML::Assertion
           expression: !!perl/hash:TestML::Expression
-            units:
+            calls:
             - !!perl/hash:TestML::Call
               name: False
           name: EQ
         expression: !!perl/hash:TestML::Expression
-          units:
+          calls:
           - !!perl/hash:TestML::Call
             name: True
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - test1
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Function
           signature:
           - f
@@ -106,24 +106,24 @@ statements:
           - !!perl/hash:TestML::Statement
             assertion: !!perl/hash:TestML::Assertion
               expression: !!perl/hash:TestML::Expression
-                units:
+                calls:
                 - !!perl/hash:TestML::Call
                   name: t
               name: EQ
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 args:
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Call
                     name: f
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Str
                     value: ->
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Call
                     name: c
                 explicit_call: 1
@@ -133,18 +133,18 @@ statements:
           - !!perl/hash:TestML::Statement
             assertion: !!perl/hash:TestML::Assertion
               expression: !!perl/hash:TestML::Expression
-                units:
+                calls:
                 - !!perl/hash:TestML::Call
                   name: c
               name: EQ
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 name: t
               - !!perl/hash:TestML::Call
                 args:
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Call
                     name: f
                 explicit_call: 1
@@ -152,7 +152,7 @@ statements:
               - !!perl/hash:TestML::Call
                 args:
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Str
                     value: ->
                 explicit_call: 1
@@ -160,15 +160,15 @@ statements:
           - !!perl/hash:TestML::Statement
             assertion: !!perl/hash:TestML::Assertion
               expression: !!perl/hash:TestML::Expression
-                units:
+                calls:
                 - !!perl/hash:TestML::Call
                   args:
                   - !!perl/hash:TestML::Expression
-                    units:
+                    calls:
                     - !!perl/hash:TestML::Call
                       name: f
                   - !!perl/hash:TestML::Expression
-                    units:
+                    calls:
                     - !!perl/hash:TestML::Call
                       name: c
                   explicit_call: 1
@@ -177,13 +177,13 @@ statements:
                   name: Join
               name: EQ
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 name: t
               - !!perl/hash:TestML::Call
                 args:
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Str
                     value: ->
                 explicit_call: 1
@@ -192,42 +192,42 @@ statements:
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
-      units:
+      calls:
       - !!perl/hash:TestML::Str
         value: Func
     name: EQ
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       name: test1
     - !!perl/hash:TestML::Call
       name: Type
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Str
           value: $BlockLabel
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Point
           name: fruit
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Point
           name: color
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Point
           name: thing
       explicit_call: 1
@@ -238,37 +238,37 @@ statements:
   - thing
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - test2
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Function
           statements:
           - !!perl/hash:TestML::Statement
             assertion: !!perl/hash:TestML::Assertion
               expression: !!perl/hash:TestML::Expression
-                units:
+                calls:
                 - !!perl/hash:TestML::Call
                   name: color
               name: HAS
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 name: thing
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Point
           name: color
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Point
           name: thing
       explicit_call: 1
@@ -278,12 +278,12 @@ statements:
   - thing
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - test3
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Function
           signature:
           - a
@@ -293,16 +293,16 @@ statements:
           - !!perl/hash:TestML::Statement
             assertion: !!perl/hash:TestML::Assertion
               expression: !!perl/hash:TestML::Expression
-                units:
+                calls:
                 - !!perl/hash:TestML::Call
                   name: b
               name: EQ
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 args:
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Call
                     name: a
                 explicit_call: 1
@@ -310,16 +310,16 @@ statements:
           - !!perl/hash:TestML::Statement
             assertion: !!perl/hash:TestML::Assertion
               expression: !!perl/hash:TestML::Expression
-                units:
+                calls:
                 - !!perl/hash:TestML::Call
                   name: c
               name: EQ
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 args:
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Call
                     name: a
                 explicit_call: 1
@@ -327,19 +327,19 @@ statements:
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Point
           name: input
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Point
           name: output1
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Point
           name: output2
       explicit_call: 1
@@ -350,23 +350,23 @@ statements:
   - output2
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Str
           value: Passing functions as objects
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - test4
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Function
           signature:
           - func
@@ -375,23 +375,23 @@ statements:
           - !!perl/hash:TestML::Statement
             assertion: !!perl/hash:TestML::Assertion
               expression: !!perl/hash:TestML::Expression
-                units:
+                calls:
                 - !!perl/hash:TestML::Str
                   value: Func
               name: EQ
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 name: func
               - !!perl/hash:TestML::Call
                 name: Type
           - !!perl/hash:TestML::Statement
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 args:
                 - !!perl/hash:TestML::Expression
-                  units:
+                  calls:
                   - !!perl/hash:TestML::Call
                     name: num
                 explicit_call: 1
@@ -399,12 +399,12 @@ statements:
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - test5
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Function
           signature:
           - num
@@ -412,26 +412,26 @@ statements:
           - !!perl/hash:TestML::Statement
             assertion: !!perl/hash:TestML::Assertion
               expression: !!perl/hash:TestML::Expression
-                units:
+                calls:
                 - !!perl/hash:TestML::Num
                   value: '42'
               name: EQ
             expression: !!perl/hash:TestML::Expression
-              units:
+              calls:
               - !!perl/hash:TestML::Call
                 name: num
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Call
           name: test5
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Num
           value: '42'
       explicit_call: 1

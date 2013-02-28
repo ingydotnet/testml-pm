@@ -18,12 +18,11 @@ sub got_code_section {
     $self->function->statements($code);
 }
 
-# TODO - 'units' should be 'calls'.
 sub got_assignment_statement {
     my ($self, $match) = @_;
     return TestML::Statement->new(
         expression => TestML::Expression->new(
-            units => [
+            calls => [
                 TestML::Call->new(
                     name => 'Set',
                     args => [
@@ -59,15 +58,15 @@ sub got_code_statement {
 
 sub got_code_expression {
     my ($self, $list) = @_;
-    my $units = [];
-    push @$units, shift @$list if @$list;
+    my $calls = [];
+    push @$calls, shift @$list if @$list;
     $list = shift @$list || [];
     for (@$list) {
-        my $unit = $_->[0]; #->{unit_call}[0][0];
-        push @$units, $unit;
+        my $call = $_->[0]; #->{call_call}[0][0];
+        push @$calls, $call;
     }
     return TestML::Expression->new(
-        units => $units,
+        calls => $calls,
     );
 }
 

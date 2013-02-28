@@ -24,63 +24,63 @@ namespace:
 statements:
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - Plan
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Num
           value: '4'
       name: Set
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Str
           value: My label
       name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
-      units:
+      calls:
       - !!perl/hash:TestML::Str
         value: My label
     name: EQ
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Str
           value: Label
       explicit_call: 1
       name: Get
 - !!perl/hash:TestML::Statement
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       args:
       - Label
       - !!perl/hash:TestML::Expression
-        units:
+        calls:
         - !!perl/hash:TestML::Str
           value: '$BlockLabel: $num) The $fruit'
       name: Set
 - !!perl/hash:TestML::Statement
   assertion: !!perl/hash:TestML::Assertion
     expression: !!perl/hash:TestML::Expression
-      units:
+      calls:
       - !!perl/hash:TestML::Point
         name: text
     name: EQ
   expression: !!perl/hash:TestML::Expression
-    units:
+    calls:
     - !!perl/hash:TestML::Call
       name: GetLabel
   points:
