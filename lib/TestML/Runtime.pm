@@ -36,18 +36,15 @@ sub run {
 
     $self->compile_testml;
     $self->initialize_global_namespace;
+    $self->setup_library_objects;
 
-    if ($self->bridge) {
-        $self->load_call_module($self->bridge);
-    }
-    $self->load_call_module('TestML::Library::Standard');
-    $self->load_call_module('TestML::Library::Debug');
+    $self->run_function(
+        $self->{function},  # top level testml function
+        TestML::None->new,  # context
+        [],                 # function arguments
+    );
 
-    my $context = TestML::None->new;
-    my $args = [];
-
-    $self->run_function($self->{function}, $context, $args);
-
+    # TODO Review the plan stuff
     $self->run_plan();
     $self->plan_end();
 }
@@ -57,6 +54,7 @@ sub run {
 sub run_function {
     my ($self, $function, $context, $args) = @_;
 
+    # TODO Move signature processing to separate method
     my $signature = $function->signature;
     die sprintf(
         "Function received %d args but expected %d",
@@ -85,14 +83,12 @@ sub run_function {
 
 sub run_statement {
     my ($self, $statement) = @_;
-    my $blocks = @{$statement->points}
-        ? $self->select_blocks($statement->points)
-        : [1];
+    my $blocks = $self->select_blocks($statement->points);
     for my $block (@$blocks) {
         $self->function->setvar('Block', $block) if ref($block);
-        my $context = $self->run_expression($statement->expression);
+        my $result = $self->run_expression($statement->expression);
         if (my $assertion = $statement->assertion) {
-            $self->run_assertion($context, $assertion);
+            $self->run_assertion($result, $assertion);
         }
     }
 }
@@ -104,11 +100,12 @@ sub run_assertion {
     # Run this as late as possible.
     $self->run_plan;
 
-    $self->test_number($self->test_number + 1);
+    $self->{test_number}++;
     $self->function->setvar(
         TestNumber => TestML::Num->new(value => $self->test_number),
     );
 
+    # TODO Review this List stuff
     my $results = ($left->type eq 'List')
         ? $left->value
         : [ $left ];
@@ -233,6 +230,7 @@ sub run_native {
 
 sub select_blocks {
     my ($self, $wanted) = @_;
+    return [1] unless @$wanted;
     my $selected = [];
 
     OUTER: for my $block (@{$self->function->data}) {
@@ -293,6 +291,15 @@ sub initialize_global_namespace {
     $global->setvar(True => $TestML::Constant::True);
     $global->setvar(False => $TestML::Constant::False);
     $global->setvar(None => $TestML::Constant::None);
+}
+
+sub setup_library_objects {
+    my ($self) = @_;
+    if ($self->bridge) {
+        $self->load_call_module($self->bridge);
+    }
+    $self->load_call_module('TestML::Library::Standard');
+    $self->load_call_module('TestML::Library::Debug');
 }
 
 sub load_call_module {
