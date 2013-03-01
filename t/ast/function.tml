@@ -118,10 +118,8 @@ statements:
                   calls:
                   - !!perl/hash:TestML::Call
                     name: f
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Str
-                    value: ->
+                - !!perl/hash:TestML::Str
+                  value: ->
                 - !!perl/hash:TestML::Expression
                   calls:
                   - !!perl/hash:TestML::Call
@@ -151,10 +149,8 @@ statements:
                 name: Strip
               - !!perl/hash:TestML::Call
                 args:
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Str
-                    value: ->
+                - !!perl/hash:TestML::Str
+                  value: ->
                 explicit_call: 1
                 name: Strip
           - !!perl/hash:TestML::Statement
@@ -182,10 +178,8 @@ statements:
                 name: t
               - !!perl/hash:TestML::Call
                 args:
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Str
-                    value: ->
+                - !!perl/hash:TestML::Str
+                  value: ->
                 explicit_call: 1
                 name: Strip
       name: Set
@@ -218,18 +212,12 @@ statements:
     calls:
     - !!perl/hash:TestML::Call
       args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: fruit
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: color
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: thing
+      - !!perl/hash:TestML::Point
+        name: fruit
+      - !!perl/hash:TestML::Point
+        name: color
+      - !!perl/hash:TestML::Point
+        name: thing
       explicit_call: 1
       name: test1
   points:
@@ -263,14 +251,10 @@ statements:
     calls:
     - !!perl/hash:TestML::Call
       args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: color
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: thing
+      - !!perl/hash:TestML::Point
+        name: color
+      - !!perl/hash:TestML::Point
+        name: thing
       explicit_call: 1
       name: test2
   points:
@@ -330,18 +314,12 @@ statements:
     calls:
     - !!perl/hash:TestML::Call
       args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: input
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: output1
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: output2
+      - !!perl/hash:TestML::Point
+        name: input
+      - !!perl/hash:TestML::Point
+        name: output1
+      - !!perl/hash:TestML::Point
+        name: output2
       explicit_call: 1
       name: test3
   points:
@@ -430,9 +408,7 @@ statements:
         calls:
         - !!perl/hash:TestML::Call
           name: test5
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '42'
+      - !!perl/hash:TestML::Num
+        value: '42'
       explicit_call: 1
       name: test4

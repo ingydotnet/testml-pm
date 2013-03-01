@@ -41,10 +41,8 @@ statements:
       name: what
     - !!perl/hash:TestML::Call
       args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: who
+      - !!perl/hash:TestML::Point
+        name: who
       explicit_call: 1
       name: combine
   points:
@@ -64,14 +62,10 @@ statements:
       name: what
     - !!perl/hash:TestML::Call
       args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: and
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: else
+      - !!perl/hash:TestML::Str
+        value: and
+      - !!perl/hash:TestML::Point
+        name: else
       explicit_call: 1
       name: combine
   points:
@@ -91,10 +85,8 @@ statements:
       name: what
     - !!perl/hash:TestML::Call
       args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: and
+      - !!perl/hash:TestML::Str
+        value: and
       - !!perl/hash:TestML::Expression
         calls:
         - !!perl/hash:TestML::Point

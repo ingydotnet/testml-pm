@@ -1,5 +1,5 @@
 # BEGIN { $Pegex::Parser::Debug = 1 }
-# use Test::Differences; *is = \&eq_or_diff;
+use Test::Differences; *is = \&eq_or_diff;
 use Test::More;
 use strict;
 
@@ -7,14 +7,13 @@ BEGIN {
     if (not eval "require YAML::XS") {
         plan skip_all => "requires YAML::XS";
     }
-    plan tests => 11;
+    plan tests => 14;
 }
 
-use TestML;
 use TestML::Compiler;
+use TestML::Compiler::Lite;
 use YAML::XS;
 
-# XXX Need to update the asts for the commented out ones
 test('t/testml/arguments.tml');
 test('t/testml/assertions.tml');
 test('t/testml/basic.tml');
@@ -27,13 +26,17 @@ test('t/testml/markers.tml');
 test('t/testml/truth.tml');
 test('t/testml/types.tml');
 
+test('t/testml/arguments.tml', 'TestML::Compiler::Lite');
+test('t/testml/basic.tml', 'TestML::Compiler::Lite');
+test('t/testml/exceptions.tml', 'TestML::Compiler::Lite');
+
 sub test {
-    my $file = shift;
+    my ($file, $compiler) = @_;
+    $compiler ||= 'TestML::Compiler';
     (my $filename = $file) =~ s!(.*)/!!;
-    my $base = $1;
-    my $runtime = TestML::Runtime->new(base => $base);
+    my $runtime = TestML::Runtime->new(base => $1);
     my $testml = $runtime->read_testml_file($filename);
-    my $ast1 = TestML::Compiler->new(
+    my $ast1 = $compiler->new(
         runtime => $runtime,
     )->compile($testml);
     my $yaml1 = Dump($ast1);

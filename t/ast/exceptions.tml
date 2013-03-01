@@ -36,10 +36,8 @@ statements:
     calls:
     - !!perl/hash:TestML::Call
       args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Point
-          name: error
+      - !!perl/hash:TestML::Point
+        name: error
       explicit_call: 1
       name: Throw
     - !!perl/hash:TestML::Call

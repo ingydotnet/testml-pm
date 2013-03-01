@@ -1,9 +1,11 @@
-#
+##
 # This is the Lite version of the TestML compiler. It can parse simple
 # statements and assertions and also parse the TestML data format.
 
 package TestML::Compiler::Lite;
 use TestML::Mo;
+
+has function => ();
 
 # TODO Use more constants for regexes
 use constant POINT => qr/^\*(\w+)/;
@@ -21,7 +23,7 @@ sub compile {
         next if $line =~ /^\s*(#|$)/;
         if ($line =~ /^%TestML +(\d+\.\d+\.\d+)\s*$/) {
             $function->setvar(
-                'TestMLVersion' => TestML::Str->new(value => $1),
+                'TestML' => TestML::Str->new(value => $1),
             );
         }
         elsif ($line =~ /^\s*(\w+) *= *(.+?);?\s*$/) {
@@ -30,7 +32,21 @@ sub compile {
             $value = $value =~ /^\d+$/
               ? TestML::Num->new(value => $value)
               : TestML::Str->new(value => $value);
-            $function->setvar($key, $value);
+            push @{$function->statements}, TestML::Statement->new(
+                expression => TestML::Expression->new(
+                    calls => [
+                        TestML::Call->new(
+                            name => 'Set',
+                            args => [
+                                $key,
+                                TestML::Expression->new(
+                                    calls => [ $value ],
+                                ),
+                            ],
+                        ),
+                    ],
+                )
+            );
         }
         elsif ($line =~ /^.*(?:==|~~).*;?\s*$/) {
             $line =~ s/;$//;
@@ -48,10 +64,10 @@ sub compile {
 }
 
 sub compile_assertion {
-    my ($self, $expr) = @_;
+    my ($self, $expr, $points) = @_;
+    $points ||= [];
     my ($left, $op, $right) = (TestML::Expression->new, undef, undef);
     my $side = $left;
-    my $points = [];
     my $assertion = undef;
     while (length $expr) {
         my $token = $self->get_token($expr);
@@ -73,14 +89,16 @@ sub compile_assertion {
             my $args = [
                 map {
                   /\./
-                      ? $self->compile_assertion($_)
+                      ? $self->compile_assertion($_, $points)
                       : $self->make_call($_, $points);
                 } @args
             ];
             my $call = TestML::Call->new(
                 name => $token->[0],
-                args => $args,
-                explicit_call => 1,
+                @$args ? (
+                    args => $args,
+                    explicit_call => 1,
+                ) : (),
             );
             push @{$side->calls}, $call;
         } ||
@@ -97,7 +115,7 @@ sub compile_assertion {
     return TestML::Statement->new(
         expression => $left,
         assertion => $assertion,
-        points => $points,
+        @$points ? (points => $points) : (),
     );
 }
 
@@ -106,7 +124,7 @@ sub make_call {
     if ($token =~ POINT) {
         my $name = $1;
         push @$points, $name;
-        return TestML::Point->new(name => $name)
+        return TestML::Point->new(name => $name);
     }
     if (not ref $token) {
         return TestML::Str->new(value => $token);
@@ -122,7 +140,11 @@ sub get_token {
     if ($_[1] =~ s/^(\w+)\(([^\)]+)\)\.?//) {
         ($token, $args) = ([$1], $2);
         push @$token, map {
-            /^\w+$/ ? TestML::Variable->new(name => $_) :
+            /^\w+$/ ? TestML::Expression->new(
+                calls => [
+                    TestML::Call->new(name => $_),
+                ]
+            ) :
             /^(['"])(.*)\1$/ ? $2 :
             $_;
         } split /,\s*/, $args;
@@ -150,9 +172,8 @@ sub get_token {
 
 sub compile_data {
     my ($self, $string);
-    $_[1] =~ s/^#.*\n//mg;
+    $_[1] =~ s/^#.*\n/\n/mg;
     $_[1] =~ s/^\\//mg;
-    $_[1] =~ s/^\s*\n//mg;
     my @blocks = grep $_, split /(^===.*?(?=^===|\z))/ms, $_[1];
     for my $block (@blocks) {
         $block =~ s/\n+\z/\n/;
@@ -165,6 +186,7 @@ sub compile_data {
             or die "No block label! $string_block";
         $block->{label} = $1;
         while (length $string_block) {
+            next if $string_block =~ s/^\n+//;
             my ($key, $value);
             if ($string_block =~ s/\A---\ +(\w+):\ +(.*)\n//g or
                 $string_block =~ s/\A---\ +(\w+)\n(.*?)(?=^---|\z)//msg

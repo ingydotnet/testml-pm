@@ -55,10 +55,8 @@ statements:
     calls:
     - !!perl/hash:TestML::Call
       args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: Label
+      - !!perl/hash:TestML::Str
+        value: Label
       explicit_call: 1
       name: Get
 - !!perl/hash:TestML::Statement

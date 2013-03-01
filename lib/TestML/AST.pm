@@ -157,7 +157,18 @@ sub got_call_object {
     }
     my $args = [];
     $args = $object->[1][0] if $object->[1][0];
-    $call->args($args) if @$args;
+    if (@$args) {
+        $args = [
+            map {
+                ($_->isa('TestML::Expression') and @{$_->calls} == 1 and
+                (
+                    $_->calls->[0]->isa('TestML::Point') ||
+                    $_->calls->[0]->isa('TestML::Object')
+                )) ? $_->calls->[0] : $_;
+            } @$args
+        ];
+        $call->args($args)
+    }
     return $call;
 }
 

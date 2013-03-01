@@ -1,28 +1,40 @@
+# TODO
+# - When bridge is main do special setup.
+# - Load call library object chain
+# - Cache called object methods. Cache into testml function namespace.
+
 package TestML::Runtime;
 use TestML::Mo;
 
-has testml => ();
-has bridge => 'main';
-has library => [
+# TODO bridge and library should support being scalar or array
+
+has testml => ();                       # Top level TestML document to run.
+has bridge => 'main';                   # Bridge class to use.
+has library => [                        # Library classes to use.
     'TestML::Library::Standard',
     'TestML::Library::Debug',
 ];
-has compiler => 'TestML::Compiler';
-has base => sub { $0 =~ m!(.*)/! ? $1 : "." };
-has skip => 0;
-has required => [];
+has compiler => 'TestML::Compiler';     # Class of TestML compiler to use.
+has base => ();
+has skip => '';                         # THis test should be skipped.
 
-has function => ();
+has function => ();                     # Currently running function.
+# XXX Why do we need this flag?
 has planned => 0;
+# XXX Can tis just live in testml global namespace?
 has test_number => 0;
 
-# Since there is only ever one test runtime, it makes things a LOT cleaner to
-# keep the reference to it in a global variable accessed by a method, than to
-# put a reference to it into every object that needs to access it.
+             # XXX Should not be part of runtime
+             # TestML can export require_or_skip
+             has required => [];
+
+# We keep the TestML::Runtime singleton object in a global variable.
 our $self;
 sub BUILD {
+    my ($self) = @_;
     # Put current Runtime singleton object into a global variable.
-    $TestML::Runtime::self = $_[0];
+    $TestML::Runtime::self = $self;
+    $self->{base} ||= $0 =~ m!(.*)/! ? $1 : ".";
 }
 
 # Default methods for Runtimes that don't support these things:
@@ -161,8 +173,6 @@ sub run_expression {
             map {
                 $_->isa('TestML::Point')
                     ? $self->get_point($_->name) :
-                $_->isa('TestML::Variable')
-                    ? $self->function->getvar($_->name) :
                 $_;
             } @{$call->args}
         ];
@@ -460,12 +470,6 @@ has points => {};
 
 #-----------------------------------------------------------------------------
 package TestML::Point;
-use TestML::Mo;
-
-has name => ();
-
-#-----------------------------------------------------------------------------
-package TestML::Variable;
 use TestML::Mo;
 
 has name => ();
