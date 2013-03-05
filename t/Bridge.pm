@@ -1,40 +1,32 @@
 package t::Bridge;
+use base TestML::Bridge;
+use TestML::Util;
 
 sub lowercase {
-    my $context = shift;
-    return lc($context->value);
+    my ($self, $string) = @_;
+    return str lc($string->value);
 }
 
 sub uppercase {
-    my $context = shift;
-    return uc($context->value);
+    my ($self, $string) = @_;
+    return str uc($string->value);
 }
 
 sub combine {
-    return join ' ', map $_->value, @_;
-}
-
-sub compile_testml {
-    my $context = shift;
-    require TestML::Compiler;
-    TestML::Compiler->new->compile($context->value);
-}
-
-sub msg {
-    my $context = shift;
-    return $context->value;
+    my ($self, @arguments) = @_;
+    return str join ' ', map $_->value, @arguments;
 }
 
 sub f1 {
-    my $context = shift;
-    my $num = shift->value;
-    return $num * 42 + $num;
+    my ($self, $num) = @_;
+    $num = $num->value;
+    return num $num * 42 + $num;
 }
 
 sub f2 {
-    my $context = shift;
-    my $num = shift->value;
-    return $num * $num + $num;
+    my ($self, $num) = @_;
+    $num = $num->value;
+    return num $num * $num + $num;
 }
 
 1;

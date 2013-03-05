@@ -1,4 +1,6 @@
 use TestML;
+use t::Bridge;
+
 TestML->new(
     bridge => 't::Bridge',
 )->run;

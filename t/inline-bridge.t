@@ -2,8 +2,8 @@ use TestML;
 TestML->new->run;
 
 sub upper {
-    my $self = shift;
-    return uc($self->value);
+    my ($self, $string) = @_;
+    return uc($string->value);
 }
 
 __DATA__

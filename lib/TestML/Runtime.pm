@@ -1,12 +1,5 @@
-# TODO
-# - When bridge is main do special setup.
-# - Load call library object chain
-# - Cache called object methods. Cache into testml function namespace.
-
 package TestML::Runtime;
 use TestML::Mo;
-
-# TODO bridge and library should support being scalar or array
 
 has testml => ();                       # Top level TestML document to run.
 has bridge => 'main';                   # Bridge class to use.
@@ -21,12 +14,8 @@ has skip => '';                         # THis test should be skipped.
 has function => ();                     # Currently running function.
 # XXX Why do we need this flag?
 has planned => 0;
-# XXX Can tis just live in testml global namespace?
+# XXX Can this just live in testml global namespace?
 has test_number => 0;
-
-             # XXX Should not be part of runtime
-             # TestML can export require_or_skip
-             has required => [];
 
 # We keep the TestML::Runtime singleton object in a global variable.
 our $self;
@@ -56,7 +45,7 @@ sub run {
         [],                 # function arguments
     );
 
-    # TODO Review the plan stuff
+    # XXX Maybe move Plan stuff to subclass's run() method (call super)
     $self->run_plan();
     $self->plan_end();
 }
@@ -145,7 +134,7 @@ sub run_expression {
     $self->function->expression($expression);
 
     my $calls = $expression->calls;
-    my $context = TestML::None->new;
+    my $context = undef;
 
     for (my $i = 0; $i < @$calls; $i++) {
         my $call = $calls->[$i];
@@ -166,34 +155,39 @@ sub run_expression {
             $context = $call;
             next;
         }
-        die "Unexpected call: $call" unless $call->isa('TestML::Call');
-        my $callable = $self->function->getvar($call->name)
-            or die "Can't find callable '${\$call->name}'";
-        my $args = [
-            map {
-                $_->isa('TestML::Point')
-                    ? $self->get_point($_->name) :
-                $_;
-            } @{$call->args}
-        ];
-        if ($callable->isa('TestML::Native')) {
-            $context = $self->run_native($callable->value, $context, $args);
-        }
-        elsif ($callable->isa('TestML::Object')) {
-            $context = $callable;
-        }
-        elsif ($callable->isa('TestML::Function')) {
-            if ($i or $call->explicit_call) {
-                my $points = $self->function->getvar('Block')->points;
-                for my $key (keys %$points) {
-                    $callable->setvar($key, TestML::Str->new(value => $points->{$key}));
-                }
-                $context = $self->run_function($callable, $context, $args);
+        if ($call->isa('TestML::Call')) {
+            my $callable = $self->get_callable($call->name)
+                or XXX $call;
+            #or die "Can't find callable '${\$call->name}'";
+            my $args = [
+                map {
+                    $_->isa('TestML::Point')
+                        ? $self->get_point($_->name) :
+                    $_;
+                } @{$call->args}
+            ];
+            if ($callable->isa('TestML::Native')) {
+                $context = $self->run_native($callable, $context, $args);
             }
-            $context = $callable;
+            elsif ($callable->isa('TestML::Object')) {
+                $context = $callable;
+            }
+            elsif ($callable->isa('TestML::Function')) {
+                if ($i or $call->explicit_call) {
+                    my $points = $self->function->getvar('Block')->points;
+                    for my $key (keys %$points) {
+                        $callable->setvar($key, TestML::Str->new(value => $points->{$key}));
+                    }
+                    $context = $self->run_function($callable, $context, $args);
+                }
+                $context = $callable;
+            }
+            else {
+                ZZZ $expression, $call, $callable;
+            }
         }
         else {
-            ZZZ $expression, $call, $callable;
+            die "Unexpected call: $call";
         }
     }
     if ($expression->error) {
@@ -201,6 +195,25 @@ sub run_expression {
     }
     $self->function->expression($prev_expression);
     return $context;
+}
+
+sub get_callable {
+    my ($self, $name) = @_;
+    return $self->function->getvar($name) ||
+        $self->set_callable($name);
+}
+
+sub set_callable {
+    my ($self, $name) = @_;
+    my $callable;
+    for my $library (@{$self->{libraries}}) {
+        if ($library->can($name)) {
+            my $function = sub { $library->$name(@_) };
+            $callable = TestML::Native->new(value => $function);
+            $self->function->setvar($name, $callable);
+        }
+    }
+    return $callable;
 }
 
 sub get_point {
@@ -213,7 +226,8 @@ sub get_point {
 }
 
 sub run_native {
-    my ($self, $function, $context, $args) = @_;
+    my ($self, $native, $context, $args) = @_;
+    my $function = $native->value;
     $args = [
         map {
             (ref($_) eq 'TestML::Expression')
@@ -305,35 +319,21 @@ sub initialize_global_namespace {
 
 sub setup_library_objects {
     my ($self) = @_;
-    if ($self->bridge) {
-        $self->load_call_module($self->bridge);
-    }
-    $self->load_call_module('TestML::Library::Standard');
-    $self->load_call_module('TestML::Library::Debug');
-}
-
-sub load_call_module {
-    my ($self, $module_name) = @_;
-    if ($module_name ne 'main') {
-        eval "require $module_name; 1"
-            or die "Can't use $module_name:\n$@";
-    }
-
-    my $global = $self->function->outer;
-    no strict 'refs';
-    for my $key (sort keys %{"$module_name\::"}) {
-        next if $key eq "\x16";
-        my $glob = ${"$module_name\::"}{$key};
-        if (my $function = *$glob{CODE}) {
-            $global->setvar(
-                $key => TestML::Native->new(value => $function),
-            );
+    my $libraries = $self->{libraries} = [];
+    my $bridge = $self->bridge;
+    if ($bridge eq 'main') {
+        if (not @main::ISA) {
+            require TestML::Bridge;
+            @main::ISA = ('TestML::Bridge');
         }
-        elsif (my $object = *$glob{SCALAR}) {
-            if (ref($$object)) {
-                $global->setvar($key => $$object);
-            }
-        }
+    }
+    push @$libraries, $bridge->new;
+    my $libs = $self->library;
+    $libs = [$libs] unless ref $libs;
+    for my $lib (@$libs) {
+        eval "require $lib; 1"
+            or die "Can't use $lib\n$@";
+        push @$libraries, $lib->new;
     }
 }
 

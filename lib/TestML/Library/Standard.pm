@@ -9,9 +9,8 @@ extends 'TestML::Library';
 use TestML::Util;
 
 sub Point {
-    my $self = shift;
-    my $name = shift;
-    $name = $name->value if ref $name;
+    my ($self, $name) = @_;
+    $name = $name->value        if ref $name; # XXX trailing clause not needed
     my $value = $self->runtime->function->getvar('Block')->points->{$name};
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
@@ -20,31 +19,29 @@ sub Point {
 }
 
 sub GetLabel {
-    my $self = shift;
+    my ($self) = @_;
     my $label = $self->runtime->get_label;
     return str($label);
 }
 
 sub Get {
-    my $self = shift;
-    my $key = shift->str->value;
-    return $self->runtime->function->getvar($key);
+    my ($self, $key) = @_;
+    return $self->runtime->function->getvar($key->str->value);
 }
 
 sub Set {
-    my $self = shift;
-    my $key = shift;
-    my $value = shift;
+    my ($self, $key, $value) = @_;
     $self->runtime->function->setvar($key, $value);
     return $value;
 }
 
 sub Type {
-    return str(shift->type);
+    my ($self, $var) = @_;
+    return str($var->type);
 }
 
 sub Catch {
-    my $self = shift;
+    my ($self) = @_;
     my $error = $self->runtime->get_error
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
@@ -53,56 +50,68 @@ sub Catch {
 }
 
 sub Throw {
-    my ($msg) = pop;
+    my ($self, $msg) = @_;
     # XXX die should be $self->runtime->throw
     die $msg->value;
 }
 
-sub Str { return str(shift->str->value) }
-sub Num { return num(shift->num->value) }
-sub Bool { return bool(shift->bool->value) }
+sub Str {
+    my ($self, $object) = @_;
+    return str($object->str->value);
+}
+sub Num {
+    my ($self, $object) = @_;
+    return num($object->num->value);
+}
+sub Bool {
+    my ($self, $object) = @_;
+    return bool($object->bool->value);
+}
 sub List {
     my $self = shift;
     return list([@_]);
 }
 
 sub Join {
-    my $self = shift;
-    my $separator = @_ ? shift->value : '';
-    my @strings = map $_->value, @{$self->list->value};
+    my ($self, $list, $separator) = @_;
+    $separator = $separator ? $separator->value : '';
+    my @strings = map $_->value, @{$list->list->value};
     return join $separator, @strings;
 }
 
 sub Strip {
-    my $self = shift;
-    my $string = $self->str->value;
-    my $part = shift->str->value;
+    my ($self, $string, $part) = @_;
+    $string = $string->str->value;
+    $part = $part->str->value;
     if ((my $i = index($string, $part)) >= 0) {
         $string = substr($string, 0, $i) . substr($string, $i + length($part));
     }
     return $string;
 }
 
-sub Not { return bool(shift->bool->value ? 0: 1) }
+sub Not {
+    my ($self, $bool) = @_;
+    return bool($bool->bool->value ? 0: 1);
+}
 
 sub Chomp {
-    my $value = shift->str->value;
+    my ($self, $string) = @_;
+    my $value = $string->str->value;
     chomp($value);
     return $value;
 }
 
 sub Has {
-    my $text = shift->value;
-    my $part = shift->value;
-    return bool(index($text, $part) >= 0);
+    my ($self, $string, $part) = @_;
+    $string = $string->str->value;
+    $part = $part->str->value;
+    return bool(index($string, $part) >= 0);
 }
 
 sub RunCommand {
     require Capture::Tiny;
-    my $self = shift;
-    my $arg = shift
-       or die "RunCommand requires an argument";
-    my $command = $arg->value;
+    my ($self, $command) = @_;
+    $command = $command->value;
     chomp($command);
     my $sub = sub {
         system($command);
@@ -115,38 +124,32 @@ sub RunCommand {
 
 sub RmPath {
     require File::Path;
-    my $self = shift;
-    my $arg = shift
-       or die "RmPath requires an argument";
-    my $path = $arg->value;
+    my ($self, $path) = @_;
+    $path = $path->value;
     File::Path::rmtree($path);
     return str('');
 }
 
 sub Stdout {
-    my $self = shift;
+    my ($self) = @_;
     return $self->runtime->function->getvar('_Stdout');
 }
 
 sub Stderr {
-    my $self = shift;
+    my ($self) = @_;
     return $self->runtime->function->getvar('_Stderr');
 }
 
 sub Chdir {
-    my $self = shift;
-    my $arg = shift
-       or die "Chdir requires an argument";
-    my $dir = $arg->value;
+    my ($self, $dir) = @_;
+    $dir = $dir->value;
     chdir $dir;
     return str('');
 }
 
 sub Read {
-    my $self = shift;
-    my $arg = shift
-        or die "Read requires an argument";
-    my $file = $arg->value;
+    my ($self, $file) = @_;
+    $file = $file->value;
     use Cwd;
     open FILE, $file or die "Can't open $file for input in " . Cwd::cwd;
     my $text = do { local $/; <FILE> };
@@ -155,73 +158,43 @@ sub Read {
 }
 
 sub Print {
-    my $self = shift;
-    my $arg = shift;
-    print STDOUT $arg ? $arg->value : $self->value;
+    my ($self, $string) = @_;
+    print STDOUT $string->value;
 }
 
 sub Pass {
-    return @_;
+    my ($self, @args) = @_;
+    return @args;
 }
 
-1;
-
 sub Text {
-    my $self = shift;
-    my $value = $self->list->value;
+    my ($self, $lines) = @_;
+    my $value = $lines->list->value;
     return str(join "\n", map($_->value, @$value), '');
 }
 
 sub Count {
-    my $self = shift;
-    return num scalar @{$self->list->value};
+    my ($self, $list) = @_;
+    return num scalar @{$list->list->value};
 }
 
 sub Lines {
-    my $self = shift;
-    my $value = $self->value || '';
-    return list([ map str($_), split /\n/, $value ]);
+    my ($self, $text) = @_;
+    return list([ map str($_), split /\n/, $text->value ]);
 }
 
-# sub Join {
-#     my $self = shift;
-#     my $value = $self->assert_type('List');
-#     my $string = @_ ? (shift)->value : '';
-#     $self->set(Str => join $string, @$value);
-# }
-
 sub Reverse {
-    my $self = shift;
-    my $value = $self->list->value;
+    my ($self, $list) = @_;
+    my $value = $list->list->value;
     return list([ reverse @$value ]);
 }
 
 sub Sort {
-    my $self = shift;
-    my $value = $self->list->value;
+    my ($self, $list) = @_;
+    my $value = $list->list->value;
     return list([ sort { $a->value cmp $b->value } @$value ]);
 }
 
-# sub BoolStr {
-#     my $self = shift;
-#     return $self->value ? 'True' : 'False';
-# }
-# 
-# 
-# sub Union {
-#     my $list = (shift)->value;
-#     # my $list2 = shift;
-#     my $list2 = [ @$list ];
-#     return [ @$list, @$list2 ];
-# }
-# 
-# sub Unique {
-#     my $list = (shift)->value;
-#     # my $list2 = shift;
-#     my $list2 = [ @$list ];
-#     return [ @$list, @$list2 ];
-# }
-# 
 # sub Raw {
 #     my $self = shift;
 #     my $point = $self->point
@@ -229,3 +202,5 @@ sub Sort {
 #     return $self->runtime->block->points->{$point};
 # }
 # 
+
+1;
