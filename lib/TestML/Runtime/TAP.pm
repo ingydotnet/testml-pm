@@ -15,6 +15,31 @@ if ($TestML::Test::Differences) {
 }
 
 has native_test => sub { Test::Builder->new };
+has planned => 0;
+
+sub run {
+    my ($self) = @_;
+    $self->SUPER::run();
+    $self->check_plan();
+    $self->plan_end();
+}
+
+sub run_assertion {
+    my ($self, @args) = @_;
+
+    $self->check_plan;
+
+    $self->SUPER::run_assertion(@args);
+}
+
+sub check_plan {
+    my ($self) = @_;
+    if (! $self->planned) {
+        $self->title();
+        $self->plan_begin();
+        $self->planned(1);
+    }
+}
 
 sub title {
     my ($self) = @_;
@@ -30,19 +55,21 @@ sub title {
     }
 }
 
-sub skip_all {
+sub skip_test {
     my ($self, $reason) = @_;
     $self->native_test->plan(skip_all => $reason);
 }
 
 sub plan_begin {
     my ($self) = @_;
-    if (defined (my $tests = $self->function->getvar('Plan'))) {
+    if (my $tests = $self->function->getvar('Plan')) {
         $self->native_test->plan(tests => $tests->value);
     }
-    else {
-        $self->native_test->no_plan();
-    }
+}
+
+sub plan_end {
+    my ($self) = @_;
+    $self->native_test->done_testing();
 }
 
 sub assert_EQ {

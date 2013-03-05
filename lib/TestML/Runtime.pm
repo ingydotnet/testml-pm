@@ -1,3 +1,7 @@
+# TODO
+# - Error handling refactoring
+# - General concept renaming
+
 package TestML::Runtime;
 use TestML::Mo;
 
@@ -9,28 +13,16 @@ has library => [                        # Library classes to use.
 ];
 has compiler => 'TestML::Compiler';     # Class of TestML compiler to use.
 has base => ();
-has skip => '';                         # THis test should be skipped.
+has skip => '';                         # This test should be skipped.
 
 has function => ();                     # Currently running function.
-# XXX Why do we need this flag?
-has planned => 0;
-# XXX Can this just live in testml global namespace?
-has test_number => 0;
 
-# We keep the TestML::Runtime singleton object in a global variable.
-our $self;
 sub BUILD {
     my ($self) = @_;
     # Put current Runtime singleton object into a global variable.
-    $TestML::Runtime::self = $self;
+    $TestML::Runtime::singleton = $self;
     $self->{base} ||= $0 =~ m!(.*)/! ? $1 : ".";
 }
-
-# Default methods for Runtimes that don't support these things:
-# TODO May wish to emulate them by default.
-sub title { }
-sub plan_begin { }
-sub plan_end { }
 
 sub run {
     my ($self) = @_;
@@ -41,13 +33,9 @@ sub run {
 
     $self->run_function(
         $self->{function},  # top level testml function
-        TestML::None->new,  # context
+        undef,              # context
         [],                 # function arguments
     );
-
-    # XXX Maybe move Plan stuff to subclass's run() method (call super)
-    $self->run_plan();
-    $self->plan_end();
 }
 
 # XXX - TestML exception handling needs to happen at the function level, not
@@ -55,20 +43,8 @@ sub run {
 sub run_function {
     my ($self, $function, $context, $args) = @_;
 
-    # TODO Move signature processing to separate method
-    my $signature = $function->signature;
-    die sprintf(
-        "Function received %d args but expected %d",
-        scalar(@$args),
-        scalar(@$signature),
-    ) if @$signature and @$args != @$signature;
-    $function->setvar('Self', $context);
-    for (my $i = 0; $i < @$signature; $i++) {
-        my $arg = $args->[$i];
-        $arg = $self->run_expression($arg)
-            if ref($arg) eq 'TestML::Expression';
-        $function->setvar($signature->[$i], $arg);
-    }
+    $args = [$context, @$args] if $context;
+    $self->apply_signature($function, $args);
 
     my $parent = $self->function;
     $self->function($function);
@@ -80,6 +56,26 @@ sub run_function {
     $self->function($parent);
 
     return TestML::None->new;
+}
+
+sub apply_signature {
+    my ($self, $function, $args) = @_;
+
+    my $signature = $function->signature;
+
+    die sprintf(
+        "Function received %d args but expected %d",
+        scalar(@$args),
+        scalar(@$signature),
+    ) if @$signature and @$args != @$signature;
+
+    $function->setvar('Self', $function);
+    for (my $i = 0; $i < @$signature; $i++) {
+        my $arg = $args->[$i];
+        $arg = $self->run_expression($arg)
+            if ref($arg) eq 'TestML::Expression';
+        $function->setvar($signature->[$i], $arg);
+    }
 }
 
 sub run_statement {
@@ -98,13 +94,7 @@ sub run_assertion {
     my ($self, $left, $assertion) = @_;
     my $method = 'assert_' . $assertion->name;
 
-    # Run this as late as possible.
-    $self->run_plan;
-
-    $self->{test_number}++;
-    $self->function->setvar(
-        TestNumber => TestML::Num->new(value => $self->test_number),
-    );
+    $self->function->getvar('TestNumber')->{value}++;
 
     # TODO Review this List stuff
     my $results = ($left->type eq 'List')
@@ -156,9 +146,13 @@ sub run_expression {
             next;
         }
         if ($call->isa('TestML::Call')) {
-            my $callable = $self->get_callable($call->name)
+            my $name = $call->name;
+            my $callable =
+                $self->function->getvar($name) ||
+                $self->lookup_callable($name)
                 or XXX $call;
-            #or die "Can't find callable '${\$call->name}'";
+
+            #or die "Can't find callable '$name'";
             my $args = [
                 map {
                     $_->isa('TestML::Point')
@@ -197,13 +191,7 @@ sub run_expression {
     return $context;
 }
 
-sub get_callable {
-    my ($self, $name) = @_;
-    return $self->function->getvar($name) ||
-        $self->set_callable($name);
-}
-
-sub set_callable {
+sub lookup_callable {
     my ($self, $name) = @_;
     my $callable;
     for my $library (@{$self->{libraries}}) {
@@ -315,6 +303,7 @@ sub initialize_global_namespace {
     $global->setvar(True => $TestML::Constant::True);
     $global->setvar(False => $TestML::Constant::False);
     $global->setvar(None => $TestML::Constant::None);
+    $global->setvar(TestNumber => TestML::Num->new(value => 0));
 }
 
 sub setup_library_objects {
@@ -355,15 +344,6 @@ sub get_label {
     }
     $label =~ s/\$(\w+)/label($self, $1)/ge;
     return $label ? ($label) : ();
-}
-
-sub run_plan {
-    my ($self) = @_;
-    if (! $self->planned) {
-        $self->title();
-        $self->plan_begin();
-        $self->planned(1);
-    }
 }
 
 sub get_error {
