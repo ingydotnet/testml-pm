@@ -17,6 +17,17 @@ if ($TestML::Test::Differences) {
 has native_test => sub { Test::Builder->new };
 has planned => 0;
 
+sub add_library {
+    my ($self, $library) = @_;
+    if ($library eq 'main') {
+        if (not @main::ISA) {
+            require TestML::Bridge;
+            @main::ISA = ('TestML::Bridge');
+        }
+    }
+    $self->SUPER::add_library($library);
+}
+
 sub run {
     my ($self) = @_;
     $self->SUPER::run();

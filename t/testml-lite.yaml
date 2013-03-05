@@ -2,11 +2,11 @@ source_testml_dir: ../../testml-tml
 local_testml_dir: ./testml
 test_file_template: |
   use TestML;
-  use t::Bridge;
 
-  TestML::Lite->new(
+  TestML->new(
       testml => '../[% file %]',
       bridge => 't::Bridge',
+      compiler => 'TestML::Compiler::Lite',
   )->run;
 test_file_dir: lite
 include_testml_files:

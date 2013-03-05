@@ -6,14 +6,11 @@ package TestML::Runtime;
 use TestML::Mo;
 
 has testml => ();                       # Top level TestML document to run.
-has bridge => 'main';                   # Bridge class to use.
-has library => [                        # Library classes to use.
-    'TestML::Library::Standard',
-    'TestML::Library::Debug',
-];
-has compiler => 'TestML::Compiler';     # Class of TestML compiler to use.
+has bridge => ();                       # Bridge class to use.
+has library => ();                      # Library classes to use.
+has compiler => ();                     # Class of TestML compiler to use.
 has base => ();
-has skip => '';                         # This test should be skipped.
+has skip => ();                         # This test should be skipped.
 
 has function => ();                     # Currently running function.
 
@@ -28,8 +25,7 @@ sub run {
     my ($self) = @_;
 
     $self->compile_testml;
-    $self->initialize_global_namespace;
-    $self->setup_library_objects;
+    $self->initialize_runtime;
 
     $self->run_function(
         $self->{function},  # top level testml function
@@ -150,7 +146,7 @@ sub run_expression {
             my $callable =
                 $self->function->getvar($name) ||
                 $self->lookup_callable($name)
-                or XXX $call;
+                or die "Can't locate '$name' callable";
 
             #or die "Can't find callable '$name'";
             my $args = [
@@ -194,7 +190,7 @@ sub run_expression {
 sub lookup_callable {
     my ($self, $name) = @_;
     my $callable;
-    for my $library (@{$self->{libraries}}) {
+    for my $library (@{$self->function->getvar('Library')->value}) {
         if ($library->can($name)) {
             my $function = sub { $library->$name(@_) };
             $callable = TestML::Native->new(value => $function);
@@ -295,36 +291,46 @@ sub compile_testml {
     $self->{function} = $function;
 }
 
-sub initialize_global_namespace {
+sub initialize_runtime {
     my ($self) = @_;
     my $global = $self->function->outer;
+
+    # Set global variables.
     $global->setvar(Block => TestML::Block->new);
     $global->setvar(Label => TestML::Str->new(value => '$BlockLabel'));
     $global->setvar(True => $TestML::Constant::True);
     $global->setvar(False => $TestML::Constant::False);
     $global->setvar(None => $TestML::Constant::None);
     $global->setvar(TestNumber => TestML::Num->new(value => 0));
-}
+    $global->setvar(Library => TestML::List->new);
 
-sub setup_library_objects {
-    my ($self) = @_;
-    my $libraries = $self->{libraries} = [];
-    my $bridge = $self->bridge;
-    if ($bridge eq 'main') {
-        if (not @main::ISA) {
-            require TestML::Bridge;
-            @main::ISA = ('TestML::Bridge');
+    for my $lib ($self->bridge, $self->library) {
+        if (ref($lib) eq 'ARRAY') {
+            $self->add_library($_) for @$lib;
+        }
+        else {
+            $self->add_library($lib);
         }
     }
-    push @$libraries, $bridge->new;
-    my $libs = $self->library;
-    $libs = [$libs] unless ref $libs;
-    for my $lib (@$libs) {
-        eval "require $lib; 1"
-            or die "Can't use $lib\n$@";
-        push @$libraries, $lib->new;
-    }
 }
+
+sub add_library {
+    my ($self, $library) = @_;
+    if (not $library->can('new')) {
+        eval "require $library";
+    }
+    $self->function->getvar('Library')->push($library);
+}
+
+#     push @$libraries, $bridge->new;
+#     my $libs = $self->library;
+#     $libs = [$libs] unless ref $libs;
+#     for my $lib (@$libs) {
+#         eval "require $lib; 1"
+#             or die "Can't use $lib\n$@";
+#         push @$libraries, $lib->new;
+#     }
+# }
 
 sub get_label {
     my ($self) = @_;
@@ -402,13 +408,12 @@ sub getvar {
 sub setvar {
     my ($self, $name, $value) = @_;
     $self->namespace->{$name} = $value;
-    return;
+    return $value;
 }
 
 sub forgetvar {
     my ($self, $name) = @_;
-    delete $self->namespace->{$name};
-    return;
+    return delete $self->namespace->{$name};
 }
 
 #-----------------------------------------------------------------------------
@@ -516,7 +521,12 @@ sub bool { $_[0] }
 package TestML::List;
 use TestML::Mo;
 extends 'TestML::Object';
+has value => [];
 sub list { $_[0] }
+sub push {
+    my ($self, $elem) = @_;
+    push @{$self->value}, $elem;
+}
 
 #-----------------------------------------------------------------------------
 # XXX Change None to Null

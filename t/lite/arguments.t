@@ -1,7 +1,7 @@
 use TestML;
-use t::Bridge;
 
-TestML::Lite->new(
+TestML->new(
     testml => '../testml/arguments.tml',
     bridge => 't::Bridge',
+    compiler => 'TestML::Compiler::Lite',
 )->run;
