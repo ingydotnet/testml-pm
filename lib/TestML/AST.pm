@@ -1,5 +1,5 @@
 package TestML::AST;
-use TestML::Mo;
+use TestML::Base;
 extends 'Pegex::Tree';
 
 use TestML::Runtime;

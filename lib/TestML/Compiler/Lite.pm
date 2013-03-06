@@ -3,7 +3,7 @@
 # statements and assertions and also parse the TestML data format.
 
 package TestML::Compiler::Lite;
-use TestML::Mo;
+use TestML::Base;
 
 has function => ();
 

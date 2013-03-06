@@ -1,11 +1,11 @@
 ##
-# name:      TestML::Mo
-# abstract:  Mo Base Class for TestML
+# name:      TestML::Base
+# abstract:  Base Class for TestML
 # author:    Ingy döt Net <ingy@cpan.org>
 # license:   perl
 # copyright: 2010-2013
 
-package TestML::Mo;
+package TestML::Base;
 # use Mo qw'build default builder xxx import';
 #   The following line of code was produced from the previous line by
 #   Mo::Inline version 0.33

@@ -7,7 +7,7 @@
 
 use strict; use warnings;
 package TestML::Setup;
-use TestML::Mo;
+use TestML::Base;
 
 use YAML::XS;
 use IO::All;

@@ -12,8 +12,7 @@
 use 5.006001;
 use strict; use warnings;
 package TestML;
-# XXX TestML::Mo could have more Acmeist name. (TestML::Base)
-use TestML::Mo;
+use TestML::Base;
 
 # TODO Need to switch VERSION to semvar (x.x.x).
 our $VERSION = '0.30';
@@ -46,9 +45,6 @@ sub run {
         testml => $self->testml,
     )->run;
 }
-
-# XXX This is a Perl specific affordance, but very nice for Perl.
-# TODO Figure out how to support this in C'Dent.
 
 1;
 

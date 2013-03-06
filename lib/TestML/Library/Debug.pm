@@ -1,5 +1,5 @@
 package TestML::Library::Debug;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Library';
 
 no warnings 'redefine';

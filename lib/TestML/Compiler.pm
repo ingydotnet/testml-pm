@@ -1,6 +1,6 @@
 package TestML::Compiler;
 
-use TestML::Mo;
+use TestML::Base;
 use TestML::Grammar;
 use TestML::AST;
 use Pegex::Parser;

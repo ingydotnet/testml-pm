@@ -1,9 +1,5 @@
-# TODO
-# - This should be an object class ($self, TestML::Mo, etc)
-# - $self->cast or $self->value is wrong
-
 package TestML::Library::Standard;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Library';
 
 use TestML::Util;

@@ -3,7 +3,7 @@
 # - General concept renaming
 
 package TestML::Runtime;
-use TestML::Mo;
+use TestML::Base;
 
 has testml => ();                       # Top level TestML document to run.
 has bridge => ();                       # Bridge class to use.
@@ -378,7 +378,7 @@ sub read_testml_file {
 
 #-----------------------------------------------------------------------------
 package TestML::Function;
-use TestML::Mo;
+use TestML::Base;
 # XXX should extend TestML::Object (maybe).
 
 has type => 'Func';     # Functions are TestML typed objects
@@ -418,7 +418,7 @@ sub forgetvar {
 
 #-----------------------------------------------------------------------------
 package TestML::Statement;
-use TestML::Mo;
+use TestML::Base;
 
 has expression => sub {TestML::Expression->new};
 has assertion => ();
@@ -426,21 +426,21 @@ has points => [];
 
 #-----------------------------------------------------------------------------
 package TestML::Expression;
-use TestML::Mo;
+use TestML::Base;
 
 has calls => [];
 has error => ();
 
 #-----------------------------------------------------------------------------
 package TestML::Assertion;
-use TestML::Mo;
+use TestML::Base;
 
 has name => ();
 has expression => sub {TestML::Expression->new};
 
 #-----------------------------------------------------------------------------
 package TestML::Call;
-use TestML::Mo;
+use TestML::Base;
 
 has name => ();
 has args => [];
@@ -448,20 +448,20 @@ has explicit_call => 0;
 
 #-----------------------------------------------------------------------------
 package TestML::Block;
-use TestML::Mo;
+use TestML::Base;
 
 has label => '';
 has points => {};
 
 #-----------------------------------------------------------------------------
 package TestML::Point;
-use TestML::Mo;
+use TestML::Base;
 
 has name => ();
 
 #-----------------------------------------------------------------------------
 package TestML::Object;
-use TestML::Mo;
+use TestML::Base;
 
 has value => ();
 
@@ -482,7 +482,7 @@ sub none { $TestML::Constant::None }
 
 #-----------------------------------------------------------------------------
 package TestML::Str;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Object';
 
 sub str { $_[0] }
@@ -496,7 +496,7 @@ sub list { TestML::List->new(value => [split //, $_[0]->value]) }
 
 #-----------------------------------------------------------------------------
 package TestML::Num;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Object';
 
 sub str { TestML::Str->new(value => $_[0]->value . "") }
@@ -510,7 +510,7 @@ sub list {
 
 #-----------------------------------------------------------------------------
 package TestML::Bool;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Object';
 
 sub str { TestML::Str->new(value => $_[0]->value ? "1" : "") }
@@ -519,7 +519,7 @@ sub bool { $_[0] }
 
 #-----------------------------------------------------------------------------
 package TestML::List;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Object';
 has value => [];
 sub list { $_[0] }
@@ -531,7 +531,7 @@ sub push {
 #-----------------------------------------------------------------------------
 # XXX Change None to Null
 package TestML::None;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Object';
 
 sub str { Str('') }
@@ -541,13 +541,13 @@ sub list { List([]) }
 
 #-----------------------------------------------------------------------------
 package TestML::Error;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Object';
 
 #-----------------------------------------------------------------------------
 # XXX Do we want/need this?
 package TestML::Native;
-use TestML::Mo;
+use TestML::Base;
 extends 'TestML::Object';
 
 #-----------------------------------------------------------------------------

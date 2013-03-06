@@ -1,5 +1,5 @@
 package TestML::Grammar;
-use TestML::Mo;
+use TestML::Base;
 extends 'Pegex::Grammar';
 
 # TODO Move grammar and AST into Compiler library once Pegex can do a smarter

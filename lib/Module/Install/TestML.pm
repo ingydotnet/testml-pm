@@ -32,7 +32,7 @@ sub use_testml {
     $self->include('Pegex::Receiver');
 
     $self->include('TestML');
-    $self->include('TestML::Mo');
+    $self->include('TestML::Base');
     $self->include('TestML::AST');
     $self->include('TestML::Compiler');
     $self->include('TestML::Grammar');
