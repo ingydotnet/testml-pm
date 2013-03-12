@@ -20,6 +20,8 @@ sub compile {
         XXX($self->function);
     }
 
+    $self->function->namespace->{TestML} = $self->directives->{TestML};
+
     $self->function->outer(TestML::Function->new());
     return $self->function;
 }

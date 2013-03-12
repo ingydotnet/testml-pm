@@ -38,9 +38,6 @@ sub fixup_grammar {
 
     my $parser = $self->parser;
 
-    my $namespace = $parser->receiver->function->namespace;
-    $namespace->{TestML} = $self->directives->{TestML};
-
     my $tree = $parser->grammar->tree;
 
     my $point_lines = $tree->{point_lines}{'.rgx'};

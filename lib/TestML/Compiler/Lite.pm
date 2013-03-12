@@ -4,21 +4,21 @@
 
 package TestML::Compiler::Lite;
 use TestML::Base;
+extends 'TestML::Compiler';
+
+use TestML::Runtime;
 
 has function => ();
 
 # TODO Use more constants for regexes
 use constant POINT => qr/^\*(\w+)/;
 
-
-# Take a TestML(Lite) document and compile to a TestML::Function.
-sub compile {
-    my ($self, $document) = @_;
+sub compile_code {
+    my ($self) = @_;
     $self->{function} = TestML::Function->new;
-    $document =~ /\A(.*?)(^===.*)?\z/ms or die;
-    my ($code, $data) = ($1, $2);
+    my $code = $self->code;
     while (length $code) {
-        $code =~ s{(.*)$/}{};
+        $code =~ s{^(.*)\r?\n?}{};
         my $line = $1;
         $self->parse_comment($line) ||
         $self->parse_directive($line) ||
@@ -26,11 +26,6 @@ sub compile {
         $self->parse_assertion($line) ||
             die "Failed to parse TestML document, here:\n$line$/$code";
     }
-    if ($data) {
-        $self->function->{data} = $self->compile_data($data);
-    }
-    $self->function->outer(TestML::Function->new());
-    return $self->function;
 }
 
 sub parse_comment {
@@ -190,10 +185,11 @@ sub get_token {
 }
 
 sub compile_data {
-    my ($self, $string);
-    $_[1] =~ s/^#.*\n/\n/mg;
-    $_[1] =~ s/^\\//mg;
-    my @blocks = grep $_, split /(^===.*?(?=^===|\z))/ms, $_[1];
+    my ($self) = @_;
+    my $input = $self->data;
+    $input =~ s/^#.*\n/\n/mg;
+    $input =~ s/^\\//mg;
+    my @blocks = grep $_, split /(^===.*?(?=^===|\z))/ms, $input;
     for my $block (@blocks) {
         $block =~ s/\n+\z/\n/;
     }
@@ -224,7 +220,7 @@ sub compile_data {
         }
         push @$data, $block;
     }
-    return $data;
+    $self->function->{data} = $data if @$data;
 }
 
 1;
