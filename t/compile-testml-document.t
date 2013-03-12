@@ -1,6 +1,6 @@
 use Test::More tests => 21;
 
-use TestML::Compiler;
+use TestML::Compiler::Pegex;
 
 my $testml = '
 # A comment
@@ -20,7 +20,7 @@ Title = "O HAI TEST";
 --- output: I LOVE LUCY
 ';
 
-my $func = TestML::Compiler->new->compile($testml);
+my $func = TestML::Compiler::Pegex->new->compile($testml);
 ok $func, 'TestML string matches against TestML grammar';
 is $func->namespace->{TestML}->value, '0.1.0', 'Version parses';
 is $func->statements->[0]->expression->calls->[0]->args->[1]->calls->[0]->value, '2', 'Plan parses';

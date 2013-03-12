@@ -11,7 +11,7 @@ BEGIN {
 }
 
 use TestML;
-use TestML::Compiler;
+use TestML::Compiler::Pegex;
 use TestML::Compiler::Lite;
 use YAML::XS;
 
@@ -33,7 +33,7 @@ Title = "O HAI TEST";
 --- output: I LOVE LUCY
 ';
 
-my $func = TestML::Compiler->new->compile($testml);
+my $func = TestML::Compiler::Pegex->new->compile($testml);
 my $func_lite = TestML::Compiler::Lite->new->compile($testml);
 
 is Dump($func_lite), Dump($func),

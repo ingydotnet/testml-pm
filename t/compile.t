@@ -11,22 +11,22 @@ BEGIN {
 }
 
 use TestML::Runtime;
-use TestML::Compiler;
+use TestML::Compiler::Pegex;
 use TestML::Compiler::Lite;
 use YAML::XS;
 
-test('t/testml/arguments.tml');
-test('t/testml/assertions.tml');
-test('t/testml/basic.tml');
-test('t/testml/dataless.tml');
-test('t/testml/exceptions.tml');
-test('t/testml/external.tml');
-test('t/testml/function.tml');
-test('t/testml/label.tml');
-test('t/testml/markers.tml');
-test('t/testml/semicolons.tml');
-test('t/testml/truth.tml');
-test('t/testml/types.tml');
+test('t/testml/arguments.tml', 'TestML::Compiler::Pegex');
+test('t/testml/assertions.tml', 'TestML::Compiler::Pegex');
+test('t/testml/basic.tml', 'TestML::Compiler::Pegex');
+test('t/testml/dataless.tml', 'TestML::Compiler::Pegex');
+test('t/testml/exceptions.tml', 'TestML::Compiler::Pegex');
+test('t/testml/external.tml', 'TestML::Compiler::Pegex');
+test('t/testml/function.tml', 'TestML::Compiler::Pegex');
+test('t/testml/label.tml', 'TestML::Compiler::Pegex');
+test('t/testml/markers.tml', 'TestML::Compiler::Pegex');
+test('t/testml/semicolons.tml', 'TestML::Compiler::Pegex');
+test('t/testml/truth.tml', 'TestML::Compiler::Pegex');
+test('t/testml/types.tml', 'TestML::Compiler::Pegex');
 
 test('t/testml/arguments.tml', 'TestML::Compiler::Lite');
 test('t/testml/basic.tml', 'TestML::Compiler::Lite');
@@ -35,7 +35,6 @@ test('t/testml/semicolons.tml', 'TestML::Compiler::Lite');
 
 sub test {
     my ($file, $compiler) = @_;
-    $compiler ||= 'TestML::Compiler';
     (my $filename = $file) =~ s!(.*)/!!;
     my $runtime = TestML::Runtime->new(base => $1);
     my $testml = $runtime->read_testml_file($filename);

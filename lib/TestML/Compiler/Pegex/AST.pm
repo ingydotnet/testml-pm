@@ -1,4 +1,4 @@
-package TestML::AST;
+package TestML::Compiler::Pegex::AST;
 use TestML::Base;
 extends 'Pegex::Tree';
 

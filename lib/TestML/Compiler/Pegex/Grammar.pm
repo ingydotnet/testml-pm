@@ -1,9 +1,7 @@
-package TestML::Grammar;
+package TestML::Compiler::Pegex::Grammar;
 use TestML::Base;
 extends 'Pegex::Grammar';
 
-# TODO Move grammar and AST into Compiler library once Pegex can do a smarter
-# in place compile.
 use constant file => '../testml-pgx/testml.pgx';
 
 sub make_tree {

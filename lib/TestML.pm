@@ -19,7 +19,7 @@ our $VERSION = '0.30';
 
 # Accessors for TestML objects:
 has runtime => 'TestML::Runtime::TAP';
-has compiler => 'TestML::Compiler';
+has compiler => 'TestML::Compiler::Pegex';
 has bridge => 'main';
 has library => [
     'TestML::Library::Standard',
