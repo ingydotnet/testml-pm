@@ -13,54 +13,73 @@ use constant POINT => qr/^\*(\w+)/;
 
 # Take a TestML(Lite) document and compile to a TestML::Function.
 sub compile {
-# TODO refactor to more subs
     my ($self, $document) = @_;
-    my $function = TestML::Function->new;
+    $self->{function} = TestML::Function->new;
     $document =~ /\A(.*?)(^===.*)?\z/ms or die;
     my ($code, $data) = ($1, $2);
-    while ($code =~ s{(.*)$/}{}) {
+    while (length $code) {
+        $code =~ s{(.*)$/}{};
         my $line = $1;
-        next if $line =~ /^\s*(#|$)/;
-        if ($line =~ /^%TestML +(\d+\.\d+\.\d+)\s*$/) {
-            $function->setvar(
-                'TestML' => TestML::Str->new(value => $1),
-            );
-        }
-        elsif ($line =~ /^\s*(\w+) *= *(.+?);?\s*$/) {
-            my ($key, $value) = ($1, $2);
-            $value =~ s/^(['"])(.*)\1$/$2/;
-            $value = $value =~ /^\d+$/
-              ? TestML::Num->new(value => $value)
-              : TestML::Str->new(value => $value);
-            push @{$function->statements}, TestML::Statement->new(
-                expression => TestML::Expression->new(
-                    calls => [
-                        TestML::Call->new(
-                            name => 'Set',
-                            args => [
-                                $key,
-                                TestML::Expression->new(
-                                    calls => [ $value ],
-                                ),
-                            ],
-                        ),
-                    ],
-                )
-            );
-        }
-        elsif ($line =~ /^.*(?:==|~~).*;?\s*$/) {
-            $line =~ s/;$//;
-            push @{$function->statements}, $self->compile_assertion($line);
-        }
-        else {
-            die "Failed to parse TestML document, here:\n$code";
-        }
+        $self->parse_comment($line) ||
+        $self->parse_directive($line) ||
+        $self->parse_assignment($line) ||
+        $self->parse_assertion($line) ||
+            die "Failed to parse TestML document, here:\n$line$/$code";
     }
     if ($data) {
-        $function->{data} = $self->compile_data($data);
+        $self->function->{data} = $self->compile_data($data);
     }
-    $function->outer(TestML::Function->new());
-    return $function;
+    $self->function->outer(TestML::Function->new());
+    return $self->function;
+}
+
+sub parse_comment {
+    my ($self, $line) = @_;
+    $line =~ /^\s*(#|$)/ or return;
+    return 1;
+}
+
+sub parse_directive {
+    my ($self, $line) = @_;
+    $line =~ /^%TestML +(\d+\.\d+\.\d+)\s*$/ or return;
+    $self->function->setvar(
+        'TestML' => TestML::Str->new(value => $1),
+    );
+    return 1;
+}
+
+sub parse_assignment {
+    my ($self, $line) = @_;
+    $line =~ /^\s*(\w+) *= *(.+?);?\s*$/ or return;
+    my ($key, $value) = ($1, $2);
+    $value =~ s/^(['"])(.*)\1$/$2/;
+    $value = $value =~ /^\d+$/
+      ? TestML::Num->new(value => $value)
+      : TestML::Str->new(value => $value);
+    push @{$self->function->statements}, TestML::Statement->new(
+        expression => TestML::Expression->new(
+            calls => [
+                TestML::Call->new(
+                    name => 'Set',
+                    args => [
+                        $key,
+                        TestML::Expression->new(
+                            calls => [ $value ],
+                        ),
+                    ],
+                ),
+            ],
+        )
+    );
+    return 1;
+}
+
+sub parse_assertion {
+    my ($self, $line) = @_;
+    $line =~ /^.*(?:==|~~).*;?\s*$/ or return;
+    $line =~ s/;$//;
+    push @{$self->function->statements}, $self->compile_assertion($line);
+    return 1;
 }
 
 sub compile_assertion {
@@ -140,7 +159,7 @@ sub get_token {
     if ($_[1] =~ s/^(\w+)\(([^\)]+)\)\.?//) {
         ($token, $args) = ([$1], $2);
         push @$token, map {
-            /^\w+$/ ? TestML::Expression->new(
+            /^(\w+)$/ ? TestML::Expression->new(
                 calls => [
                     TestML::Call->new(name => $_),
                 ]
@@ -156,7 +175,7 @@ sub get_token {
         $token = TestML::Str->new(value => $2);
     }
     elsif ($_[1] =~ s/^(\d+)//) {
-        $token = TestML::Num->new(value => $2);
+        $token = TestML::Num->new(value => $1);
     }
     elsif ($_[1] =~ s/^(\*\w+)\.?//) {
         $token = $1;

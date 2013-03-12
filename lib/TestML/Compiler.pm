@@ -5,8 +5,6 @@ use TestML::Grammar;
 use TestML::AST;
 use Pegex::Parser;
 
-has runtime => ();
-
 # XXX This code is too complicated. It preprocesses the TestML code, splits it
 # into 2 sections and calls a separate Pegex parse on each. This could all be
 # handled in Pegex, but probably not worth it just yet.
@@ -78,7 +76,7 @@ sub preprocess {
             }
             $order_error = 1 unless $result->{TestML};
             if ($directive eq 'Include') {
-                my $runtime = $self->runtime
+                my $runtime = $TestML::Runtime::singleton
                     or die "Can't process Include. No runtime available";
                 my $sub_result =
                     $self->preprocess($runtime->read_testml_file($value));

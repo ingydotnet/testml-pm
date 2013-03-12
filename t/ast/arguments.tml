@@ -3,16 +3,16 @@ data:
 - !!perl/hash:TestML::Block
   label: Dear John
   points:
-    greeting: Dear John
     what: Dear
     who: John
+    greeting: Dear John
 - !!perl/hash:TestML::Block
   label: Greetings and Salutations
   points:
+    what: Greetings
     else: Salutations
     greeting: Greetings and Salutations
     upper_greeting: Greetings and SALUTATIONS
-    what: Greetings
 namespace:
   TestML: !!perl/hash:TestML::Str
     value: '0.1.0'

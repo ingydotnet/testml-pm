@@ -146,9 +146,7 @@ sub run_expression {
             my $callable =
                 $self->function->getvar($name) ||
                 $self->lookup_callable($name)
-                or die "Can't locate '$name' callable";
-
-            #or die "Can't find callable '$name'";
+                    or die "Can't locate '$name' callable";
             my $args = [
                 map {
                     $_->isa('TestML::Point')
@@ -189,20 +187,20 @@ sub run_expression {
 
 sub lookup_callable {
     my ($self, $name) = @_;
-    my $callable;
     for my $library (@{$self->function->getvar('Library')->value}) {
         if ($library->can($name)) {
             my $function = sub { $library->$name(@_) };
-            $callable = TestML::Native->new(value => $function);
+            my $callable = TestML::Native->new(value => $function);
             $self->function->setvar($name, $callable);
+            return $callable;
         }
     }
-    return $callable;
+    return;
 }
 
 sub get_point {
-    my ($self, $point) = @_;
-    my $value = $self->function->getvar('Block')->{points}{$point};
+    my ($self, $name) = @_;
+    my $value = $self->function->getvar('Block')->{points}{$name};
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
@@ -275,20 +273,16 @@ sub compile_testml {
     my $testml = $self->testml
         or die "'testml' document required but not found";
     if ($testml !~ /\n/) {
-        my $base = $self->base;
-        $testml =~ s/(.*)\/(.*)/$2/ or die;
+        $testml =~ /(.*)\/(.*)/ or die;
         $testml = $2;
-        $self->{base} = "$base/$1";
+        $self->{base} = $self->base . '/' . $1;
         $self->{testml} = $self->read_testml_file($testml);
     }
 
     my $compiler = $self->compiler;
-    eval "require $compiler; 1" or die "Can't load '$compiler'";
-    my $function = $compiler->new(
-        runtime => $self,
-    )->compile($self->testml)
+    eval "require $compiler; 1" or die "Can't load '$compiler':\n$@";
+    $self->{function} = $compiler->new->compile($self->testml)
         or die "TestML document failed to compile";
-    $self->{function} = $function;
 }
 
 sub initialize_runtime {
@@ -545,7 +539,6 @@ use TestML::Base;
 extends 'TestML::Object';
 
 #-----------------------------------------------------------------------------
-# XXX Do we want/need this?
 package TestML::Native;
 use TestML::Base;
 extends 'TestML::Object';
