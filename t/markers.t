@@ -1,7 +1,8 @@
+use lib 't/lib';
 use TestML;
-use t::Bridge;
+use TestMLBridge;
 
 TestML->new(
     testml => 'testml/markers.tml',
-    bridge => 't::Bridge',
+    bridge => 'TestMLBridge',
 )->run;

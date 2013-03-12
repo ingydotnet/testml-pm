@@ -1,14 +1,14 @@
 source_testml_dir: ../../testml-tml
 local_testml_dir: ./testml
 test_file_template: |
-  use lib 't';
+  use lib 't/lib';
   use TestML;
   use TestML::Compiler::Lite;
   use TestMLBridge;
 
   TestML->new(
       testml => '../[% file %]',
-      bridge => 't::Bridge',
+      bridge => 'TestMLBridge',
       compiler => 'TestML::Compiler::Lite',
   )->run;
 test_file_dir: lite

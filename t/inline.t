@@ -1,8 +1,9 @@
+use lib 't/lib';
 use TestML;
-use t::Bridge;
+use TestMLBridge;
 
 TestML->new(
-    bridge => 't::Bridge',
+    bridge => 'TestMLBridge',
 )->run;
 
 __DATA__
