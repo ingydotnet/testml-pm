@@ -8,180 +8,154 @@ extends 'TestML::Compiler';
 
 use TestML::Runtime;
 
+has input => ();
+has points => ();
+has tokens => ();
 has function => ();
 
-# TODO Use more constants for regexes
-use constant POINT => qr/^\*(\w+)/;
+my $WS = qr!\s+!;
+my $ANY = qr!.!;
+my $STAR = qr!\*!;
+my $NUM = qr!-?[0-9]+!;
+my $WORD = qr!\w+!;
+my $HASH = qr!#!;
+my $EQ = qr!=!;
+my $TILDE = qr!~!;
+my $LP = qr!\(!;
+my $RP = qr!\)!;
+my $DOT = qr!\.!;
+my $COMMA = qr!,!;
+my $SEMI = qr!;!;
+my $SSTR = qr!'(?:[^']*)'!;
+my $DSTR = qr!"(?:[^"]*)"!;
+my $ENDING = qr!(?:$RP|$COMMA|$SEMI)!;
+
+my $POINT = qr!$STAR$WORD!;
+my $QSTR = qr!(?:$SSTR|$DSTR)!;
+my $COMP = qr!(?:$EQ$EQ|$TILDE$TILDE)!;
+my $OPER = qr!(?:$COMP|$EQ)!;
+my $PUNCT = qr!(?:$LP|$RP|$DOT|$COMMA|$SEMI)!;
+
+my $TOKENS = qr!(?:$POINT|$NUM|$WORD|$QSTR|$PUNCT|$OPER)!;
 
 sub compile_code {
     my ($self) = @_;
     $self->{function} = TestML::Function->new;
-    my $code = $self->code;
-    while (length $code) {
-        $code =~ s{^(.*)\r?\n?}{};
-        my $line = $1;
-        $self->parse_comment($line) ||
-        $self->parse_directive($line) ||
-        $self->parse_assignment($line) ||
-        $self->parse_assertion($line) ||
-            die "Failed to parse TestML document, here:\n$line$/$code";
+    while (length $self->{code}) {
+        $self->{code} =~ s{^(.*)(\r\n|\n|)}{};
+        $self->{line} = $1;
+        $self->tokenize;
+        next if $self->done;
+        $self->parse_assignment ||
+        $self->parse_assertion ||
+        $self->fail;
     }
 }
 
-sub parse_comment {
-    my ($self, $line) = @_;
-    $line =~ /^\s*(#|$)/ or return;
-    return 1;
-}
-
-sub parse_directive {
-    my ($self, $line) = @_;
-    $line =~ /^%TestML +(\d+\.\d+\.\d+)\s*$/ or return;
-    $self->function->setvar(
-        'TestML' => TestML::Str->new(value => $1),
-    );
-    return 1;
+sub tokenize {
+    my ($self) = @_;
+    my $line = $self->{line};
+    $self->{tokens} = [];
+    while (length $line) {
+        next if $line =~ s/^$WS//;
+        next if $line =~ s/^$HASH$ANY*//;
+        if ($line =~ s/^($TOKENS)//) {
+            push @{$self->{tokens}}, $1;
+        }
+        else {
+            $self->fail("Failed to get token here: '$line'");
+        }
+    }
 }
 
 sub parse_assignment {
-    my ($self, $line) = @_;
-    $line =~ /^\s*(\w+) *= *(.+?);?\s*$/ or return;
-    my ($key, $value) = ($1, $2);
-    $value =~ s/^(['"])(.*)\1$/$2/;
-    $value = $value =~ /^\d+$/
-      ? TestML::Num->new(value => $value)
-      : TestML::Str->new(value => $value);
-    push @{$self->function->statements}, TestML::Statement->new(
-        expression => TestML::Expression->new(
-            calls => [
-                TestML::Call->new(
-                    name => 'Set',
-                    args => [
-                        $key,
-                        TestML::Expression->new(
-                            calls => [ $value ],
-                        ),
-                    ],
-                ),
-            ],
-        )
-    );
+    my ($self) = @_;
+    return unless $self->peek(2) eq '=';
+    my ($var, $op) = $self->pop(2);
+    my $expr = $self->parse_expression;
+    $self->pop if not $self->done and $self->peek eq ';';
+    $self->fail unless $self->done;
+    push @{$self->function->statements},
+        TestML::Assignment->new(name => $var, expr => $expr);
     return 1;
 }
 
 sub parse_assertion {
-    my ($self, $line) = @_;
-    $line =~ /^.*(?:==|~~).*;?\s*$/ or return;
-    $line =~ s/;$//;
-    push @{$self->function->statements}, $self->compile_assertion($line);
+    my ($self) = @_;
+    return unless grep /^$COMP$/, @{$self->tokens};
+    $self->{points} = [];
+    my $left = $self->parse_expression;
+    my $token = $self->pop;
+    my $op =
+        $token eq '==' ? 'EQ' :
+        $token eq '~~' ? 'HAS' :
+        $self->fail;
+    my $right = $self->parse_expression;
+    $self->pop if not $self->done and $self->peek eq ';';
+    $self->fail unless $self->done;
+
+    push @{$self->function->statements}, TestML::Statement->new(
+        expr => $left,
+        assert => TestML::Assertion->new(
+            name => $op,
+            expr => $right,
+        ),
+        @{$self->points} ? (points => $self->points) : (),
+    );
     return 1;
 }
 
-sub compile_assertion {
-    my ($self, $expr, $points) = @_;
-    $points ||= [];
-    my ($left, $op, $right) = (TestML::Expression->new, undef, undef);
-    my $side = $left;
-    my $assertion = undef;
-    while (length $expr) {
-        my $token = $self->get_token($expr);
-        $token =~ POINT && do {
-            push @{$side->calls}, $self->make_call($token, $points);
-        } ||
-        $token =~ /^(==|~~)$/ && do {
-            my $name = $token eq '==' ? 'EQ' : 'HAS';
-            $left = $side;
-            $side = $right = TestML::Expression->new;
-            $assertion = TestML::Assertion->new(
-                name => $name,
-                expression => $right,
-            );
-        } ||
-        ref($token) eq 'ARRAY' && do {
-            my @args = @$token;
-            shift @args;
-            my $args = [
-                map {
-                  /\./
-                      ? $self->compile_assertion($_, $points)
-                      : $self->make_call($_, $points);
-                } @args
-            ];
-            my $call = TestML::Call->new(
-                name => $token->[0],
-                @$args ? (
-                    args => $args,
-                    explicit_call => 1,
-                ) : (),
-            );
-            push @{$side->calls}, $call;
-        } ||
-        $token->isa('TestML::Object') && do {
-            push @{$side->calls}, $token;
-        } ||
-        do {
-            XXX $expr, $token;
-        };
-    }
+sub parse_expression {
+    my ($self) = @_;
+    my $calls = [];
 
-    $right = $side if $right;
-    return $left unless $right;
-    return TestML::Statement->new(
-        expression => $left,
-        assertion => $assertion,
-        @$points ? (points => $points) : (),
-    );
+    while (not $self->done and $self->peek !~ /^($ENDING|$COMP)$/) {
+        my $token = $self->pop;
+        if ($token =~ $NUM) {
+            push @$calls, TestML::Num->new(value => $token);
+        }
+        elsif ($token =~/^$QSTR$/) {
+            my $str = substr($token, 1, length($token) - 2);
+            push @$calls, TestML::Str->new(value => $str);
+        }
+        elsif ($token =~ /^$WORD$/) {
+            my $call = TestML::Call->new(name => $token);
+            if (not $self->done and $self->peek eq '(') {
+                $call->{args} = $self->parse_args;
+            }
+            push @$calls, $call;
+            if (not $self->done and $self->peek eq '.') {
+                $self->pop;
+                next;
+            }
+        }
+        elsif ($token =~ /^$POINT/) {
+            $token =~ /($WORD)/ or die;
+            push @{$self->{points}}, $1;
+            push @$calls, TestML::Point->new(name => $1);
+            if (not $self->done and $self->peek eq '.') {
+                $self->pop;
+                next;
+            }
+        }
+        else {
+            $self->fail("Unknown token '$token'");
+        }
+    }
+    return $calls->[0] if @$calls == 1;
+    return TestML::Expression->new(calls => $calls);
 }
 
-sub make_call {
-    my ($self, $token, $points) = @_;
-    if ($token =~ POINT) {
-        my $name = $1;
-        push @$points, $name;
-        return TestML::Point->new(name => $name);
+sub parse_args {
+    my ($self) = @_;
+    $self->pop eq '(' or die;
+    my $args = [];
+    while ($self->peek ne ')') {
+        push @$args, $self->parse_expression;
+        $self->pop if $self->peek eq ',';
     }
-    if (not ref $token) {
-        return TestML::Str->new(value => $token);
-    }
-    else {
-        return $token;
-    }
-}
-
-sub get_token {
-    my ($self, $expr) = @_;
-    my ($token, $args);
-    if ($_[1] =~ s/^(\w+)\(([^\)]+)\)\.?//) {
-        ($token, $args) = ([$1], $2);
-        push @$token, map {
-            /^(\w+)$/ ? TestML::Expression->new(
-                calls => [
-                    TestML::Call->new(name => $_),
-                ]
-            ) :
-            /^(['"])(.*)\1$/ ? $2 :
-            $_;
-        } split /,\s*/, $args;
-    }
-    elsif ($_[1] =~ s/^\s*(==|~~)\s*//) {
-        $token = $1;
-    }
-    elsif ($_[1] =~ s/^(['"])(.*?)\1//) {
-        $token = TestML::Str->new(value => $2);
-    }
-    elsif ($_[1] =~ s/^(\d+)//) {
-        $token = TestML::Num->new(value => $1);
-    }
-    elsif ($_[1] =~ s/^(\*\w+)\.?//) {
-        $token = $1;
-    }
-    elsif ($_[1] =~ s/^(\w+)\.?//) {
-        $token = [$1];
-    }
-    else {
-        die "Can't get token from '$_[1]'";
-    }
-    return $token;
+    $self->pop;
+    return $args;
 }
 
 sub compile_data {
@@ -221,6 +195,33 @@ sub compile_data {
         push @$data, $block;
     }
     $self->function->{data} = $data if @$data;
+}
+
+sub done {
+    my ($self) = @_;
+    @{$self->{tokens}} ? 0 : 1
+}
+
+sub peek {
+    my ($self, $index) = @_;
+    $index ||= 1;
+    die if $index > @{$self->{tokens}};
+    $self->{tokens}->[$index - 1];
+}
+
+sub pop {
+    my ($self, $count) = @_;
+    $count ||= 1;
+    die if $count > @{$self->{tokens}};
+    splice @{$self->{tokens}}, 0, $count;
+}
+
+sub fail {
+    my ($self, $message) = @_;
+    my $text = "Failed to compile TestML document.\n";
+    $text .= "Reason: $message\n" if $message;
+    $text .= "\nCode section of failure:\n$self->{line}\n$self->{code}\n";
+    die $text;
 }
 
 1;

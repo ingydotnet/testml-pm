@@ -1,4 +1,41 @@
 --- !!perl/hash:TestML::Function
+namespace:
+  TestML: !!perl/hash:TestML::Str
+    value: '0.1.0'
+
+statements:
+- !!perl/hash:TestML::Assignment
+  name: Plan
+  expr: !!perl/hash:TestML::Num
+    value: '4'
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: My label
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Call
+    name: Get
+    args:
+    - !!perl/hash:TestML::Str
+      value: Label
+  assert: !!perl/hash:TestML::Assertion
+    name: EQ
+    expr: !!perl/hash:TestML::Str
+      value: My label
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: '$BlockLabel: $num) The $fruit'
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Call
+    name: GetLabel
+  assert: !!perl/hash:TestML::Assertion
+    name: EQ
+    expr: !!perl/hash:TestML::Point
+      name: text
+  points:
+  - text
+
 data:
 - !!perl/hash:TestML::Block
   label: A Fruity Test
@@ -18,68 +55,3 @@ data:
     fruit: tomato
     num: '99'
     text: 'Last Test: 99) The tomato'
-namespace:
-  TestML: !!perl/hash:TestML::Str
-    value: '0.1.0'
-statements:
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Plan
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '4'
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: My label
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: My label
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - !!perl/hash:TestML::Str
-        value: Label
-      explicit_call: 1
-      name: Get
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: '$BlockLabel: $num) The $fruit'
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Point
-        name: text
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      name: GetLabel
-  points:
-  - text

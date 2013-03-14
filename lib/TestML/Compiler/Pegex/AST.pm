@@ -20,18 +20,9 @@ sub got_code_section {
 
 sub got_assignment_statement {
     my ($self, $match) = @_;
-    return TestML::Statement->new(
-        expression => TestML::Expression->new(
-            calls => [
-                TestML::Call->new(
-                    name => 'Set',
-                    args => [
-                        $match->[0],
-                        $match->[1],
-                    ],
-                ),
-            ],
-        ),
+    return TestML::Assignment->new(
+        name => $match->[0],
+        expr => $match->[1],
     );
 }
 
@@ -42,16 +33,17 @@ sub got_code_statement {
     $self->points([]);
 
     for (@$list) {
-        if (ref eq 'TestML::Expression') {
-            $expression = $_;
-        }
         if (ref eq 'TestML::Assertion') {
             $assertion = $_;
         }
+        else {
+            #if (ref eq 'TestML::Expression') {
+            $expression = $_;
+        }
     }
     return TestML::Statement->new(
-        $expression ? ( expression => $expression ) : (),
-        $assertion ? ( assertion => $assertion ) : (),
+        $expression ? ( expr => $expression ) : (),
+        $assertion ? ( assert => $assertion ) : (),
         @$points ? ( points => $points ) : (),
     );
 }
@@ -65,6 +57,7 @@ sub got_code_expression {
         my $call = $_->[0]; #->{call_call}[0][0];
         push @$calls, $call;
     }
+    return $calls->[0] if @$calls == 1;
     return TestML::Expression->new(
         calls => $calls,
     );
@@ -108,7 +101,7 @@ sub got_assertion_call {
     XXX $call unless $assertion;
     return TestML::Assertion->new(
         name => $name,
-        expression => $assertion,
+        expr => $assertion,
     );
 }
 
@@ -152,7 +145,7 @@ sub got_call_object {
     my ($self, $object) = @_;
     my $call = $object->[0];
     if ($object->[1][-1] and $object->[1][-1] eq 'explicit') {
-        $call->explicit_call(1);
+#         $call->explicit_call(1);
         splice @{$object->[1]}, -1, 1;
     }
     my $args = [];

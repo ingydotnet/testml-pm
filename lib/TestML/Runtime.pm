@@ -411,11 +411,18 @@ sub forgetvar {
 }
 
 #-----------------------------------------------------------------------------
+package TestML::Assignment;
+use TestML::Base;
+
+has name => ();
+has expr => ();
+
+#-----------------------------------------------------------------------------
 package TestML::Statement;
 use TestML::Base;
 
-has expression => sub {TestML::Expression->new};
-has assertion => ();
+has expr => sub {TestML::Expression->new};
+has assert => ();
 has points => [];
 
 #-----------------------------------------------------------------------------

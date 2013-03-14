@@ -2,108 +2,61 @@
 namespace:
   TestML: !!perl/hash:TestML::Str
     value: '0.1.0'
+
 statements:
+- !!perl/hash:TestML::Assignment
+  name: Plan
+  expr: !!perl/hash:TestML::Num
+    value: '6'
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: EQ tests
 - !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Plan
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '6'
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: EQ tests
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: The cat in the hat
+  expr: !!perl/hash:TestML::Str
+    value: The cat in the hat
+  assert: !!perl/hash:TestML::Assertion
     name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
+    expr: !!perl/hash:TestML::Str
       value: The cat in the hat
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: The cat in the hat
+  expr: !!perl/hash:TestML::Str
+    value: The cat in the hat
+  assert: !!perl/hash:TestML::Assertion
     name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
+    expr: !!perl/hash:TestML::Str
       value: The cat in the hat
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: HAS tests
 - !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: HAS tests
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: cat
+  expr: !!perl/hash:TestML::Str
+    value: The cat in the hat
+  assert: !!perl/hash:TestML::Assertion
     name: HAS
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
-      value: The cat in the hat
+    expr: !!perl/hash:TestML::Str
+      value: cat
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: hat
+  expr: !!perl/hash:TestML::Str
+    value: The cat in the hat
+  assert: !!perl/hash:TestML::Assertion
     name: HAS
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
-      value: The cat in the hat
+    expr: !!perl/hash:TestML::Str
+      value: hat
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: OK tests
 - !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: OK tests
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  expr: !!perl/hash:TestML::Str
+    value: The cat in the hat
+  assert: !!perl/hash:TestML::Assertion
     name: OK
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
-      value: The cat in the hat
+    expr: !!perl/hash:TestML::Expression {}
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  expr: !!perl/hash:TestML::Str
+    value: The cat in the hat
+  assert: !!perl/hash:TestML::Assertion
     name: OK
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
-      value: The cat in the hat
+    expr: !!perl/hash:TestML::Expression {}

@@ -1,4 +1,49 @@
 --- !!perl/hash:TestML::Function
+namespace:
+  TestML: !!perl/hash:TestML::Str
+    value: 0.1.0
+statements:
+- !!perl/hash:TestML::Assignment
+  name: Plan
+  expr: !!perl/hash:TestML::Num
+    value: '2'
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Expression
+    calls:
+    - !!perl/hash:TestML::Call
+      name: Throw
+      args:
+      - !!perl/hash:TestML::Point
+        name: error
+    - !!perl/hash:TestML::Call
+      name: NonExistingMethod
+    - !!perl/hash:TestML::Call
+      name: Catch
+  assert: !!perl/hash:TestML::Assertion
+    name: HAS
+    expr: !!perl/hash:TestML::Point
+      name: match
+  points:
+  - error
+  - match
+- !!perl/hash:TestML::Assignment
+  name: message
+  expr: !!perl/hash:TestML::Str
+    value: blowed up
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Expression
+    calls:
+    - !!perl/hash:TestML::Call
+      name: Throw
+      args:
+      - !!perl/hash:TestML::Call
+        name: message
+    - !!perl/hash:TestML::Call
+      name: Catch
+  assert: !!perl/hash:TestML::Assertion
+    name: EQ
+    expr: !!perl/hash:TestML::Call
+      name: message
 data:
 - !!perl/hash:TestML::Block
   label: Error message from data
@@ -10,70 +55,3 @@ data:
 
 '
     match: Something
-namespace:
-  TestML: !!perl/hash:TestML::Str
-    value: 0.1.0
-statements:
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Plan
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '2'
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Point
-        name: match
-    name: HAS
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - !!perl/hash:TestML::Point
-        name: error
-      explicit_call: 1
-      name: Throw
-    - !!perl/hash:TestML::Call
-      name: NonExistingMethod
-    - !!perl/hash:TestML::Call
-      name: Catch
-  points:
-  - error
-  - match
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - message
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: blowed up
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Call
-        name: message
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Call
-          name: message
-      explicit_call: 1
-      name: Throw
-    - !!perl/hash:TestML::Call
-      name: Catch

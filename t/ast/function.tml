@@ -1,4 +1,242 @@
 --- !!perl/hash:TestML::Function
+namespace:
+  TestML: !!perl/hash:TestML::Str
+    value: '0.1.0'
+
+statements:
+- !!perl/hash:TestML::Assignment
+  name: Plan
+  expr: !!perl/hash:TestML::Num
+    value: '21'
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: Fruity Tests
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Function
+    statements:
+    - !!perl/hash:TestML::Assignment
+      name: Label
+      expr: !!perl/hash:TestML::Str
+        value: Anonymous function never called
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Call
+        name: True
+      assert: !!perl/hash:TestML::Assertion
+        name: EQ
+        expr: !!perl/hash:TestML::Call
+          name: False
+- !!perl/hash:TestML::Assignment
+  name: test1
+  expr: !!perl/hash:TestML::Function
+    signature:
+    - f
+    - c
+    - t
+    statements:
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Expression
+        calls:
+        - !!perl/hash:TestML::Call
+          name: List
+          args:
+          - !!perl/hash:TestML::Call
+            name: f
+          - !!perl/hash:TestML::Str
+            value: ->
+          - !!perl/hash:TestML::Call
+            name: c
+        - !!perl/hash:TestML::Call
+          name: Join
+      assert: !!perl/hash:TestML::Assertion
+        name: EQ
+        expr: !!perl/hash:TestML::Call
+          name: t
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Expression
+        calls:
+        - !!perl/hash:TestML::Call
+          name: t
+        - !!perl/hash:TestML::Call
+          name: Strip
+          args:
+          - !!perl/hash:TestML::Call
+            name: f
+        - !!perl/hash:TestML::Call
+          name: Strip
+          args:
+          - !!perl/hash:TestML::Str
+            value: ->
+      assert: !!perl/hash:TestML::Assertion
+        name: EQ
+        expr: !!perl/hash:TestML::Call
+          name: c
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Expression
+        calls:
+        - !!perl/hash:TestML::Call
+          name: t
+        - !!perl/hash:TestML::Call
+          name: Strip
+          args:
+          - !!perl/hash:TestML::Str
+            value: ->
+      assert: !!perl/hash:TestML::Assertion
+        name: EQ
+        expr: !!perl/hash:TestML::Expression
+          calls:
+          - !!perl/hash:TestML::Call
+            args:
+            - !!perl/hash:TestML::Call
+              name: f
+            - !!perl/hash:TestML::Call
+              name: c
+            name: List
+          - !!perl/hash:TestML::Call
+            name: Join
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Expression
+    calls:
+    - !!perl/hash:TestML::Call
+      name: test1
+    - !!perl/hash:TestML::Call
+      name: Type
+  assert: !!perl/hash:TestML::Assertion
+    name: EQ
+    expr: !!perl/hash:TestML::Str
+      value: Func
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: $BlockLabel
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Call
+    name: test1
+    args:
+    - !!perl/hash:TestML::Point
+      name: fruit
+    - !!perl/hash:TestML::Point
+      name: color
+    - !!perl/hash:TestML::Point
+      name: thing
+  points:
+  - fruit
+  - color
+  - thing
+- !!perl/hash:TestML::Assignment
+  name: test2
+  expr: !!perl/hash:TestML::Function
+    statements:
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Call
+        name: thing
+      assert: !!perl/hash:TestML::Assertion
+          name: HAS
+          expr: !!perl/hash:TestML::Call
+            name: color
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Call
+    name: test2
+    args:
+    - !!perl/hash:TestML::Point
+      name: color
+    - !!perl/hash:TestML::Point
+      name: thing
+  points:
+  - color
+  - thing
+- !!perl/hash:TestML::Assignment
+  name: test3
+  expr: !!perl/hash:TestML::Function
+    signature:
+    - a
+    - b
+    - c
+    statements:
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Call
+          name: f1
+          args:
+          - !!perl/hash:TestML::Call
+            name: a
+      assert: !!perl/hash:TestML::Assertion
+        name: EQ
+        expr: !!perl/hash:TestML::Call
+          name: b
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Call
+        name: f2
+        args:
+        - !!perl/hash:TestML::Call
+          name: a
+      assert: !!perl/hash:TestML::Assertion
+        name: EQ
+        expr: !!perl/hash:TestML::Call
+          name: c
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Call
+    name: test3
+    args:
+    - !!perl/hash:TestML::Point
+      name: input
+    - !!perl/hash:TestML::Point
+      name: output1
+    - !!perl/hash:TestML::Point
+      name: output2
+  points:
+  - input
+  - output1
+  - output2
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: Passing functions as objects
+- !!perl/hash:TestML::Assignment
+  name: test4
+  expr: !!perl/hash:TestML::Function
+    signature:
+    - func
+    - num
+    statements:
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Expression
+        calls:
+        - !!perl/hash:TestML::Call
+          name: func
+        - !!perl/hash:TestML::Call
+          name: Type
+      assert: !!perl/hash:TestML::Assertion
+        name: EQ
+        expr: !!perl/hash:TestML::Str
+          value: Func
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Call
+        name: func
+        args:
+        - !!perl/hash:TestML::Call
+          name: num
+- !!perl/hash:TestML::Assignment
+  name: test5
+  expr: !!perl/hash:TestML::Function
+    signature:
+    - num
+    statements:
+    - !!perl/hash:TestML::Statement
+      expr: !!perl/hash:TestML::Call
+        name: num
+      assert: !!perl/hash:TestML::Assertion
+        name: EQ
+        expr: !!perl/hash:TestML::Num
+          value: '42'
+- !!perl/hash:TestML::Statement
+  expr: !!perl/hash:TestML::Call
+      name: test4
+      args:
+      - !!perl/hash:TestML::Call
+          name: test5
+      - !!perl/hash:TestML::Num
+        value: '42'
+
 data:
 - !!perl/hash:TestML::Block
   label: Red Apple
@@ -36,379 +274,3 @@ data:
     input: '5'
     output1: '215'
     output2: '30'
-namespace:
-  TestML: !!perl/hash:TestML::Str
-    value: '0.1.0'
-statements:
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Plan
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '21'
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: Fruity Tests
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Function
-      statements:
-      - !!perl/hash:TestML::Statement
-        expression: !!perl/hash:TestML::Expression
-          calls:
-          - !!perl/hash:TestML::Call
-            args:
-            - Label
-            - !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Str
-                value: Anonymous function never called
-            name: Set
-      - !!perl/hash:TestML::Statement
-        assertion: !!perl/hash:TestML::Assertion
-          expression: !!perl/hash:TestML::Expression
-            calls:
-            - !!perl/hash:TestML::Call
-              name: False
-          name: EQ
-        expression: !!perl/hash:TestML::Expression
-          calls:
-          - !!perl/hash:TestML::Call
-            name: True
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - test1
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Function
-          signature:
-          - f
-          - c
-          - t
-          statements:
-          - !!perl/hash:TestML::Statement
-            assertion: !!perl/hash:TestML::Assertion
-              expression: !!perl/hash:TestML::Expression
-                calls:
-                - !!perl/hash:TestML::Call
-                  name: t
-              name: EQ
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                args:
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Call
-                    name: f
-                - !!perl/hash:TestML::Str
-                  value: ->
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Call
-                    name: c
-                explicit_call: 1
-                name: List
-              - !!perl/hash:TestML::Call
-                name: Join
-          - !!perl/hash:TestML::Statement
-            assertion: !!perl/hash:TestML::Assertion
-              expression: !!perl/hash:TestML::Expression
-                calls:
-                - !!perl/hash:TestML::Call
-                  name: c
-              name: EQ
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                name: t
-              - !!perl/hash:TestML::Call
-                args:
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Call
-                    name: f
-                explicit_call: 1
-                name: Strip
-              - !!perl/hash:TestML::Call
-                args:
-                - !!perl/hash:TestML::Str
-                  value: ->
-                explicit_call: 1
-                name: Strip
-          - !!perl/hash:TestML::Statement
-            assertion: !!perl/hash:TestML::Assertion
-              expression: !!perl/hash:TestML::Expression
-                calls:
-                - !!perl/hash:TestML::Call
-                  args:
-                  - !!perl/hash:TestML::Expression
-                    calls:
-                    - !!perl/hash:TestML::Call
-                      name: f
-                  - !!perl/hash:TestML::Expression
-                    calls:
-                    - !!perl/hash:TestML::Call
-                      name: c
-                  explicit_call: 1
-                  name: List
-                - !!perl/hash:TestML::Call
-                  name: Join
-              name: EQ
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                name: t
-              - !!perl/hash:TestML::Call
-                args:
-                - !!perl/hash:TestML::Str
-                  value: ->
-                explicit_call: 1
-                name: Strip
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: Func
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      name: test1
-    - !!perl/hash:TestML::Call
-      name: Type
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: $BlockLabel
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - !!perl/hash:TestML::Point
-        name: fruit
-      - !!perl/hash:TestML::Point
-        name: color
-      - !!perl/hash:TestML::Point
-        name: thing
-      explicit_call: 1
-      name: test1
-  points:
-  - fruit
-  - color
-  - thing
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - test2
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Function
-          statements:
-          - !!perl/hash:TestML::Statement
-            assertion: !!perl/hash:TestML::Assertion
-              expression: !!perl/hash:TestML::Expression
-                calls:
-                - !!perl/hash:TestML::Call
-                  name: color
-              name: HAS
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                name: thing
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - !!perl/hash:TestML::Point
-        name: color
-      - !!perl/hash:TestML::Point
-        name: thing
-      explicit_call: 1
-      name: test2
-  points:
-  - color
-  - thing
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - test3
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Function
-          signature:
-          - a
-          - b
-          - c
-          statements:
-          - !!perl/hash:TestML::Statement
-            assertion: !!perl/hash:TestML::Assertion
-              expression: !!perl/hash:TestML::Expression
-                calls:
-                - !!perl/hash:TestML::Call
-                  name: b
-              name: EQ
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                args:
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Call
-                    name: a
-                explicit_call: 1
-                name: f1
-          - !!perl/hash:TestML::Statement
-            assertion: !!perl/hash:TestML::Assertion
-              expression: !!perl/hash:TestML::Expression
-                calls:
-                - !!perl/hash:TestML::Call
-                  name: c
-              name: EQ
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                args:
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Call
-                    name: a
-                explicit_call: 1
-                name: f2
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - !!perl/hash:TestML::Point
-        name: input
-      - !!perl/hash:TestML::Point
-        name: output1
-      - !!perl/hash:TestML::Point
-        name: output2
-      explicit_call: 1
-      name: test3
-  points:
-  - input
-  - output1
-  - output2
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: Passing functions as objects
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - test4
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Function
-          signature:
-          - func
-          - num
-          statements:
-          - !!perl/hash:TestML::Statement
-            assertion: !!perl/hash:TestML::Assertion
-              expression: !!perl/hash:TestML::Expression
-                calls:
-                - !!perl/hash:TestML::Str
-                  value: Func
-              name: EQ
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                name: func
-              - !!perl/hash:TestML::Call
-                name: Type
-          - !!perl/hash:TestML::Statement
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                args:
-                - !!perl/hash:TestML::Expression
-                  calls:
-                  - !!perl/hash:TestML::Call
-                    name: num
-                explicit_call: 1
-                name: func
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - test5
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Function
-          signature:
-          - num
-          statements:
-          - !!perl/hash:TestML::Statement
-            assertion: !!perl/hash:TestML::Assertion
-              expression: !!perl/hash:TestML::Expression
-                calls:
-                - !!perl/hash:TestML::Num
-                  value: '42'
-              name: EQ
-            expression: !!perl/hash:TestML::Expression
-              calls:
-              - !!perl/hash:TestML::Call
-                name: num
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Call
-          name: test5
-      - !!perl/hash:TestML::Num
-        value: '42'
-      explicit_call: 1
-      name: test4

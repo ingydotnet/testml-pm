@@ -2,61 +2,35 @@
 namespace:
   TestML: !!perl/hash:TestML::Str
     value: '0.1.0'
+
 statements:
+- !!perl/hash:TestML::Assignment
+  name: Title
+  expr: !!perl/hash:TestML::Str
+    value: TestML with no data section
+- !!perl/hash:TestML::Assignment
+  name: Plan
+  expr: !!perl/hash:TestML::Num
+    value: '2'
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: Test $TestNumber
 - !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Title
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: TestML with no data section
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Plan
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '2'
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: Test $TestNumber
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: foo
+  expr: !!perl/hash:TestML::Str
+    value: foo
+  assert: !!perl/hash:TestML::Assertion
     name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
+    expr: !!perl/hash:TestML::Str
       value: foo
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: bar
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
+  expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Str
       value: bar
     - !!perl/hash:TestML::Call
       name: Str
+  assert: !!perl/hash:TestML::Assertion
+    name: EQ
+    expr: !!perl/hash:TestML::Str
+      value: bar

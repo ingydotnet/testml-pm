@@ -2,52 +2,37 @@
 namespace:
   TestML: !!perl/hash:TestML::Str
     value: '0.1.0'
+
 statements:
+- !!perl/hash:TestML::Assignment
+  name: Plan
+  expr: !!perl/hash:TestML::Num
+    value: '9'
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: Boolean OK
 - !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Plan
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '9'
-      name: Set
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: Boolean OK
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      name: True
+  expr: !!perl/hash:TestML::Call
+    name: True
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
+  expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Call
       name: False
     - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
+  expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Call
       name: True
@@ -55,77 +40,55 @@ statements:
       name: Not
     - !!perl/hash:TestML::Call
       name: Not
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: String OK
 - !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: String OK
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
-      value: Text
+  expr: !!perl/hash:TestML::Str
+    value: Text
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
+  expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Str
       value: ''
     - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
-      value: '0'
+  expr: !!perl/hash:TestML::Str
+    value: '0'
+- !!perl/hash:TestML::Assignment
+  name: Label
+  expr: !!perl/hash:TestML::Str
+    value: Number OK
 - !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Label
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Str
-          value: Number OK
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
+  expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Num
       value: '0'
     - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Num
-      value: '1'
+  expr: !!perl/hash:TestML::Num
+    value: '1'
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression {}
+  assert: !!perl/hash:TestML::Assertion
+    expr: !!perl/hash:TestML::Expression {}
     name: OK
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Num
-      value: '42'
+  expr: !!perl/hash:TestML::Num
+    value: '42'

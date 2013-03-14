@@ -1,4 +1,24 @@
 --- !!perl/hash:TestML::Function
+namespace:
+  TestML: !!perl/hash:TestML::Str
+    value: '0.1.0'
+
+statements:
+- !!perl/hash:TestML::Assignment
+  name: Plan
+  expr: !!perl/hash:TestML::Num
+    value: '2'
+- !!perl/hash:TestML::Statement
+  assert: !!perl/hash:TestML::Assertion
+    name: EQ
+    expr: !!perl/hash:TestML::Point
+      name: bar
+  expr: !!perl/hash:TestML::Point
+    name: foo
+  points:
+  - foo
+  - bar
+
 data:
 - !!perl/hash:TestML::Block
   label: Test One
@@ -14,32 +34,3 @@ data:
     foo: 'O HAI
 
 '
-namespace:
-  TestML: !!perl/hash:TestML::Str
-    value: '0.1.0'
-statements:
-- !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Plan
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '2'
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Point
-        name: bar
-    name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Point
-      name: foo
-  points:
-  - foo
-  - bar

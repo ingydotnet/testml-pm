@@ -3,47 +3,28 @@ namespace:
   TestML: !!perl/hash:TestML::Str
     value: 0.1.0
 statements:
+- !!perl/hash:TestML::Assignment
+  name: Plan
+  expr: !!perl/hash:TestML::Num
+    value: '3'
 - !!perl/hash:TestML::Statement
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Call
-      args:
-      - Plan
-      - !!perl/hash:TestML::Expression
-        calls:
-        - !!perl/hash:TestML::Num
-          value: '3'
-      name: Set
-- !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: one
+  expr: !!perl/hash:TestML::Str
+      value: one
+  assert: !!perl/hash:TestML::Assertion
     name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
+    expr: !!perl/hash:TestML::Str
       value: one
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: two
+  expr: !!perl/hash:TestML::Str
+    value: two
+  assert: !!perl/hash:TestML::Assertion
     name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
+    expr: !!perl/hash:TestML::Str
       value: two
 - !!perl/hash:TestML::Statement
-  assertion: !!perl/hash:TestML::Assertion
-    expression: !!perl/hash:TestML::Expression
-      calls:
-      - !!perl/hash:TestML::Str
-        value: three
+  expr: !!perl/hash:TestML::Str
+    value: three
+  assert: !!perl/hash:TestML::Assertion
     name: EQ
-  expression: !!perl/hash:TestML::Expression
-    calls:
-    - !!perl/hash:TestML::Str
+    expr: !!perl/hash:TestML::Str
       value: three
