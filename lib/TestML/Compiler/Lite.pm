@@ -108,6 +108,7 @@ sub parse_assertion {
 sub parse_expression {
     my ($self) = @_;
     my $calls = [];
+    my $dot = 0;
 
     while (not $self->done and $self->peek !~ /^($ENDING|$COMP)$/) {
         my $token = $self->pop;
@@ -123,27 +124,27 @@ sub parse_expression {
             if (not $self->done and $self->peek eq '(') {
                 $call->{args} = $self->parse_args;
             }
-            push @$calls, $call;
-            if (not $self->done and $self->peek eq '.') {
-                $self->pop;
-                next;
+            elsif ($dot) {
+                $call->{args} = [];
             }
+            push @$calls, $call;
         }
         elsif ($token =~ /^$POINT/) {
             $token =~ /($WORD)/ or die;
             push @{$self->{points}}, $1;
             push @$calls, TestML::Point->new(name => $1);
-            if (not $self->done and $self->peek eq '.') {
-                $self->pop;
-                next;
-            }
         }
         else {
             $self->fail("Unknown token '$token'");
         }
+        if (not $self->done and $self->peek eq '.') {
+            $self->pop;
+            $dot = 1;
+        }
     }
-    return $calls->[0] if @$calls == 1;
-    return TestML::Expression->new(calls => $calls);
+    return @$calls == 1
+        ? $calls->[0]
+        : TestML::Expression->new(calls => $calls);
 }
 
 sub parse_args {

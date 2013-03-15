@@ -1,7 +1,3 @@
-# TODO
-# - Error handling refactoring
-# - General concept renaming
-
 package TestML::Runtime;
 use TestML::Base;
 
@@ -13,6 +9,8 @@ has base => ();
 has skip => ();                         # This test should be skipped.
 
 has function => ();                     # Currently running function.
+has error => ();                        # Current exception
+has global => ();                       # Global namespace
 
 sub BUILD {
     my ($self) = @_;
@@ -34,29 +32,28 @@ sub run {
     );
 }
 
-# XXX - TestML exception handling needs to happen at the function level, not
-# just at the expression level. Not yet handled here.
 sub run_function {
-    my ($self, $function, $context, $args) = @_;
+    my ($self, $function, $args) = @_;
 
-    $args = [$context, @$args] if $context;
     $self->apply_signature($function, $args);
 
     my $parent = $self->function;
     $self->function($function);
 
     for my $statement (@{$function->statements}) {
-        $self->run_statement($statement);
+        if (ref($statement) eq 'TestML::Assignment') {
+            $self->run_assignment($statement);
+        }
+        else {
+            $self->run_statement($statement);
+        }
     }
-
     $self->function($parent);
-
     return TestML::None->new;
 }
 
 sub apply_signature {
     my ($self, $function, $args) = @_;
-
     my $signature = $function->signature;
 
     die sprintf(
@@ -79,110 +76,96 @@ sub run_statement {
     my $blocks = $self->select_blocks($statement->points);
     for my $block (@$blocks) {
         $self->function->setvar('Block', $block) if ref($block);
-        my $result = $self->run_expression($statement->expression);
-        if (my $assertion = $statement->assertion) {
-            $self->run_assertion($result, $assertion);
+        my $result = $self->run_expression($statement->expr);
+        if (my $assert = $statement->assert) {
+            $self->run_assertion($result, $assert);
         }
     }
+}
+
+sub run_assignment {
+    my ($self, $statement) = @_;
+    $self->function->setvar(
+        $statement->name,
+        $self->run_expression($statement->expr),
+    );
 }
 
 sub run_assertion {
-    my ($self, $left, $assertion) = @_;
-    my $method = 'assert_' . $assertion->name;
+    my ($self, $left, $assert) = @_;
+    my $method = 'assert_' . $assert->name;
 
     $self->function->getvar('TestNumber')->{value}++;
 
-    # TODO Review this List stuff
-    my $results = ($left->type eq 'List')
-        ? $left->value
-        : [ $left ];
-    for my $result (@$results) {
-        if (@{$assertion->expression->calls}) {
-            my $right = $self->run_expression($assertion->expression);
-            my $matches = ($right->type eq 'List')
-                ? $right->value
-                : [ $right ];
-            for my $match (@$matches) {
-                $self->$method($result, $match);
-            }
-        }
-        else {
-            $self->$method($result);
-        }
+    if ($assert->expr) {
+        $self->$method($left, $self->run_expression($assert->expr));
+    }
+    else {
+        $self->$method($left);
     }
 }
 
-# TODO Simplify this
 sub run_expression {
-    my ($self, $expression) = @_;
+    my ($self, $expr) = @_;
 
-    my $prev_expression = $self->function->expression;
-    $self->function->expression($expression);
-
-    my $calls = $expression->calls;
     my $context = undef;
-
-    for (my $i = 0; $i < @$calls; $i++) {
-        my $call = $calls->[$i];
-        if ($expression->error) {
-            next unless
-                $call->isa('TestML::Call') and
-                $call->name eq 'Catch';
-        }
-        if ($call->isa('TestML::Point')) {
-            $context = $self->get_point($call->name);
-            next;
-        }
-        if ($call->isa('TestML::Object')) {
-            $context = $call;
-            next;
-        }
-        if ($call->isa('TestML::Function')) {
-            $context = $call;
-            next;
-        }
-        if ($call->isa('TestML::Call')) {
-            my $name = $call->name;
-            my $callable =
-                $self->function->getvar($name) ||
-                $self->lookup_callable($name)
-                    or die "Can't locate '$name' callable";
-            my $args = [
-                map {
-                    $_->isa('TestML::Point')
-                        ? $self->get_point($_->name) :
-                    $_;
-                } @{$call->args}
-            ];
-            if ($callable->isa('TestML::Native')) {
-                $context = $self->run_native($callable, $context, $args);
+    $self->{error} = undef;
+    if ($expr->isa('TestML::Expression')) {
+        my @calls = @{$expr->calls};
+        die if @calls <= 1;
+        $context = $self->run_call(shift(@calls), undef);
+        for my $call (@calls) {
+            if ($self->error) {
+                next unless
+                    $call->isa('TestML::Call') and
+                    $call->name eq 'Catch';
             }
-            elsif ($callable->isa('TestML::Object')) {
-                $context = $callable;
-            }
-            elsif ($callable->isa('TestML::Function')) {
-                if ($i or $call->explicit_call) {
-                    my $points = $self->function->getvar('Block')->points;
-                    for my $key (keys %$points) {
-                        $callable->setvar($key, TestML::Str->new(value => $points->{$key}));
-                    }
-                    $context = $self->run_function($callable, $context, $args);
-                }
-                $context = $callable;
-            }
-            else {
-                ZZZ $expression, $call, $callable;
-            }
-        }
-        else {
-            die "Unexpected call: $call";
+            $context = $self->run_call($call, $context);
         }
     }
-    if ($expression->error) {
-        die $expression->error;
+    else {
+        $context = $self->run_call($expr);
     }
-    $self->function->expression($prev_expression);
+    if ($self->error) {
+        die $self->error;
+    }
     return $context;
+}
+
+sub run_call {
+    my ($self, $call, $context) = @_;
+
+    if ($call->isa('TestML::Object')) {
+        return $call;
+    }
+    if ($call->isa('TestML::Function')) {
+        return $call;
+    }
+    if ($call->isa('TestML::Point')) {
+        return $self->get_point($call->name);
+    }
+    if ($call->isa('TestML::Call')) {
+        my $name = $call->name;
+        my $callable =
+            $self->function->getvar($name) ||
+            $self->get_point($name) ||
+            $self->lookup_callable($name)
+                or die "Can't locate '$name' callable";
+        if ($callable->isa('TestML::Object')) {
+            return $callable;
+        }
+        return $callable unless defined $call->args;
+        my $args = [map $self->run_expression($_), @{$call->args}];
+        unshift @$args, $context if $context;
+        if ($callable->isa('TestML::Native')) {
+            return $self->run_native($callable, $args);
+        }
+        if ($callable->isa('TestML::Function')) {
+            return $self->run_function($callable, $args);
+        }
+        XXX $call, $callable;
+    }
+    XXX $call;
 }
 
 sub lookup_callable {
@@ -200,7 +183,8 @@ sub lookup_callable {
 
 sub get_point {
     my ($self, $name) = @_;
-    my $value = $self->function->getvar('Block')->{points}{$name};
+    my $value = $self->function->getvar('Block')->{points}{$name}
+        or return;
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
@@ -208,30 +192,20 @@ sub get_point {
 }
 
 sub run_native {
-    my ($self, $native, $context, $args) = @_;
-    my $function = $native->value;
-    $args = [
-        map {
-            (ref($_) eq 'TestML::Expression')
-            ? $self->run_expression($_)
-            : $_
-        } @$args
-    ];
-    unshift @$args, $context if $context;
+    my ($self, $native, $args) = @_;
     my $value = eval {
-        &$function(@$args)
+        $native->value->(@$args)
     };
     if ($@) {
-        $self->function->expression->error($@);
-        $context = TestML::Error->new(value => $@);
+        $self->{error} = $@;
+        return;
     }
-    elsif (UNIVERSAL::isa($value, 'TestML::Object')) {
-        $context = $value;
+    elsif ($value->isa('TestML::Object')) {
+        return $value;
     }
     else {
-        $context = $self->object_from_native($value);
+        return $self->object_from_native($value);
     }
-    return $context;
 }
 
 sub select_blocks {
@@ -287,7 +261,7 @@ sub compile_testml {
 
 sub initialize_runtime {
     my ($self) = @_;
-    my $global = $self->function->outer;
+    my $global = $self->{global} = $self->function->outer;
 
     # Set global variables.
     $global->setvar(Block => TestML::Block->new);
@@ -316,16 +290,6 @@ sub add_library {
     $self->function->getvar('Library')->push($library);
 }
 
-#     push @$libraries, $bridge->new;
-#     my $libs = $self->library;
-#     $libs = [$libs] unless ref $libs;
-#     for my $lib (@$libs) {
-#         eval "require $lib; 1"
-#             or die "Can't use $lib\n$@";
-#         push @$libraries, $lib->new;
-#     }
-# }
-
 sub get_label {
     my ($self) = @_;
     my $label = $self->function->getvar('Label')->value;
@@ -346,21 +310,6 @@ sub get_label {
     return $label ? ($label) : ();
 }
 
-sub get_error {
-    my ($self) = @_;
-    return $self->function->expression->error;
-}
-
-sub clear_error {
-    my ($self) = @_;
-    return $self->function->expression->error(undef);
-}
-
-sub throw {
-    require Carp;
-    Carp::croak $_[1];
-}
-
 sub read_testml_file {
     my ($self, $file) = @_;
     my $path = join '/', $self->base, $file;
@@ -373,17 +322,12 @@ sub read_testml_file {
 #-----------------------------------------------------------------------------
 package TestML::Function;
 use TestML::Base;
-# XXX should extend TestML::Object (maybe).
 
 has type => 'Func';     # Functions are TestML typed objects
 has signature => [];    # Input variable names
 has namespace => {};    # Lexical scoped variable stash
 has statements => [];   # Exexcutable code statements
 has data => [];         # Data section scoped to this function
-
-# Runtime pointers to current objects.
-has expression => ();
-has block => ();
 
 my $outer = {};
 sub outer { @_ == 1 ? $outer->{$_[0]} : ($outer->{$_[0]} = $_[1]) }
@@ -430,21 +374,20 @@ package TestML::Expression;
 use TestML::Base;
 
 has calls => [];
-has error => ();
 
 #-----------------------------------------------------------------------------
 package TestML::Assertion;
 use TestML::Base;
 
 has name => ();
-has expression => sub {TestML::Expression->new};
+has expr => ();
 
 #-----------------------------------------------------------------------------
 package TestML::Call;
 use TestML::Base;
 
 has name => ();
-has args => [];
+has args => ();
 has explicit_call => 0;
 
 #-----------------------------------------------------------------------------
@@ -471,9 +414,6 @@ sub type {
     $type =~ s/^TestML::// or die "Can't find type of '$type'";
     return $type;
 }
-
-# XXX Move this to TestML::Library and TestML::Bridge
-sub runtime { return $TestML::Runtime::self }
 
 sub str { my $t = $_[0]->type; die "Cast from $t to Str is not supported" }
 sub num { my $t = $_[0]->type; die "Cast from $t to Num is not supported" }
@@ -530,7 +470,6 @@ sub push {
 }
 
 #-----------------------------------------------------------------------------
-# XXX Change None to Null
 package TestML::None;
 use TestML::Base;
 extends 'TestML::Object';
@@ -548,7 +487,7 @@ extends 'TestML::Object';
 #-----------------------------------------------------------------------------
 package TestML::Native;
 use TestML::Base;
-extends 'TestML::Object';
+has value => ();
 
 #-----------------------------------------------------------------------------
 package TestML::Constant;
@@ -557,3 +496,4 @@ our $True = TestML::Bool->new(value => 1);
 our $False = TestML::Bool->new(value => 0);
 our $None = TestML::None->new;
 
+1;

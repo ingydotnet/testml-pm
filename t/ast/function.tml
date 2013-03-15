@@ -48,6 +48,7 @@ statements:
             name: c
         - !!perl/hash:TestML::Call
           name: Join
+          args: []
       assert: !!perl/hash:TestML::Assertion
         name: EQ
         expr: !!perl/hash:TestML::Call
@@ -94,6 +95,7 @@ statements:
             name: List
           - !!perl/hash:TestML::Call
             name: Join
+            args: []
 - !!perl/hash:TestML::Statement
   expr: !!perl/hash:TestML::Expression
     calls:
@@ -101,6 +103,7 @@ statements:
       name: test1
     - !!perl/hash:TestML::Call
       name: Type
+      args: []
   assert: !!perl/hash:TestML::Assertion
     name: EQ
     expr: !!perl/hash:TestML::Str
@@ -205,6 +208,7 @@ statements:
           name: func
         - !!perl/hash:TestML::Call
           name: Type
+          args: []
       assert: !!perl/hash:TestML::Assertion
         name: EQ
         expr: !!perl/hash:TestML::Str

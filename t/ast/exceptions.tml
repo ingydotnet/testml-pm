@@ -2,6 +2,7 @@
 namespace:
   TestML: !!perl/hash:TestML::Str
     value: 0.1.0
+
 statements:
 - !!perl/hash:TestML::Assignment
   name: Plan
@@ -17,8 +18,10 @@ statements:
         name: error
     - !!perl/hash:TestML::Call
       name: NonExistingMethod
+      args: []
     - !!perl/hash:TestML::Call
       name: Catch
+      args: []
   assert: !!perl/hash:TestML::Assertion
     name: HAS
     expr: !!perl/hash:TestML::Point
@@ -40,10 +43,12 @@ statements:
         name: message
     - !!perl/hash:TestML::Call
       name: Catch
+      args: []
   assert: !!perl/hash:TestML::Assertion
     name: EQ
     expr: !!perl/hash:TestML::Call
       name: message
+
 data:
 - !!perl/hash:TestML::Block
   label: Error message from data

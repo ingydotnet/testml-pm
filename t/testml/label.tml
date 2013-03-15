@@ -6,7 +6,7 @@ Label = 'My label'
 Get('Label') == 'My label'
 
 Label = '$BlockLabel: $num) The $fruit'
-GetLabel == *text
+GetLabel() == *text
 
 === A Fruity Test
 --- num: 14

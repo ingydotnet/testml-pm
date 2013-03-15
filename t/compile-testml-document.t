@@ -23,26 +23,26 @@ Title = "O HAI TEST";
 my $func = TestML::Compiler::Pegex->new->compile($testml);
 ok $func, 'TestML string matches against TestML grammar';
 is $func->namespace->{TestML}->value, '0.1.0', 'Version parses';
-is $func->statements->[0]->expression->calls->[0]->args->[1]->calls->[0]->value, '2', 'Plan parses';
-is $func->statements->[1]->expression->calls->[0]->args->[1]->calls->[0]->value, 'O HAI TEST', 'Title parses';
+is $func->statements->[0]->expr->value, '2', 'Plan parses';
+is $func->statements->[1]->expr->value, 'O HAI TEST', 'Title parses';
+is $func->statements->[1]->expr->value, 'O HAI TEST', 'Title parses';
 
 is scalar(@{$func->statements}), 3, 'Three test statements';
 my $statement = $func->statements->[2];
 is join('-', @{$statement->points}), 'input-output',
     'Point list is correct';
 
-is scalar(@{$statement->expression->calls}), 2, 'Expression has two calls';
-my $expression = $statement->expression;
-ok $expression->calls->[0]->isa('TestML::Point'), 'First sub is a Point';
-is $expression->calls->[0]->name, 'input', 'Point name is "input"';
-is $expression->calls->[1]->name, 'uppercase', 'Second sub is "uppercase"';
+is scalar(@{$statement->expr->calls}), 2, 'Expression has two calls';
+my $expr = $statement->expr;
+ok $expr->calls->[0]->isa('TestML::Point'), 'First sub is a Point';
+is $expr->calls->[0]->name, 'input', 'Point name is "input"';
+is $expr->calls->[1]->name, 'uppercase', 'Second sub is "uppercase"';
 
-is $statement->assertion->name, 'EQ', 'Assertion is "EQ"';
+is $statement->assert->name, 'EQ', 'Assertion is "EQ"';
 
-$expression = $statement->assertion->expression;
-is scalar(@{$expression->calls}), 1, 'Right side has one part';
-ok $expression->calls->[0]->isa('TestML::Point'), 'First sub is a Point';
-is $expression->calls->[0]->name, 'output', 'Point name is "output"';
+$expr = $statement->assert->expr;
+ok $expr->isa('TestML::Point'), 'First sub is a Point';
+is $expr->name, 'output', 'Point name is "output"';
 
 is scalar(@{$func->data}), 2, 'Two data blocks';
 my ($block1, $block2) = @{$func->data};

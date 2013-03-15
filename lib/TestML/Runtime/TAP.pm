@@ -4,14 +4,14 @@ extends 'TestML::Runtime';
 
 use Test::Builder;
 
-# TODO Redo this using Unix diff. Use global $TestML::Diff.
-if ($TestML::Test::Differences) {
+# XXX Make work with Test::Diff
+if ($TestML::Diff) {
     no warnings 'redefine';
-    require Test::Differences;
-    *Test::Builder::is_eq = sub {
-        my ($self) = @_;
-        \&Test::Differences::eq_or_diff(@_);
-    };
+    require Test::Diff;
+#     *Test::Builder::is_eq = sub {
+#         my ($self) = @_;
+#         \&Test::Differences::eq_or_diff(@_);
+#     };
 }
 
 has native_test => sub { Test::Builder->new };
@@ -37,9 +37,7 @@ sub run {
 
 sub run_assertion {
     my ($self, @args) = @_;
-
     $self->check_plan;
-
     $self->SUPER::run_assertion(@args);
 }
 

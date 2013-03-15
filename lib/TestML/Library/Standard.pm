@@ -4,15 +4,11 @@ extends 'TestML::Library';
 
 use TestML::Util;
 
-sub Point {
-    my ($self, $name) = @_;
-    $name = $name->value        if ref $name; # XXX trailing clause not needed
-    my $value = $self->runtime->function->getvar('Block')->points->{$name};
-    if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
-        $value = '';
-    }
-    return str($value);
-}
+# sub Point {
+#     my ($self, $name) = @_;
+#     $name = $name->value;
+#     $self->runtime->get_point($name);
+# }
 
 sub GetLabel {
     my ($self) = @_;
@@ -38,16 +34,15 @@ sub Type {
 
 sub Catch {
     my ($self) = @_;
-    my $error = $self->runtime->get_error
+    my $error = $self->runtime->error
         or die "Catch called but no TestML error found";
     $error =~ s/ at .* line \d+\.\n\z//;
-    $self->runtime->clear_error;
+    $self->runtime->{error} = undef;
     return str($error);
 }
 
 sub Throw {
     my ($self, $msg) = @_;
-    # XXX die should be $self->runtime->throw
     die $msg->value;
 }
 
@@ -72,7 +67,7 @@ sub Join {
     my ($self, $list, $separator) = @_;
     $separator = $separator ? $separator->value : '';
     my @strings = map $_->value, @{$list->list->value};
-    return join $separator, @strings;
+    return str join $separator, @strings;
 }
 
 sub Strip {
@@ -82,7 +77,7 @@ sub Strip {
     if ((my $i = index($string, $part)) >= 0) {
         $string = substr($string, 0, $i) . substr($string, $i + length($part));
     }
-    return $string;
+    return str $string;
 }
 
 sub Not {
@@ -197,6 +192,5 @@ sub Sort {
 #         or die "Raw called but there is no point";
 #     return $self->runtime->block->points->{$point};
 # }
-# 
 
 1;

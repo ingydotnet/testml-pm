@@ -6,6 +6,7 @@ use TestML::Runtime;
 
 has points => [];
 has function => sub { TestML::Function->new };
+has dot => 0;
 
 # sub final {
 #     my ($self, $match, $top) = @_;
@@ -57,6 +58,7 @@ sub got_code_expression {
         my $call = $_->[0]; #->{call_call}[0][0];
         push @$calls, $call;
     }
+    $self->{dot} = 0;
     return $calls->[0] if @$calls == 1;
     return TestML::Expression->new(
         calls => $calls,
@@ -88,20 +90,19 @@ sub got_point_object {
 
 sub got_assertion_call {
     my ($self, $call) = @_;
-    my ($name, $assertion);
+    my ($name, $expr);
     for (qw( eq has ok )) {
-        if ($assertion = $call->{"assertion_$_"}) {
+        if ($expr = $call->{"assertion_$_"}) {
             $name = uc $_;
-            $assertion =
-                $assertion->{"assertion_operator_$_"}[0] ||
-                $assertion->{"assertion_function_$_"}[0];
+            $expr =
+                $expr->{"assertion_operator_$_"}[0] ||
+                $expr->{"assertion_function_$_"}[0];
             last;
         }
     }
-    XXX $call unless $assertion;
     return TestML::Assertion->new(
         name => $name,
-        expr => $assertion,
+        $expr ? (expr => $expr) : (),
     );
 }
 
@@ -109,7 +110,6 @@ sub got_assertion_function_ok {
     my ($self, $ok) = @_;
     return {
         assertion_function_ok => [
-            TestML::Expression->new,
         ]
     }
 }
@@ -138,19 +138,19 @@ sub got_function_object {
 
 sub got_call_name {
     my ($self, $name) = @_;
-    return TestML::Call->new(name => $name);
+    my $call = TestML::Call->new(name => $name);
+    $call->{dot} = $self->dot;
+    $self->{dot} = 0;
+    return $call;
 }
 
 sub got_call_object {
     my ($self, $object) = @_;
     my $call = $object->[0];
-    if ($object->[1][-1] and $object->[1][-1] eq 'explicit') {
-#         $call->explicit_call(1);
-        splice @{$object->[1]}, -1, 1;
-    }
-    my $args = [];
-    $args = $object->[1][0] if $object->[1][0];
-    if (@$args) {
+    my $dot = delete $call->{dot};
+    $self->{dot} = 0;
+    my $args = $object->[1][-1];
+    if ($args) {
         $args = [
             map {
                 ($_->isa('TestML::Expression') and @{$_->calls} == 1 and
@@ -162,16 +162,23 @@ sub got_call_object {
         ];
         $call->args($args)
     }
+    elsif ($dot) {
+        $call->args([]);
+    }
     return $call;
 }
 
 sub got_call_argument_list {
     my ($self, $list) = @_;
-    push @$list, 'explicit';
     return $list;
 }
 
-#----------------------------------------------------------
+sub got_call_indicator {
+    my ($self) = @_;
+    $self->{dot} = 1;
+    return;
+}
+
 sub got_data_section {
     my ($self, $data) = @_;
     $self->function->data($data);
