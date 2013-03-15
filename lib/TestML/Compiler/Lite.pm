@@ -111,7 +111,7 @@ sub parse_expression {
 
     while (not $self->done and $self->peek !~ /^($ENDING|$COMP)$/) {
         my $token = $self->pop;
-        if ($token =~ $NUM) {
+        if ($token =~ /^$NUM$/) {
             push @$calls, TestML::Num->new(value => $token);
         }
         elsif ($token =~/^$QSTR$/) {
@@ -125,7 +125,7 @@ sub parse_expression {
             }
             push @$calls, $call;
         }
-        elsif ($token =~ /^$POINT/) {
+        elsif ($token =~ /^$POINT$/) {
             $token =~ /($WORD)/ or die;
             push @{$self->{points}}, $1;
             push @$calls, TestML::Point->new(name => $1);

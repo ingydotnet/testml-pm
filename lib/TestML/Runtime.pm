@@ -201,7 +201,7 @@ sub run_native {
         $self->{error} = $@;
         return TestML::None->new;
     }
-    elsif ($value->isa('TestML::Object')) {
+    elsif (UNIVERSAL::isa($value, 'TestML::Object')) {
         return $value;
     }
     else {
