@@ -154,7 +154,8 @@ sub run_call {
         if ($callable->isa('TestML::Object')) {
             return $callable;
         }
-        return $callable unless defined $call->args;
+        return $callable unless $call->args or defined $context;
+        $call->{args} ||= [];
         my $args = [map $self->run_expression($_), @{$call->args}];
         unshift @$args, $context if $context;
         if ($callable->isa('TestML::Native')) {
@@ -198,7 +199,7 @@ sub run_native {
     };
     if ($@) {
         $self->{error} = $@;
-        return;
+        return TestML::None->new;
     }
     elsif ($value->isa('TestML::Object')) {
         return $value;

@@ -22,7 +22,6 @@ statements:
       name: text
     - !!perl/hash:TestML::Call
       name: uppercase
-      args: []
   points:
   - text
   - upper
@@ -37,7 +36,6 @@ statements:
       name: text
     - !!perl/hash:TestML::Call
       name: lowercase
-      args: []
   points:
   - text
   - lower
@@ -49,10 +47,8 @@ statements:
         name: upper
       - !!perl/hash:TestML::Call
         name: lowercase
-        args: []
       - !!perl/hash:TestML::Call
         name: uppercase
-        args: []
     name: EQ
   expr: !!perl/hash:TestML::Expression
     calls:
@@ -60,7 +56,6 @@ statements:
       name: lower
     - !!perl/hash:TestML::Call
       name: uppercase
-      args: []
   points:
   - lower
   - upper

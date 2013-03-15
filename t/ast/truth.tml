@@ -26,7 +26,6 @@ statements:
       name: False
     - !!perl/hash:TestML::Call
       name: Not
-      args: []
 - !!perl/hash:TestML::Statement
   assert: !!perl/hash:TestML::Assertion
     name: OK
@@ -36,10 +35,8 @@ statements:
       name: True
     - !!perl/hash:TestML::Call
       name: Not
-      args: []
     - !!perl/hash:TestML::Call
       name: Not
-      args: []
 - !!perl/hash:TestML::Assignment
   name: Label
   expr: !!perl/hash:TestML::Str
@@ -58,7 +55,6 @@ statements:
       value: ''
     - !!perl/hash:TestML::Call
       name: Not
-      args: []
 - !!perl/hash:TestML::Statement
   assert: !!perl/hash:TestML::Assertion
     name: OK
@@ -77,7 +73,6 @@ statements:
       value: '0'
     - !!perl/hash:TestML::Call
       name: Not
-      args: []
 - !!perl/hash:TestML::Statement
   assert: !!perl/hash:TestML::Assertion
     name: OK

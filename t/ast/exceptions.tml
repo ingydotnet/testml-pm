@@ -18,10 +18,8 @@ statements:
         name: error
     - !!perl/hash:TestML::Call
       name: NonExistingMethod
-      args: []
     - !!perl/hash:TestML::Call
       name: Catch
-      args: []
   assert: !!perl/hash:TestML::Assertion
     name: HAS
     expr: !!perl/hash:TestML::Point
@@ -43,7 +41,6 @@ statements:
         name: message
     - !!perl/hash:TestML::Call
       name: Catch
-      args: []
   assert: !!perl/hash:TestML::Assertion
     name: EQ
     expr: !!perl/hash:TestML::Call

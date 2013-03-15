@@ -62,7 +62,6 @@ statements:
           name: else
         - !!perl/hash:TestML::Call
           name: uppercase
-          args: []
   assert: !!perl/hash:TestML::Assertion
     name: EQ
     expr: !!perl/hash:TestML::Point

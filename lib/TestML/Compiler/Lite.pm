@@ -108,7 +108,6 @@ sub parse_assertion {
 sub parse_expression {
     my ($self) = @_;
     my $calls = [];
-    my $dot = 0;
 
     while (not $self->done and $self->peek !~ /^($ENDING|$COMP)$/) {
         my $token = $self->pop;
@@ -124,9 +123,6 @@ sub parse_expression {
             if (not $self->done and $self->peek eq '(') {
                 $call->{args} = $self->parse_args;
             }
-            elsif ($dot) {
-                $call->{args} = [];
-            }
             push @$calls, $call;
         }
         elsif ($token =~ /^$POINT/) {
@@ -139,7 +135,6 @@ sub parse_expression {
         }
         if (not $self->done and $self->peek eq '.') {
             $self->pop;
-            $dot = 1;
         }
     }
     return @$calls == 1

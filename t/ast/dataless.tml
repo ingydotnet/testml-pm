@@ -30,7 +30,6 @@ statements:
       value: bar
     - !!perl/hash:TestML::Call
       name: Str
-      args: []
   assert: !!perl/hash:TestML::Assertion
     name: EQ
     expr: !!perl/hash:TestML::Str

@@ -6,7 +6,6 @@ use TestML::Runtime;
 
 has points => [];
 has function => sub { TestML::Function->new };
-has dot => 0;
 
 # sub final {
 #     my ($self, $match, $top) = @_;
@@ -58,7 +57,6 @@ sub got_code_expression {
         my $call = $_->[0]; #->{call_call}[0][0];
         push @$calls, $call;
     }
-    $self->{dot} = 0;
     return $calls->[0] if @$calls == 1;
     return TestML::Expression->new(
         calls => $calls,
@@ -139,16 +137,12 @@ sub got_function_object {
 sub got_call_name {
     my ($self, $name) = @_;
     my $call = TestML::Call->new(name => $name);
-    $call->{dot} = $self->dot;
-    $self->{dot} = 0;
     return $call;
 }
 
 sub got_call_object {
     my ($self, $object) = @_;
     my $call = $object->[0];
-    my $dot = delete $call->{dot};
-    $self->{dot} = 0;
     my $args = $object->[1][-1];
     if ($args) {
         $args = [
@@ -162,9 +156,6 @@ sub got_call_object {
         ];
         $call->args($args)
     }
-    elsif ($dot) {
-        $call->args([]);
-    }
     return $call;
 }
 
@@ -175,7 +166,6 @@ sub got_call_argument_list {
 
 sub got_call_indicator {
     my ($self) = @_;
-    $self->{dot} = 1;
     return;
 }
 
