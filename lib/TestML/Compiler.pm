@@ -98,7 +98,6 @@ sub preprocess {
             if $order_error;
 
         my $DataMarker = $directives->{DataMarker} ||= $directives->{BlockMarker};
-        my ($code, $data);
         if ((my $split = index($input, "\n$DataMarker")) >= 0) {
             $self->{code} = substr($input, 0, $split + 1);
             $self->{data} = substr($input, $split + 1);

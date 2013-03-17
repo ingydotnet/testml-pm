@@ -63,21 +63,21 @@ data:
 - !!perl/hash:TestML::Block
   label: Test One
   points:
-    lower: i like pie.
     text: I like Pie.
     upper: I LIKE PIE.
+    lower: i like pie.
 - !!perl/hash:TestML::Block
   label: Test Two
   points:
-    lower: 'say it,
-
-      don''t spray it.
-
-'
     text: 'Say it,
 
       Don''t spray it.
 
 
+
+'
+    lower: 'say it,
+
+      don''t spray it.
 
 '
