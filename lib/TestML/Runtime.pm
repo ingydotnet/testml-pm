@@ -1,21 +1,21 @@
 package TestML::Runtime;
 use TestML::Base;
 
-has testml => ();                       # Top level TestML document to run.
-has bridge => ();                       # Bridge class to use.
-has library => ();                      # Library classes to use.
-has compiler => ();                     # Class of TestML compiler to use.
+has testml => ();
+has bridge => ();
+has library => ();
+has compiler => ();
 has base => ();
-has skip => ();                         # This test should be skipped.
+has skip => ();
 
-has function => ();                     # Currently running function.
-has error => ();                        # Current exception
-has global => ();                       # Global namespace
+has function => ();
+has error => ();
+has global => ();
 
 sub BUILD {
     my ($self) = @_;
     # Put current Runtime singleton object into a global variable.
-    $TestML::Runtime::singleton = $self;
+    $TestML::Runtime::Singleton = $self;
     $self->{base} ||= $0 =~ m!(.*)/! ? $1 : ".";
 }
 
@@ -27,7 +27,6 @@ sub run {
 
     $self->run_function(
         $self->{function},  # top level testml function
-        undef,              # context
         [],                 # function arguments
     );
 }
@@ -38,7 +37,7 @@ sub run_function {
     $self->apply_signature($function, $args);
 
     my $parent = $self->function;
-    $self->function($function);
+    $self->{function} = $function;
 
     for my $statement (@{$function->statements}) {
         if (ref($statement) eq 'TestML::Assignment') {
@@ -48,7 +47,7 @@ sub run_function {
             $self->run_statement($statement);
         }
     }
-    $self->function($parent);
+    $self->{function} = $parent;
     return TestML::None->new;
 }
 
@@ -73,9 +72,9 @@ sub apply_signature {
 
 sub run_statement {
     my ($self, $statement) = @_;
-    my $blocks = $self->select_blocks($statement->points);
+    my $blocks = $self->select_blocks($statement->points || []);
     for my $block (@$blocks) {
-        $self->function->setvar('Block', $block) if ref($block);
+        $self->function->setvar('Block', $block) if $block != 1;
         my $result = $self->run_expression($statement->expr);
         if (my $assert = $statement->assert) {
             $self->run_assertion($result, $assert);
@@ -84,10 +83,10 @@ sub run_statement {
 }
 
 sub run_assignment {
-    my ($self, $statement) = @_;
+    my ($self, $assignment) = @_;
     $self->function->setvar(
-        $statement->name,
-        $self->run_expression($statement->expr),
+        $assignment->name,
+        $self->run_expression($assignment->expr),
     );
 }
 
@@ -113,7 +112,7 @@ sub run_expression {
     if ($expr->isa('TestML::Expression')) {
         my @calls = @{$expr->calls};
         die if @calls <= 1;
-        $context = $self->run_call(shift(@calls), undef);
+        $context = $self->run_call(shift(@calls));
         for my $call (@calls) {
             if ($self->error) {
                 next unless
@@ -164,9 +163,9 @@ sub run_call {
         if ($callable->isa('TestML::Function')) {
             return $self->run_function($callable, $args);
         }
-        XXX $call, $callable;
+        die;
     }
-    XXX $call;
+    die;
 }
 
 sub lookup_callable {
@@ -221,7 +220,7 @@ sub select_blocks {
             next OUTER unless exists $points{$point};
         }
         if (exists $points{ONLY}) {
-            @$selected = ($block);
+            $selected = [$block];
             last;
         }
         push @$selected, $block;
@@ -245,50 +244,40 @@ sub object_from_native {
 sub compile_testml {
     my ($self) = @_;
 
-    my $testml = $self->testml
-        or die "'testml' document required but not found";
-    if ($testml !~ /\n/) {
-        $testml =~ /(.*)\/(.*)/ or die;
-        $testml = $2;
+    die "'testml' document required but not found"
+        unless $self->testml;
+    if ($self->testml !~ /\n/) {
+        $self->testml =~ /(.*)\/(.*)/ or die;
+        $self->{testml} = $2;
         $self->{base} = $self->base . '/' . $1;
-        $self->{testml} = $self->read_testml_file($testml);
+        $self->{testml} = $self->read_testml_file($self->testml);
     }
-
-    my $compiler = $self->compiler;
-    eval "require $compiler; 1" or die "Can't load '$compiler':\n$@";
-    $self->{function} = $compiler->new->compile($self->testml)
+    $self->{function} = $self->compiler->new->compile($self->testml)
         or die "TestML document failed to compile";
 }
 
 sub initialize_runtime {
     my ($self) = @_;
-    my $global = $self->{global} = $self->function->outer;
 
-    # Set global variables.
-    $global->setvar(Block => TestML::Block->new);
-    $global->setvar(Label => TestML::Str->new(value => '$BlockLabel'));
-    $global->setvar(True => $TestML::Constant::True);
-    $global->setvar(False => $TestML::Constant::False);
-    $global->setvar(None => $TestML::Constant::None);
-    $global->setvar(TestNumber => TestML::Num->new(value => 0));
-    $global->setvar(Library => TestML::List->new);
+    $self->{global} = $self->function->outer;
 
+    $self->{global}->setvar(Block => TestML::Block->new);
+    $self->{global}->setvar(Label => TestML::Str->new(value => '$BlockLabel'));
+    $self->{global}->setvar(True => $TestML::Constant::True);
+    $self->{global}->setvar(False => $TestML::Constant::False);
+    $self->{global}->setvar(None => $TestML::Constant::None);
+    $self->{global}->setvar(TestNumber => TestML::Num->new(value => 0));
+    $self->{global}->setvar(Library => TestML::List->new);
+
+    my $library = $self->function->getvar('Library');
     for my $lib ($self->bridge, $self->library) {
         if (ref($lib) eq 'ARRAY') {
-            $self->add_library($_) for @$lib;
+            $library->push($_->new) for @$lib;
         }
         else {
-            $self->add_library($lib);
+            $library->push($lib->new);
         }
     }
-}
-
-sub add_library {
-    my ($self, $library) = @_;
-    if (not $library->can('new')) {
-        eval "require $library";
-    }
-    $self->function->getvar('Library')->push($library);
 }
 
 sub get_label {
@@ -313,7 +302,7 @@ sub get_label {
 
 sub read_testml_file {
     my ($self, $file) = @_;
-    my $path = join '/', $self->base, $file;
+    my $path = $self->base . '/' . $file;
     open my $fh, $path
         or die "Can't open '$path' for input: $!";
     local $/;
@@ -341,18 +330,17 @@ sub getvar {
         }
         $self = $self->outer;
     }
-    return;
+    undef;
 }
 
 sub setvar {
     my ($self, $name, $value) = @_;
     $self->namespace->{$name} = $value;
-    return $value;
 }
 
 sub forgetvar {
     my ($self, $name) = @_;
-    return delete $self->namespace->{$name};
+    delete $self->namespace->{$name};
 }
 
 #-----------------------------------------------------------------------------
@@ -366,9 +354,9 @@ has expr => ();
 package TestML::Statement;
 use TestML::Base;
 
-has expr => sub {TestML::Expression->new};
+has expr => ();
 has assert => ();
-has points => [];
+has points => ();
 
 #-----------------------------------------------------------------------------
 package TestML::Expression;
@@ -389,7 +377,6 @@ use TestML::Base;
 
 has name => ();
 has args => ();
-has explicit_call => 0;
 
 #-----------------------------------------------------------------------------
 package TestML::Block;
@@ -416,10 +403,10 @@ sub type {
     return $type;
 }
 
-sub str { my $t = $_[0]->type; die "Cast from $t to Str is not supported" }
-sub num { my $t = $_[0]->type; die "Cast from $t to Num is not supported" }
-sub bool { my $t = $_[0]->type; die "Cast from $t to Bool is not supported" }
-sub list { my $t = $_[0]->type; die "Cast from $t to List is not supported" }
+sub str { die "Cast from ${\ $_[0]->type} to Str is not supported" }
+sub num { die "Cast from ${\ $_[0]->type} to Num is not supported" }
+sub bool { die "Cast from ${\ $_[0]->type} to Bool is not supported" }
+sub list { die "Cast from ${\ $_[0]->type} to List is not supported" }
 sub none { $TestML::Constant::None }
 
 #-----------------------------------------------------------------------------
@@ -475,10 +462,10 @@ package TestML::None;
 use TestML::Base;
 extends 'TestML::Object';
 
-sub str { Str('') }
-sub num { Num(0) }
+sub str { TestML::Str->new(value => '') }
+sub num { TestML::Num->new(value => 0) }
 sub bool { $TestML::Constant::False }
-sub list { List([]) }
+sub list { TestML::List->new(value => []) }
 
 #-----------------------------------------------------------------------------
 package TestML::Error;

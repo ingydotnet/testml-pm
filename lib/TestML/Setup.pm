@@ -1,11 +1,3 @@
-##
-# name:      TestML::Setup
-# author:    Ingy döt Net <ingy@cpan.org>
-# abstract:  Generate Test Files for a TestML Suite
-# license:   perl
-# copyright: 2010-2013
-
-use strict; use warnings;
 package TestML::Setup;
 use TestML::Base;
 
@@ -75,16 +67,3 @@ sub rel {
 }
 
 1;
-
-=head1 SYNOPSIS
-
-    perl -MTestML::Setup -e setup testml.yaml
-
-=head1 DESCRIPTION
-
-A pure TestML suite contains no language specific code. Normally you
-need to write a very small test program that points to a TestML document
-and runs it.
-
-This module does that for you. By providing a small YAML file, this
-module will generate all your testml runtime programs for you.

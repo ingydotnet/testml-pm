@@ -1,4 +1,4 @@
-use 5.006001; use strict; use warnings;
+use 5.006001;
 
 package TestML;
 use TestML::Base;

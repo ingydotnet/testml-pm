@@ -1,27 +1,18 @@
+use Test::Builder;
+use TestML::Runtime;
+
 package TestML::Runtime::TAP;
 use TestML::Base;
 extends 'TestML::Runtime';
-
-use Test::Builder;
-
-# XXX Make work with Test::Diff
-if ($TestML::Diff) {
-    no warnings 'redefine';
-    require Test::Diff;
-#     *Test::Builder::is_eq = sub {
-#         my ($self) = @_;
-#         \&Test::Differences::eq_or_diff(@_);
-#     };
-}
 
 has native_test => sub { Test::Builder->new };
 has planned => 0;
 
 sub run {
     my ($self) = @_;
-    $self->SUPER::run();
-    $self->check_plan();
-    $self->plan_end();
+    $self->SUPER::run;
+    $self->check_plan;
+    $self->plan_end;
 }
 
 sub run_assertion {
@@ -33,9 +24,9 @@ sub run_assertion {
 sub check_plan {
     my ($self) = @_;
     if (! $self->planned) {
-        $self->title();
-        $self->plan_begin();
-        $self->planned(1);
+        $self->title;
+        $self->plan_begin;
+        $self->{planned} = 1;
     }
 }
 
@@ -44,12 +35,7 @@ sub title {
     if (my $title = $self->function->getvar('Title')) {
         $title = $title->value;
         $title = "=== $title ===\n";
-        if ($self->native_test->can('note')) {
-            $self->native_test->note($title);
-        }
-        else {
-            $self->native_test->diag($title);
-        }
+        $self->native_test->note($title);
     }
 }
 
@@ -70,6 +56,7 @@ sub plan_end {
     $self->native_test->done_testing();
 }
 
+# TODO Use Test::Diff here.
 sub assert_EQ {
     my ($self, $got, $want) = @_;
     $self->native_test->is_eq(

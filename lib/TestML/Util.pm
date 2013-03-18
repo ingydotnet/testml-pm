@@ -1,4 +1,7 @@
 use strict; use warnings;
+
+use TestML::Runtime;
+
 package TestML::Util;
 
 use Exporter 'import';

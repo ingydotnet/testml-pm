@@ -15,7 +15,7 @@ has function => sub { TestML::Function->new };
 
 sub got_code_section {
     my ($self, $code) = @_;
-    $self->function->statements($code);
+    $self->function->{statements} = $code;
 }
 
 sub got_assignment_statement {
@@ -107,16 +107,15 @@ sub got_assertion_call {
 sub got_assertion_function_ok {
     my ($self, $ok) = @_;
     return {
-        assertion_function_ok => [
-        ]
+        assertion_function_ok => [],
     }
 }
 
 sub got_function_start {
     my ($self) = @_;
-    my $function = TestML::Function->new();
+    my $function = TestML::Function->new;
     $function->outer($self->function);
-    $self->function($function);
+    $self->{function} = $function;
     return 1;
 }
 
@@ -124,20 +123,19 @@ sub got_function_object {
     my ($self, $object) = @_;
 
     my $function = $self->function;
-    $self->function($self->function->outer);
+    $self->{function} = $self->function->outer;
 
     if (ref($object->[0]) and ref($object->[0][0])) {
-        $function->signature($object->[0][0]);
+        $function->{signature} = $object->[0][0];
     }
-    $function->statements($object->[-1]);
+    $function->{statements} = $object->[-1];
 
     return $function;
 }
 
 sub got_call_name {
     my ($self, $name) = @_;
-    my $call = TestML::Call->new(name => $name);
-    return $call;
+    return TestML::Call->new(name => $name);
 }
 
 sub got_call_object {

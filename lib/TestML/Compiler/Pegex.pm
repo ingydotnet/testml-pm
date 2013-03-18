@@ -36,9 +36,7 @@ sub compile_data {
 sub fixup_grammar {
     my ($self) = @_;
 
-    my $parser = $self->parser;
-
-    my $tree = $parser->grammar->tree;
+    my $tree = $self->{parser}->grammar->tree;
 
     my $point_lines = $tree->{point_lines}{'.rgx'};
 

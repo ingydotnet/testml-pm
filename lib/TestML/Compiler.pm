@@ -1,7 +1,7 @@
+use TestML::Runtime;
+
 package TestML::Compiler;
 use TestML::Base;
-
-use TestML::Runtime;
 
 has code => ();
 has data => ();
@@ -22,7 +22,7 @@ sub compile {
 
     $self->function->namespace->{TestML} = $self->directives->{TestML};
 
-    $self->function->outer(TestML::Function->new());
+    $self->function->outer(TestML::Function->new);
     return $self->function;
 }
 
@@ -30,10 +30,9 @@ sub preprocess {
     my ($self, $input, $top) = @_;
 
     my @parts = split /^((?:\%\w+.*|\#.*|\ *)\n)/m, $input;
-
     $input = '';
 
-    my $directives = $self->{directives} = {
+    $self->{directives} = {
         TestML => '',
         DataMarker => '',
         BlockMarker => '===',
@@ -54,50 +53,53 @@ sub preprocess {
                 die "Invalid TestML directive"
                     unless $value =~ /^\d+\.\d+\.\d+$/;
                 die "More than one TestML directive found"
-                    if $directives->{TestML};
-                $directives->{TestML} = TestML::Str->new(value => $value);
+                    if $self->directives->{TestML};
+                $self->directives->{TestML} =
+                    TestML::Str->new(value => $value);
                 next;
             }
-            $order_error = 1 unless $directives->{TestML};
+            $order_error = 1 unless $self->directives->{TestML};
             if ($directive eq 'Include') {
-                my $runtime = $TestML::Runtime::singleton
+                my $runtime = $TestML::Runtime::Singleton
                     or die "Can't process Include. No runtime available";
                 my $include = ref($self)->new;
                 $include->preprocess($runtime->read_testml_file($value));
                 $input .= $include->text;
-                $directives->{DataMarker} =
+                $self->directives->{DataMarker} =
                     $include->directives->{DataMarker};
-                $directives->{BlockMarker} =
+                $self->directives->{BlockMarker} =
                     $include->directives->{BlockMarker};
-                $directives->{PointMarker} =
+                $self->directives->{PointMarker} =
                     $include->directives->{PointMarker};
                 die "Can't define %TestML in an Included file"
                     if $include->directives->{TestML};
             }
             elsif ($directive =~ /^(DataMarker|BlockMarker|PointMarker)$/) {
-                $directives->{$directive} = $value;
+                $self->directives->{$directive} = $value;
             }
             elsif ($directive =~ /^(DebugPegex|DumpAST)$/) {
                 $value = 1 unless length($value);
-                $directives->{$directive} = $value;
+                $self->directives->{$directive} = $value;
             }
             else {
                 die "Unknown TestML directive '$directive'";
             }
         }
         else {
-            $order_error = 1 if $input and not $directives->{TestML};
+            $order_error = 1 if $input and not $self->directives->{TestML};
             $input .= $part;
         }
     }
 
     if ($top) {
         die "No TestML directive found"
-            unless $directives->{TestML};
+            unless $self->directives->{TestML};
         die "%TestML directive must be the first (non-comment) statement"
             if $order_error;
 
-        my $DataMarker = $directives->{DataMarker} ||= $directives->{BlockMarker};
+        my $DataMarker =
+            $self->directives->{DataMarker} ||=
+            $self->directives->{BlockMarker};
         if ((my $split = index($input, "\n$DataMarker")) >= 0) {
             $self->{code} = substr($input, 0, $split + 1);
             $self->{data} = substr($input, $split + 1);

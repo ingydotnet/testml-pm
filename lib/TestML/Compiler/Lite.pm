@@ -1,6 +1,3 @@
-# This is the Lite version of the TestML compiler. It can parse simple
-# statements and assertions and also parse the TestML data format.
-
 package TestML::Compiler::Lite;
 use TestML::Base;
 extends 'TestML::Compiler';
@@ -53,16 +50,15 @@ sub compile_code {
 
 sub tokenize {
     my ($self) = @_;
-    my $line = $self->{line};
     $self->{tokens} = [];
-    while (length $line) {
-        next if $line =~ s/^$WS//;
-        next if $line =~ s/^$HASH$ANY*//;
-        if ($line =~ s/^($TOKENS)//) {
+    while (length $self->{line}) {
+        next if $self->{line} =~ s/^$WS//;
+        next if $self->{line} =~ s/^$HASH$ANY*//;
+        if ($self->{line} =~ s/^($TOKENS)//) {
             push @{$self->{tokens}}, $1;
         }
         else {
-            $self->fail("Failed to get token here: '$line'");
+            $self->fail("Failed to get token here: '$self->{line}'");
         }
     }
 }
@@ -106,8 +102,8 @@ sub parse_assertion {
 
 sub parse_expression {
     my ($self) = @_;
-    my $calls = [];
 
+    my $calls = [];
     while (not $self->done and $self->peek !~ /^($ENDING|$COMP)$/) {
         my $token = $self->pop;
         if ($token =~ /^$NUM$/) {

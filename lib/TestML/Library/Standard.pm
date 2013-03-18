@@ -4,27 +4,19 @@ extends 'TestML::Library';
 
 use TestML::Util;
 
-# sub Point {
-#     my ($self, $name) = @_;
-#     $name = $name->value;
-#     $self->runtime->get_point($name);
-# }
-
-sub GetLabel {
-    my ($self) = @_;
-    my $label = $self->runtime->get_label;
-    return str($label);
-}
-
 sub Get {
     my ($self, $key) = @_;
     return $self->runtime->function->getvar($key->str->value);
 }
 
-sub Set {
-    my ($self, $key, $value) = @_;
-    $self->runtime->function->setvar($key, $value);
-    return $value;
+# sub Set {
+#     my ($self, $key, $value) = @_;
+#     return $self->runtime->function->setvar($key, $value);
+# }
+
+sub GetLabel {
+    my ($self) = @_;
+    return str($self->runtime->get_label);
 }
 
 sub Type {
@@ -50,14 +42,14 @@ sub Str {
     my ($self, $object) = @_;
     return str($object->str->value);
 }
-sub Num {
-    my ($self, $object) = @_;
-    return num($object->num->value);
-}
-sub Bool {
-    my ($self, $object) = @_;
-    return bool($object->bool->value);
-}
+# sub Num {
+#     my ($self, $object) = @_;
+#     return num($object->num->value);
+# }
+# sub Bool {
+#     my ($self, $object) = @_;
+#     return bool($object->bool->value);
+# }
 sub List {
     my $self = shift;
     return list([@_]);
@@ -70,98 +62,15 @@ sub Join {
     return str join $separator, @strings;
 }
 
-sub Strip {
-    my ($self, $string, $part) = @_;
-    $string = $string->str->value;
-    $part = $part->str->value;
-    if ((my $i = index($string, $part)) >= 0) {
-        $string = substr($string, 0, $i) . substr($string, $i + length($part));
-    }
-    return str $string;
-}
-
 sub Not {
     my ($self, $bool) = @_;
     return bool($bool->bool->value ? 0: 1);
 }
 
-sub Chomp {
-    my ($self, $string) = @_;
-    my $value = $string->str->value;
-    chomp($value);
-    return $value;
-}
-
-sub Has {
-    my ($self, $string, $part) = @_;
-    $string = $string->str->value;
-    $part = $part->str->value;
-    return bool(index($string, $part) >= 0);
-}
-
-sub RunCommand {
-    require Capture::Tiny;
-    my ($self, $command) = @_;
-    $command = $command->value;
-    chomp($command);
-    my $sub = sub {
-        system($command);
-    };
-    my ($stdout, $stderr) = Capture::Tiny::capture($sub);
-    $self->runtime->function->setvar('_Stdout', $stdout);
-    $self->runtime->function->setvar('_Stderr', $stderr);
-    return str('');
-}
-
-sub RmPath {
-    require File::Path;
-    my ($self, $path) = @_;
-    $path = $path->value;
-    File::Path::rmtree($path);
-    return str('');
-}
-
-sub Stdout {
-    my ($self) = @_;
-    return $self->runtime->function->getvar('_Stdout');
-}
-
-sub Stderr {
-    my ($self) = @_;
-    return $self->runtime->function->getvar('_Stderr');
-}
-
-sub Chdir {
-    my ($self, $dir) = @_;
-    $dir = $dir->value;
-    chdir $dir;
-    return str('');
-}
-
-sub Read {
-    my ($self, $file) = @_;
-    $file = $file->value;
-    use Cwd;
-    open FILE, $file or die "Can't open $file for input in " . Cwd::cwd;
-    my $text = do { local $/; <FILE> };
-    close FILE;
-    return str($text);
-}
-
-sub Print {
-    my ($self, $string) = @_;
-    print STDOUT $string->value;
-}
-
-sub Pass {
-    my ($self, @args) = @_;
-    return @args;
-}
-
 sub Text {
     my ($self, $lines) = @_;
     my $value = $lines->list->value;
-    return str(join "\n", map($_->value, @$value), '');
+    return str(join $/, map($_->value, @$value), '');
 }
 
 sub Count {
@@ -186,6 +95,91 @@ sub Sort {
     return list([ sort { $a->value cmp $b->value } @$value ]);
 }
 
+sub Strip {
+    my ($self, $string, $part) = @_;
+    $string = $string->str->value;
+    $part = $part->str->value;
+    if ((my $i = index($string, $part)) >= 0) {
+        $string = substr($string, 0, $i) . substr($string, $i + length($part));
+    }
+    return str $string;
+}
+
+1;
+
+# sub Chomp {
+#     my ($self, $string) = @_;
+#     my $value = $string->str->value;
+#     chomp($value);
+#     return $value;
+# }
+
+# sub Has {
+#     my ($self, $string, $part) = @_;
+#     $string = $string->str->value;
+#     $part = $part->str->value;
+#     return bool(index($string, $part) >= 0);
+# }
+
+# sub RunCommand {
+#     require Capture::Tiny;
+#     my ($self, $command) = @_;
+#     $command = $command->value;
+#     chomp($command);
+#     my $sub = sub {
+#         system($command);
+#     };
+#     my ($stdout, $stderr) = Capture::Tiny::capture($sub);
+#     $self->runtime->function->setvar('_Stdout', $stdout);
+#     $self->runtime->function->setvar('_Stderr', $stderr);
+#     return str('');
+# }
+
+# sub RmPath {
+#     require File::Path;
+#     my ($self, $path) = @_;
+#     $path = $path->value;
+#     File::Path::rmtree($path);
+#     return str('');
+# }
+
+# sub Stdout {
+#     my ($self) = @_;
+#     return $self->runtime->function->getvar('_Stdout');
+# }
+
+# sub Stderr {
+#     my ($self) = @_;
+#     return $self->runtime->function->getvar('_Stderr');
+# }
+
+# sub Chdir {
+#     my ($self, $dir) = @_;
+#     $dir = $dir->value;
+#     chdir $dir;
+#     return str('');
+# }
+
+# sub Read {
+#     my ($self, $file) = @_;
+#     $file = $file->value;
+#     use Cwd;
+#     open FILE, $file or die "Can't open $file for input in " . Cwd::cwd;
+#     my $text = do { local $/; <FILE> };
+#     close FILE;
+#     return str($text);
+# }
+
+# sub Print {
+#     my ($self, $string) = @_;
+#     print STDOUT $string->value;
+# }
+
+# sub Pass {
+#     my ($self, @args) = @_;
+#     return @args;
+# }
+
 # sub Raw {
 #     my $self = shift;
 #     my $point = $self->point
@@ -193,4 +187,8 @@ sub Sort {
 #     return $self->runtime->block->points->{$point};
 # }
 
-1;
+# sub Point {
+#     my ($self, $name) = @_;
+#     $name = $name->value;
+#     $self->runtime->get_point($name);
+# }
