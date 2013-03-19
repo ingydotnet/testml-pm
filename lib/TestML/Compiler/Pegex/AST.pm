@@ -30,7 +30,7 @@ sub got_code_statement {
     my ($self, $list) = @_;
     my ($expression, $assertion);
     my $points = $self->points;
-    $self->points([]);
+    $self->{points} = [];
 
     for (@$list) {
         if (ref eq 'TestML::Assertion') {
