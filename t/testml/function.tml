@@ -22,6 +22,7 @@ Label = '$BlockLabel'
 
 test1(*fruit, *color, *thing)
 
+# XXX aocole suggests yanking the auto-sig feature.
 test2 = {
     thing ~~ color
 }
