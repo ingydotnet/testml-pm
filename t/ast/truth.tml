@@ -7,7 +7,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: Plan
   expr: !!perl/hash:TestML::Num
-    value: '9'
+    value: 9
 - !!perl/hash:TestML::Assignment
   name: Label
   expr: !!perl/hash:TestML::Str
@@ -16,14 +16,14 @@ statements:
   assert: !!perl/hash:TestML::Assertion
     name: OK
   expr: !!perl/hash:TestML::Call
-    name: True
+    name: 'True'
 - !!perl/hash:TestML::Statement
   assert: !!perl/hash:TestML::Assertion
     name: OK
   expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Call
-      name: False
+      name: 'False'
     - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
@@ -32,7 +32,7 @@ statements:
   expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Call
-      name: True
+      name: 'True'
     - !!perl/hash:TestML::Call
       name: Not
     - !!perl/hash:TestML::Call
@@ -70,16 +70,16 @@ statements:
   expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Num
-      value: '0'
+      value: 0
     - !!perl/hash:TestML::Call
       name: Not
 - !!perl/hash:TestML::Statement
   assert: !!perl/hash:TestML::Assertion
     name: OK
   expr: !!perl/hash:TestML::Num
-    value: '1'
+    value: 1
 - !!perl/hash:TestML::Statement
   assert: !!perl/hash:TestML::Assertion
     name: OK
   expr: !!perl/hash:TestML::Num
-    value: '42'
+    value: 42

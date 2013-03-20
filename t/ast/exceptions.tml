@@ -7,7 +7,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: Plan
   expr: !!perl/hash:TestML::Num
-    value: '2'
+    value: 2
 - !!perl/hash:TestML::Statement
   expr: !!perl/hash:TestML::Expression
     calls:

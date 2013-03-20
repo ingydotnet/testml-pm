@@ -7,7 +7,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: Plan
   expr: !!perl/hash:TestML::Num
-    value: '4'
+    value: 4
 - !!perl/hash:TestML::Statement
   expr: !!perl/hash:TestML::Point
     name: foo
@@ -23,20 +23,20 @@ data:
 - !!perl/hash:TestML::Block
   label: Test 2
   points:
-    bar: '02134'
     foo: '02134'
+    bar: '02134'
 - !!perl/hash:TestML::Block
   label: Test 1
   points:
-    bar: '98122'
     foo: '98122'
+    bar: '98122'
 - !!perl/hash:TestML::Block
   label: Test 11
   points:
-    bar: '90210'
     foo: '90210'
+    bar: '90210'
 - !!perl/hash:TestML::Block
   label: Test 111
   points:
-    bar: '60067'
     foo: '60067'
+    bar: '60067'

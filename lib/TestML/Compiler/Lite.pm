@@ -107,7 +107,7 @@ sub parse_expression {
     while (not $self->done and $self->peek !~ /^($ENDING|$COMP)$/) {
         my $token = $self->pop;
         if ($token =~ /^$NUM$/) {
-            push @$calls, TestML::Num->new(value => $token);
+            push @$calls, TestML::Num->new(value => $token + 0);
         }
         elsif ($token =~/^$QSTR$/) {
             my $str = substr($token, 1, length($token) - 2);

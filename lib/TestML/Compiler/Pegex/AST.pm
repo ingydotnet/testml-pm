@@ -73,7 +73,7 @@ sub got_string_object {
 sub got_number_object {
     my ($self, $number) = @_;
     return TestML::Num->new(
-        value => $number,
+        value => $number + 0,
     );
 }
 
@@ -123,7 +123,7 @@ sub got_function_object {
     my ($self, $object) = @_;
 
     my $function = $self->function;
-    $self->{function} = $self->function->outer;
+    $self->{function} = $function->outer;
 
     if (ref($object->[0]) and ref($object->[0][0])) {
         $function->{signature} = $object->[0][0];

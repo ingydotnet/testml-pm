@@ -7,7 +7,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: Plan
   expr: !!perl/hash:TestML::Num
-    value: '11'
+    value: 11
 - !!perl/hash:TestML::Assignment
   name: Label
   expr: !!perl/hash:TestML::Str
@@ -27,7 +27,7 @@ statements:
   expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Num
-      value: '42'
+      value: 42
     - !!perl/hash:TestML::Call
       name: Type
   assert: !!perl/hash:TestML::Assertion
@@ -38,7 +38,7 @@ statements:
   expr: !!perl/hash:TestML::Expression
     calls:
     - !!perl/hash:TestML::Call
-      name: True
+      name: 'True'
     - !!perl/hash:TestML::Call
       name: Type
   assert: !!perl/hash:TestML::Assertion
@@ -51,11 +51,11 @@ statements:
     - !!perl/hash:TestML::Call
       args:
       - !!perl/hash:TestML::Num
-        value: '1'
+        value: 1
       - !!perl/hash:TestML::Num
-        value: '2'
+        value: 2
       - !!perl/hash:TestML::Num
-        value: '3'
+        value: 3
       name: List
     - !!perl/hash:TestML::Call
       name: Type
@@ -103,7 +103,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: n
   expr: !!perl/hash:TestML::Num
-    value: '42'
+    value: 42
 - !!perl/hash:TestML::Statement
   expr: !!perl/hash:TestML::Expression
     calls:
@@ -118,7 +118,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: b
   expr: !!perl/hash:TestML::Call
-    name: False
+    name: 'False'
 - !!perl/hash:TestML::Statement
   expr: !!perl/hash:TestML::Expression
     calls:

@@ -23,7 +23,7 @@ Title = "O HAI TEST";
 my $func = TestML::Compiler::Pegex->new->compile($testml);
 ok $func, 'TestML string matches against TestML grammar';
 is $func->namespace->{TestML}->value, '0.1.0', 'Version parses';
-is $func->statements->[0]->expr->value, '2', 'Plan parses';
+is $func->statements->[0]->expr->value, 2, 'Plan parses';
 is $func->statements->[1]->expr->value, 'O HAI TEST', 'Title parses';
 is $func->statements->[1]->expr->value, 'O HAI TEST', 'Title parses';
 

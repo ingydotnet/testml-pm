@@ -7,7 +7,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: Plan
   expr: !!perl/hash:TestML::Num
-    value: '4'
+    value: 4
 - !!perl/hash:TestML::Assignment
   name: Label
   expr: !!perl/hash:TestML::Str
@@ -41,18 +41,18 @@ data:
 - !!perl/hash:TestML::Block
   label: A Fruity Test
   points:
-    fruit: apple
     num: '14'
+    fruit: apple
     text: 'A Fruity Test: 14) The apple'
 - !!perl/hash:TestML::Block
   label: X
   points:
-    fruit: pear
     num: '21'
+    fruit: pear
     text: 'X: 21) The pear'
 - !!perl/hash:TestML::Block
   label: Last Test
   points:
-    fruit: tomato
     num: '99'
+    fruit: tomato
     text: 'Last Test: 99) The tomato'

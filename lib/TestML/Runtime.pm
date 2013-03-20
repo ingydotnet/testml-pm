@@ -283,21 +283,22 @@ sub initialize_runtime {
 sub get_label {
     my ($self) = @_;
     my $label = $self->function->getvar('Label')->value;
-    sub label {
-        my ($self, $var) = @_;
-        my $block = $self->function->getvar('Block');
-        return $block->label if $var eq 'BlockLabel';
-        if (my $v = $block->points->{$var}) {
-            $v =~ s/\n.*//s;
-            $v =~ s/^\s*(.*?)\s*$/$1/;
-            return $v;
-        }
-        if (my $v = $self->function->getvar($var)) {
-            return $v->value;
-        }
-    }
-    $label =~ s/\$(\w+)/label($self, $1)/ge;
+    $label =~ s/\$(\w+)/$self->replace_label($1)/ge;
     return $label ? ($label) : ();
+}
+
+sub replace_label {
+    my ($self, $var) = @_;
+    my $block = $self->function->getvar('Block');
+    return $block->label if $var eq 'BlockLabel';
+    if (my $v = $block->points->{$var}) {
+        $v =~ s/\n.*//s;
+        $v =~ s/^\s*(.*?)\s*$/$1/;
+        return $v;
+    }
+    if (my $v = $self->function->getvar($var)) {
+        return $v->value;
+    }
 }
 
 sub read_testml_file {

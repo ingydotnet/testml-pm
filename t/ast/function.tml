@@ -7,7 +7,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: Plan
   expr: !!perl/hash:TestML::Num
-    value: '21'
+    value: 21
 - !!perl/hash:TestML::Assignment
   name: Label
   expr: !!perl/hash:TestML::Str
@@ -21,11 +21,11 @@ statements:
         value: Anonymous function never called
     - !!perl/hash:TestML::Statement
       expr: !!perl/hash:TestML::Call
-        name: True
+        name: 'True'
       assert: !!perl/hash:TestML::Assertion
         name: EQ
         expr: !!perl/hash:TestML::Call
-          name: False
+          name: 'False'
 - !!perl/hash:TestML::Assignment
   name: test1
   expr: !!perl/hash:TestML::Function
@@ -227,7 +227,7 @@ statements:
       assert: !!perl/hash:TestML::Assertion
         name: EQ
         expr: !!perl/hash:TestML::Num
-          value: '42'
+          value: 42
 - !!perl/hash:TestML::Statement
   expr: !!perl/hash:TestML::Call
       name: test4
@@ -235,26 +235,26 @@ statements:
       - !!perl/hash:TestML::Call
           name: test5
       - !!perl/hash:TestML::Num
-        value: '42'
+        value: 42
 
 data:
 - !!perl/hash:TestML::Block
   label: Red Apple
   points:
-    color: red
     fruit: apple
+    color: red
     thing: apple->red
 - !!perl/hash:TestML::Block
   label: Orange Orange
   points:
-    color: orange
     fruit: orange
+    color: orange
     thing: orange->orange
 - !!perl/hash:TestML::Block
   label: Green Grape
   points:
-    color: green
     fruit: grape
+    color: green
     thing: grape->green
 - !!perl/hash:TestML::Block
   label: One

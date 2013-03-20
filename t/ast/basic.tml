@@ -10,7 +10,7 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: Plan
   expr: !!perl/hash:TestML::Num
-    value: '4'
+    value: 4
 - !!perl/hash:TestML::Statement
   assert: !!perl/hash:TestML::Assertion
     name: EQ
