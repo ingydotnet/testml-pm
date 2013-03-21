@@ -21,16 +21,12 @@ sub BUILD {
 
 sub run {
     my ($self) = @_;
-
     $self->compile_testml;
     $self->initialize_runtime;
-
-    $self->run_function(
-        $self->{function},  # top level testml function
-        [],                 # function arguments
-    );
+    $self->run_function($self->{function}, []);
 }
 
+# TODO Functions should have return values
 sub run_function {
     my ($self, $function, $args) = @_;
 
@@ -48,7 +44,7 @@ sub run_function {
         }
     }
     $self->{function} = $parent;
-    return TestML::None->new;
+    return;
 }
 
 sub apply_signature {
@@ -148,8 +144,8 @@ sub run_call {
         my $callable =
             $self->function->getvar($name) ||
             $self->get_point($name) ||
-            $self->lookup_callable($name)
-                or die "Can't locate '$name' callable";
+            $self->lookup_callable($name) ||
+                die "Can't locate '$name' callable";
         if ($callable->isa('TestML::Object')) {
             return $callable;
         }
@@ -157,8 +153,15 @@ sub run_call {
         $call->{args} ||= [];
         my $args = [map $self->run_expression($_), @{$call->args}];
         unshift @$args, $context if $context;
-        if ($callable->isa('TestML::Native')) {
-            return $self->run_native($callable, $args);
+        if ($callable->isa('TestML::Callable')) {
+            my $value = eval { $callable->value->(@$args) };
+            if ($@) {
+                $self->{error} = $@;
+                return TestML::Error->new(value => $@);
+            }
+            die "'$name' did not return a TestML::Object object"
+                unless UNIVERSAL::isa($value, 'TestML::Object');
+            return $value;
         }
         if ($callable->isa('TestML::Function')) {
             return $self->run_function($callable, $args);
@@ -173,7 +176,7 @@ sub lookup_callable {
     for my $library (@{$self->function->getvar('Library')->value}) {
         if ($library->can($name)) {
             my $function = sub { $library->$name(@_) };
-            my $callable = TestML::Native->new(value => $function);
+            my $callable = TestML::Callable->new(value => $function);
             $self->function->setvar($name, $callable);
             return $callable;
         }
@@ -189,23 +192,6 @@ sub get_point {
         $value = '';
     }
     return TestML::Str->new(value => $value);
-}
-
-sub run_native {
-    my ($self, $native, $args) = @_;
-    my $value = eval {
-        $native->value->(@$args)
-    };
-    if ($@) {
-        $self->{error} = $@;
-        return TestML::None->new;
-    }
-    elsif (UNIVERSAL::isa($value, 'TestML::Object')) {
-        return $value;
-    }
-    else {
-        return $self->object_from_native($value);
-    }
 }
 
 sub select_blocks {
@@ -227,18 +213,6 @@ sub select_blocks {
         last if exists $points{LAST};
     }
     return $selected;
-}
-
-sub object_from_native {
-    my ($self, $value) = @_;
-    return
-        not(defined $value) ? TestML::None->new :
-        ref($value) eq 'ARRAY' ? TestML::List->new(value => $value) :
-        $value =~ /^-?\d+$/ ? TestML::Num->new(value => $value + 0) :
-        "$value" eq "$TestML::Constant::True" ? $value :
-        "$value" eq "$TestML::Constant::False" ? $value :
-        "$value" eq "$TestML::Constant::None" ? $value :
-        TestML::Str->new(value => $value);
 }
 
 sub compile_testml {
@@ -282,9 +256,10 @@ sub initialize_runtime {
 
 sub get_label {
     my ($self) = @_;
-    my $label = $self->function->getvar('Label')->value;
+    my $label = $self->function->getvar('Label') or return;
+    $label = $label->value or return;
     $label =~ s/\$(\w+)/$self->replace_label($1)/ge;
-    return $label ? ($label) : ();
+    return $label;
 }
 
 sub replace_label {
@@ -380,6 +355,11 @@ has name => ();
 has args => ();
 
 #-----------------------------------------------------------------------------
+package TestML::Callable;
+use TestML::Base;
+has value => ();
+
+#-----------------------------------------------------------------------------
 package TestML::Block;
 use TestML::Base;
 
@@ -469,14 +449,14 @@ sub bool { $TestML::Constant::False }
 sub list { TestML::List->new(value => []) }
 
 #-----------------------------------------------------------------------------
-package TestML::Error;
+package TestML::Native;
 use TestML::Base;
 extends 'TestML::Object';
 
 #-----------------------------------------------------------------------------
-package TestML::Native;
+package TestML::Error;
 use TestML::Base;
-has value => ();
+extends 'TestML::Object';
 
 #-----------------------------------------------------------------------------
 package TestML::Constant;

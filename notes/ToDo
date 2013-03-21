@@ -48,7 +48,7 @@
 - Add a standard call for data parse
 
 - Allow quotes for line points
-- Support Native objects
++ Support Native objects
 
 == Runtime
 - Run the 'plan' right away (not as a side-effect of the first test)

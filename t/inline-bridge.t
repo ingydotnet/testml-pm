@@ -1,9 +1,10 @@
 use TestML;
+use TestML::Util;
 TestML->new->run;
 
 sub upper {
     my ($self, $string) = @_;
-    return uc($string->value);
+    return str uc($string->value);
 }
 
 __DATA__
