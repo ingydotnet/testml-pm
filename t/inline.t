@@ -1,4 +1,4 @@
-use lib 't/lib';
+use lib 't';
 use TestML;
 use TestMLBridge;
 

@@ -5,7 +5,7 @@ package TestML::Runtime::TAP;
 use TestML::Base;
 extends 'TestML::Runtime';
 
-has test_framework => sub { Test::Builder->new };
+has tap_object => sub { Test::Builder->new };
 has planned => 0;
 
 sub run {
@@ -35,31 +35,31 @@ sub title {
     if (my $title = $self->function->getvar('Title')) {
         $title = $title->value;
         $title = "=== $title ===\n";
-        $self->test_framework->note($title);
+        $self->tap_object->note($title);
     }
 }
 
 sub skip_test {
     my ($self, $reason) = @_;
-    $self->test_framework->plan(skip_all => $reason);
+    $self->tap_object->plan(skip_all => $reason);
 }
 
 sub plan_begin {
     my ($self) = @_;
     if (my $tests = $self->function->getvar('Plan')) {
-        $self->test_framework->plan(tests => $tests->value);
+        $self->tap_object->plan(tests => $tests->value);
     }
 }
 
 sub plan_end {
     my ($self) = @_;
-    $self->test_framework->done_testing();
+    $self->tap_object->done_testing();
 }
 
 # TODO Use Test::Diff here.
 sub assert_EQ {
     my ($self, $got, $want) = @_;
-    $self->test_framework->is_eq(
+    $self->tap_object->is_eq(
         $got->str->value,
         $want->str->value,
         $self->get_label,
@@ -78,14 +78,14 @@ Failed TestML HAS (~~) assertion. This text:
 does not contain this string:
 '$has'
 ...
-        $self->test_framework->diag($msg);
+        $self->tap_object->diag($msg);
     }
-    $self->test_framework->ok($assertion, $self->get_label);
+    $self->tap_object->ok($assertion, $self->get_label);
 }
 
 sub assert_OK {
     my ($self, $got) = @_;
-    $self->test_framework->ok(
+    $self->tap_object->ok(
         $got->bool->value,
         $self->get_label,
     );

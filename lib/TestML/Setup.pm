@@ -45,6 +45,8 @@ sub setup {
         }
         if ($template) {
             (my $test = $file) =~ s/\.tml$/.t/;
+            $test = $conf->{test_file_prefix} . $test
+                if $conf->{test_file_prefix};
             $test = abs_path "$tests/$test";
             my $hash = {
                 file => $self->rel($t, $base),

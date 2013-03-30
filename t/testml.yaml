@@ -1,7 +1,7 @@
 source_testml_dir: ../../testml-tml
 local_testml_dir: ./testml
 test_file_template: |
-  use lib 't/lib';
+  use lib 't';
   use TestML;
   use TestMLBridge;
 
@@ -9,6 +9,7 @@ test_file_template: |
       testml => '[% file %]',
       bridge => 'TestMLBridge',
   )->run;
+test_file_prefix: testml_
 exclude_testml_files:
 - comments.tml
 - data.tml

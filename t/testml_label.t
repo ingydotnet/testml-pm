@@ -1,8 +1,8 @@
-use lib 't/lib';
+use lib 't';
 use TestML;
 use TestMLBridge;
 
 TestML->new(
-    testml => 'testml/truth.tml',
+    testml => 'testml/label.tml',
     bridge => 'TestMLBridge',
 )->run;

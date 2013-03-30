@@ -3,6 +3,6 @@ use TestML;
 use TestMLBridge;
 
 TestML->new(
-    testml => 'testml/standard.tml',
+    testml => 'testml/markers.tml',
     bridge => 'TestMLBridge',
 )->run;

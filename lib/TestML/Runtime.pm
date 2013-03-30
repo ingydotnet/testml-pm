@@ -5,16 +5,15 @@ has testml => ();
 has bridge => ();
 has library => ();
 has compiler => ();
-has base => ();
 has skip => ();
 
 has function => ();
 has error => ();
 has global => ();
+has base => ();
 
 sub BUILD {
     my ($self) = @_;
-    # Put current Runtime singleton object into a global variable.
     $TestML::Runtime::Singleton = $self;
     $self->{base} ||= $0 =~ m!(.*)/! ? $1 : ".";
 }
