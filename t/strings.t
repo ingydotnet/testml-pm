@@ -1,5 +1,7 @@
 use TestML;
-TestML->new->run;
+TestML->new(
+    testml => join('', <DATA>),
+)->run;
 
 __DATA__
 %TestML 0.1.0

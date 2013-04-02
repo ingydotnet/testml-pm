@@ -3,6 +3,7 @@ use TestML;
 use TestMLBridge;
 
 TestML->new(
+    testml => join('', <DATA>),
     bridge => 'TestMLBridge',
 )->run;
 

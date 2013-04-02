@@ -9,11 +9,7 @@ has runtime => ();
 has compiler => ();
 has bridge => ();
 has library => ();
-has testml => sub {
-    local $/;
-    no warnings 'once';
-    return <main::DATA>;
-};
+has testml => ();
 
 sub run {
     my ($self) = @_;
@@ -37,11 +33,8 @@ sub set_default_classes {
         $self->{compiler} = 'TestML::Compiler::Pegex';
     }
     if (not $self->bridge) {
-        $self->{bridge} = 'main';
-        if (not @main::ISA) {
-            require TestML::Bridge;
-            @main::ISA = ('TestML::Bridge');
-        }
+        require TestML::Bridge;
+        $self->{bridge} = 'TestML::Bridge';
     }
     if (not $self->library) {
         require TestML::Library::Standard;
