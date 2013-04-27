@@ -311,7 +311,18 @@ sub make_tree {
       '.rgx' => qr/\G(?:"((?:[^\n\\"]|\\"|\\\\|\\[0nt])*?)")/
     },
     'ending' => {
-      '.rgx' => qr/\G(?:;|\r?\n)/
+      '.any' => [
+        {
+          '.rgx' => qr/\G(?:;|\r?\n)/
+        },
+        {
+          '+asr' => 1,
+          '.ref' => 'ending2'
+        }
+      ]
+    },
+    'ending2' => {
+      '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\}/
     },
     'function_object' => {
       '.all' => [
