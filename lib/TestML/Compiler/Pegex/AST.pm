@@ -70,6 +70,12 @@ sub got_string_object {
     );
 }
 
+sub got_double_quoted_string {
+    my ($self, $string) = @_;
+    $string =~ s/\\n/\n/g;
+    return $string;
+}
+
 sub got_number_object {
     my ($self, $number) = @_;
     return TestML::Num->new(

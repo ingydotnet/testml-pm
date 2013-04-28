@@ -105,6 +105,12 @@ sub Strip {
     return str $string;
 }
 
+sub Print {
+    my ($self, $string) = @_;
+    print STDOUT $string->value;
+    return bool(1);
+}
+
 1;
 
 # sub Chomp {
@@ -168,11 +174,6 @@ sub Strip {
 #     my $text = do { local $/; <FILE> };
 #     close FILE;
 #     return str($text);
-# }
-
-# sub Print {
-#     my ($self, $string) = @_;
-#     print STDOUT $string->value;
 # }
 
 # sub Pass {
