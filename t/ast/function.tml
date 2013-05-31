@@ -126,6 +126,9 @@ statements:
 - !!perl/hash:TestML::Assignment
   name: test2
   expr: !!perl/hash:TestML::Function
+    signature:
+    - color
+    - thing
     statements:
     - !!perl/hash:TestML::Statement
       expr: !!perl/hash:TestML::Call

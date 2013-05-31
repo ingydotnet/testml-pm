@@ -142,7 +142,6 @@ sub run_call {
         my $name = $call->name;
         my $callable =
             $self->function->getvar($name) ||
-            $self->get_point($name) ||
             $self->lookup_callable($name) ||
                 die "Can't locate '$name' callable";
         if ($callable->isa('TestML::Object')) {
