@@ -11,7 +11,7 @@ test_file_template: |
       bridge => 'TestMLBridge',
       compiler => 'TestML::Compiler::Lite',
   )->run;
-test_file_prefix: testml_lite_
+test_file_prefix: testml-lite-
 include_testml_files:
 - arguments.tml
 - basic.tml
