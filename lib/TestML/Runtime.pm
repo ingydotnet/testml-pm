@@ -219,9 +219,9 @@ sub compile_testml {
     die "'testml' document required but not found"
         unless $self->testml;
     if ($self->testml !~ /\n/) {
-        $self->testml =~ /(.*)\/(.*)/ or die;
+        $self->testml =~ /(?:(.*)\/)?(.*)/ or die;
         $self->{testml} = $2;
-        $self->{base} = $self->base . '/' . $1;
+        $self->{base} .= '/' . $1 if $1;
         $self->{testml} = $self->read_testml_file($self->testml);
     }
     $self->{function} = $self->compiler->new->compile($self->testml)

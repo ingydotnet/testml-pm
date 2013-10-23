@@ -1,7 +1,6 @@
 # BEGIN { $Pegex::Parser::Debug = 1 }
-# use Test::Differences; *is = \&eq_or_diff;
+use Test::Differences; *is = \&eq_or_diff;
 use Test::More;
-use Test::Diff;
 use strict;
 
 BEGIN {
