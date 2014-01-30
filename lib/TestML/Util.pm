@@ -5,7 +5,9 @@ use TestML::Runtime;
 package TestML::Util;
 
 use Exporter 'import';
-our @EXPORT = qw( list str num bool none native );
+our @EXPORT = qw( runtime list str num bool none native );
+
+sub runtime { $TestML::Runtime::Singleton }
 
 sub list { TestML::List->new(value => $_[0]) }
 sub str { TestML::Str->new(value => $_[0]) }

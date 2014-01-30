@@ -26,6 +26,7 @@ sub use_testml {
     my ($self) = @_;
 
     $self->include('Pegex::Grammar');
+    $self->include('Pegex::Base');
     $self->include('Pegex::Input');
     $self->include('Pegex::Parser');
     $self->include('Pegex::Tree');
@@ -33,13 +34,16 @@ sub use_testml {
 
     $self->include('TestML');
     $self->include('TestML::Base');
-    $self->include('TestML::AST');
+    $self->include('TestML::Bridge');
     $self->include('TestML::Compiler');
-    $self->include('TestML::Grammar');
+    $self->include('TestML::Compiler::Pegex');
+    $self->include('TestML::Compiler::Pegex::AST');
+    $self->include('TestML::Compiler::Pegex::Grammar');
     $self->include('TestML::Library::Debug');
     $self->include('TestML::Library::Standard');
     $self->include('TestML::Runtime');
     $self->include('TestML::Runtime::TAP');
+    $self->include('TestML::Util');
 }
 
 sub testml_setup {
