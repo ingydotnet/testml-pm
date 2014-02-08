@@ -184,8 +184,8 @@ sub lookup_callable {
 
 sub get_point {
     my ($self, $name) = @_;
-    my $value = $self->function->getvar('Block')->{points}{$name}
-        // return;
+    my $value = $self->function->getvar('Block')->{points}{$name};
+    defined $value or return;
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }

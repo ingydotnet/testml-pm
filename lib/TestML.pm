@@ -1,5 +1,3 @@
-use 5.006001;
-
 package TestML;
 use TestML::Base;
 
