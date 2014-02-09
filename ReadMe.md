@@ -72,7 +72,7 @@ Ingy döt Net <ingy@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
-Copyright (c) 2009-2013. Ingy döt Net.
+Copyright (c) 2009-2014. Ingy döt Net.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
