@@ -1,4 +1,9 @@
 ---
+version: 0.30
+date:    Mon Feb 10 15:09:39 PST 2014
+changes:
+- Make sure Capture::Tiny is available for testing.
+---
 version: 0.29
 date:    Sat Feb  8 19:22:48 PST 2014
 changes:
