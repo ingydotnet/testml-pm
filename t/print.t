@@ -1,6 +1,12 @@
 use strict;
-use Test::More tests => 1;
-use Capture::Tiny ':all';
+use Test::More;
+
+BEGIN {
+    if (not eval "use Capture::Tiny ':all'; 1") {
+        plan skip_all => "requires Capture::Tiny";
+    }
+    plan tests => 1;
+}
 
 my ($out, $err) = capture {
     system $^X, '-Ilib', 't/script/hello.pl';
