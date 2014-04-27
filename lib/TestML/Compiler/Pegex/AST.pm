@@ -94,6 +94,9 @@ sub got_point_object {
 
 sub got_assertion_call {
     my ($self, $call) = @_;
+    # XXX $call strangley becomes an array when $PERL_PEGEX_DEBUG is on.
+    # Workaround for now, until I figure it out.
+    $call = $call->[0] if ref $call eq 'ARRAY';
     my ($name, $expr);
     for (qw( eq has ok )) {
         if ($expr = $call->{"assertion_$_"}) {
