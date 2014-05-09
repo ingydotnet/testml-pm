@@ -189,6 +189,7 @@ sub get_point {
     if ($value =~ s/\n+\z/\n/ and $value eq "\n") {
         $value = '';
     }
+    $value =~ s/^\\//gm;
     return TestML::Str->new(value => $value);
 }
 
