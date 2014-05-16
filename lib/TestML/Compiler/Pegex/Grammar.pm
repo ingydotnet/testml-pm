@@ -176,11 +176,24 @@ sub make_tree {
           '.rgx' => qr/\G\((?:[\ \t]|\r?\n|\#.*\r?\n)*/
         },
         {
-          '+min' => 0,
-          '.ref' => 'call_argument',
-          '.sep' => {
-            '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*/
-          }
+          '+max' => 1,
+          '-flat' => 1,
+          '.all' => [
+            {
+              '.ref' => 'call_argument'
+            },
+            {
+              '+min' => 0,
+              '.all' => [
+                {
+                  '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*/
+                },
+                {
+                  '.ref' => 'call_argument'
+                }
+              ]
+            }
+          ]
         },
         {
           '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*\)/
@@ -382,11 +395,23 @@ sub make_tree {
       '.rgx' => qr/\G([a-zA-Z]\w*)/
     },
     'function_variables' => {
-      '+min' => 1,
-      '.ref' => 'function_variable',
-      '.sep' => {
-        '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*/
-      }
+      '-flat' => 1,
+      '.all' => [
+        {
+          '.ref' => 'function_variable'
+        },
+        {
+          '+min' => 0,
+          '.all' => [
+            {
+              '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*/
+            },
+            {
+              '.ref' => 'function_variable'
+            }
+          ]
+        }
+      ]
     },
     'lines_point' => {
       '.all' => [
