@@ -1,4 +1,6 @@
-use lib 't';
+use strict;
+use File::Basename;
+use lib dirname(__FILE__);
 use TestML;
 use TestML::Compiler::Lite;
 use TestMLBridge;
