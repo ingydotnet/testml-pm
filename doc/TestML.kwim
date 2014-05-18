@@ -46,7 +46,7 @@ To run this test you would have a normal test file that looks like this:
 The apply_* functions are defined in the bridge class that is specified outside
 this test (`t/Bridge.pm`).
 
-=head1 Description
+= Description
 
 TestML is a generic, programming language agnostic, meta language for writing
 unit tests. The idea is that you can use the same test files in multiple
@@ -62,7 +62,7 @@ In Perl 5, TestML is the evolution of the [Test::Base] module. It has a
 superset of Test:Base's goals. The data markup syntax is currently exactly the
 same as Test::Base.
 
-=head1 See Also
+= See Also
 
 * [http://www.testml.org/]
 * [irc://irc.freenode.net#testml]

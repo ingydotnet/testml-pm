@@ -1,4 +1,10 @@
 ---
+version: 0.31
+date:    Sun May 18 01:08:48 PDT 2014
+changes:
+- Upgrade to Pegex 0.30
+- Change to new release setup
+---
 version: 0.30
 date:    Mon Feb 10 15:09:39 PST 2014
 changes:

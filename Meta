@@ -1,0 +1,38 @@
+=meta: 0.0.1
+
+name: TestML
+version: 0.31
+abstract: A Generic Software Testing Meta Language
+homepage: http://testml.org
+
+license: perl
+copyright: 2010, 2011, 2012, 2013, 2014. Ingy döt Net.
+author:
+  name: Ingy döt Net
+  email: ingy@cpan.org
+  github: ingydotnet
+  twitter: ingydotnet
+  freenode: ingy
+  homepage: http://ingy.net
+
+requires:
+  perl: 5.8.1
+  Pegex: 0.30
+test:
+  requires:
+    Capture::Tiny: 0
+  cmd: prove -lv test/
+
+devel:
+  git: git@github.org/ingydotnet/testml-pm
+  irc: irc.freenode.net/testml
+  bug: https://github.com/ingydotnet/testml-pm/issues/
+
+=cpan:
+  ourpkgversion: 1
+
+=travis: perl
+
+# XXX need to generate TestML shims:
+# perl -Ilib -MTestML::Setup -e 'TestML::Setup->new->setup(shift)' t/testml.yaml
+# perl -Ilib -MTestML::Setup -e 'TestML::Setup->new->setup(shift)' t/testml-lite.yaml
