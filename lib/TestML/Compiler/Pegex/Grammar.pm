@@ -177,13 +177,13 @@ sub make_tree {
         },
         {
           '+max' => 1,
-          '-flat' => 1,
           '.all' => [
             {
               '.ref' => 'call_argument'
             },
             {
               '+min' => 0,
+              '-flat' => 1,
               '.all' => [
                 {
                   '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*/
@@ -395,13 +395,13 @@ sub make_tree {
       '.rgx' => qr/\G([a-zA-Z]\w*)/
     },
     'function_variables' => {
-      '-flat' => 1,
       '.all' => [
         {
           '.ref' => 'function_variable'
         },
         {
           '+min' => 0,
+          '-flat' => 1,
           '.all' => [
             {
               '.rgx' => qr/\G(?:[\ \t]|\r?\n|\#.*\r?\n)*,(?:[\ \t]|\r?\n|\#.*\r?\n)*/
