@@ -1,6 +1,5 @@
 # XXX This module should be deprecated or at least moved to a separate dist.
 package Module::Install::TestML;
-# VERSION
 
 use strict;
 use warnings;

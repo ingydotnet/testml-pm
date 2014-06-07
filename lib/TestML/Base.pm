@@ -1,5 +1,4 @@
 package TestML::Base;
-#VERSION
 
 # use Mo qw'build default builder xxx import';
 #   The following line of code was produced from the previous line by

@@ -1,6 +1,4 @@
-# ABSTRACT: A Generic Software Testing Meta Language
 package TestML;
-# VERSION
 
 use TestML::Base;
 

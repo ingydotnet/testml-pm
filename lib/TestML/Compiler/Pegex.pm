@@ -1,4 +1,5 @@
 package TestML::Compiler::Pegex;
+
 use TestML::Base;
 extends 'TestML::Compiler';
 

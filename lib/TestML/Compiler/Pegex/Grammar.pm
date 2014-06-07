@@ -1,4 +1,5 @@
 package TestML::Compiler::Pegex::Grammar;
+
 use TestML::Base;
 extends 'Pegex::Grammar';
 

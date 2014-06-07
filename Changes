@@ -1,4 +1,10 @@
 ---
+version: 0.32
+date:    Sat Jun  7 10:05:42 PDT 2014
+changes:
+- zild release
+- Switch to PkgVersion
+---
 version: 0.31
 date:    Sun May 18 01:08:48 PDT 2014
 changes:

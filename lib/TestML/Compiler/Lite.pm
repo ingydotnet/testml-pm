@@ -1,4 +1,5 @@
 package TestML::Compiler::Lite;
+
 use TestML::Base;
 extends 'TestML::Compiler';
 

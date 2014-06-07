@@ -1,7 +1,7 @@
 =meta: 0.0.1
 
 name: TestML
-version: 0.31
+version: 0.32
 abstract: A Generic Software Testing Meta Language
 homepage: http://testml.org
 
@@ -27,9 +27,6 @@ devel:
   git: git@github.org/ingydotnet/testml-pm
   irc: irc.freenode.net/testml
   bug: https://github.com/ingydotnet/testml-pm/issues/
-
-=cpan:
-  ourpkgversion: 1
 
 =travis: perl
 
