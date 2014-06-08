@@ -1,4 +1,9 @@
 ---
+version: 0.33
+date:    Sun Jun  8 12:31:30 PDT 2014
+changes:
+- Add badges
+---
 version: 0.32
 date:    Sat Jun  7 10:05:42 PDT 2014
 changes:

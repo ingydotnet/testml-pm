@@ -3,6 +3,10 @@ TestML::Setup
 
 Generate Test Files for a TestML Suite
 
+<badge-travis ingydotnet/testml-pm>
+
+<badge-coveralls ingydotnet/testml-pm>
+
 = Synopsis
 
   perl -MTestML::Setup -e setup testml.yaml
