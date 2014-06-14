@@ -10,6 +10,10 @@ See http://github.com/ingydotnet/kwim-pm#readme
 
 TestML - A Generic Software Testing Meta Language
 
+=for html
+<a href="https://travis-ci.org/ingydotnet/testml-pm"><img src="https://travis-ci.org/ingydotnet/testml-pm.png" alt="testml-pm"></a>
+<a href="https://coveralls.io/r/ingydotnet/testml-pm?branch=master"><img src="https://coveralls.io/repos/ingydotnet/testml-pm/badge.png" alt="testml-pm"></a>
+
 =head1 SYNOPSIS
 
     # file t/testml/encode.tml

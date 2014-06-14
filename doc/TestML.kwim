@@ -3,6 +3,8 @@ TestML
 
 A Generic Software Testing Meta Language
 
+<badge travis coveralls ingydotnet/testml-pm>
+
 = Synopsis
 
   # file t/testml/encode.tml

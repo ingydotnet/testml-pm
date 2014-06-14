@@ -1,7 +1,7 @@
 =meta: 0.0.1
 
 name: TestML
-version: 0.33
+version: 0.34
 abstract: A Generic Software Testing Meta Language
 homepage: http://testml.org
 
@@ -28,7 +28,9 @@ devel:
   irc: irc.freenode.net/testml
   bug: https://github.com/ingydotnet/testml-pm/issues/
 
-=travis: perl
+=travis:
+  type: perl
+  irc: irc.freenode.net#testml
 
 # XXX need to generate TestML shims:
 # perl -Ilib -MTestML::Setup -e 'TestML::Setup->new->setup(shift)' t/testml.yaml

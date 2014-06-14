@@ -11,6 +11,7 @@ perl:
 install:
 - cpanm --quiet --notest
   Devel::Cover::Report::Coveralls
+  Capture::Tiny
   Pegex
 
 script:
@@ -20,3 +21,10 @@ script:
 
 after_success:
 - cover -report coveralls
+
+notifications:
+  irc:
+    channels:
+    - irc.freenode.net#testml
+    on_success: change
+    on_failure: always
