@@ -112,14 +112,14 @@ sub Print {
     return bool(1);
 }
 
-1;
+sub Chomp {
+    my ($self, $string) = @_;
+    my $value = $string->str->value;
+    chomp($value);
+    return str $value;
+}
 
-# sub Chomp {
-#     my ($self, $string) = @_;
-#     my $value = $string->str->value;
-#     chomp($value);
-#     return $value;
-# }
+1;
 
 # sub Has {
 #     my ($self, $string, $part) = @_;
