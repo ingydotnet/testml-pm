@@ -28,3 +28,8 @@ notifications:
     - irc.freenode.net#testml
     on_success: change
     on_failure: always
+
+# Hack to not run on tag pushes:
+branches:
+  except:
+  - /^v?[0-9]+\.[0-9]+/
