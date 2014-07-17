@@ -1,12 +1,12 @@
 =meta: 0.0.1
 
 name: TestML
-version: 0.36
+version: 0.37
 abstract: A Generic Software Testing Meta Language
 homepage: http://testml.org
 
 license: perl
-copyright: 2010, 2011, 2012, 2013, 2014. Ingy döt Net.
+copyright: 2010-2014. Ingy döt Net.
 author:
   name: Ingy döt Net
   email: ingy@cpan.org
@@ -18,15 +18,16 @@ author:
 requires:
   perl: 5.8.1
   Pegex: 0.30
+
 test:
   requires:
     Capture::Tiny: 0
   cmd: prove -lv test/
 
 devel:
-  git: git@github.org/ingydotnet/testml-pm
-  irc: irc.freenode.net/testml
-  bug: https://github.com/ingydotnet/testml-pm/issues/
+  git: https://github.com/ingydotnet/testml-pm
+  bug: https://github.com/ingydotnet/testml-pm/issues
+  irc: irc.freenode.net#testml
 
 =travis:
   type: perl
