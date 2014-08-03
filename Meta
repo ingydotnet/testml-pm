@@ -1,12 +1,12 @@
 =meta: 0.0.1
 
 name: TestML
-version: 0.38
+version: 0.39
 abstract: A Generic Software Testing Meta Language
 homepage: http://testml.org
 
 license: perl
-copyright: 2010-2014. Ingy döt Net.
+copyright: 2009-2014. Ingy döt Net.
 author:
   name: Ingy döt Net
   email: ingy@cpan.org

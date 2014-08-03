@@ -1,4 +1,9 @@
 ---
+version: 0.39
+date:    Sat Aug  2 23:55:37 PDT 2014
+changes:
+- Fix years in Meta
+---
 version: 0.38
 date:    Sat Aug  2 23:50:11 PDT 2014
 changes:
