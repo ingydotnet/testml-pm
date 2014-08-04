@@ -5,7 +5,7 @@ extends 'Pegex::Grammar';
 
 use constant file => '../testml-pgx/testml.pgx';
 
-sub make_tree {
+sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.43)
   {
     '+grammar' => 'testml',
     '+include' => 'atom',
@@ -465,7 +465,7 @@ sub make_tree {
       ]
     },
     'point_lines' => {
-      '.rgx' => qr/\G((?:(?!===|\-\-\-).*\r?\n)*)/
+      '.rgx' => qr/\G((?:(?!(?:===|\-\-\-)\ \w).*\r?\n)*)/
     },
     'point_marker' => {
       '.rgx' => qr/\G\-\-\-/

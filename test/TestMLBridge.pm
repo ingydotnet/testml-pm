@@ -30,4 +30,11 @@ sub f2 {
     return num $num * $num + $num;
 }
 
+sub replace_with_dots {
+    my ($self, $text) = @_;
+    $text = $text->value;
+    $text =~ s/\S/./g;
+    return str $text;
+}
+
 1;
