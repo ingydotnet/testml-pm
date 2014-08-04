@@ -1,4 +1,9 @@
 ---
+version: 0.41
+date:    Mon Aug  4 00:59:19 PDT 2014
+changes:
+- Finish doc to Swim
+---
 version: 0.40
 date:    Mon Aug  4 00:42:55 PDT 2014
 changes:
