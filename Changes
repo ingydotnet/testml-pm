@@ -1,4 +1,9 @@
 ---
+version: 0.42
+date:    Mon Aug  4 12:37:49 PDT 2014
+changes:
+- Support === and --- as text
+---
 version: 0.41
 date:    Mon Aug  4 00:59:19 PDT 2014
 changes:
