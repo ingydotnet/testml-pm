@@ -202,12 +202,15 @@ sub select_blocks {
     OUTER: for my $block (@{$self->function->data}) {
         my %points = %{$block->points};
         next if exists $points{SKIP};
-        for my $point (@$wanted) {
-            next OUTER unless exists $points{$point};
-        }
         if (exists $points{ONLY}) {
+            for my $point (@$wanted) {
+                return [] unless exists $points{$point};
+            }
             $selected = [$block];
             last;
+        }
+        for my $point (@$wanted) {
+            next OUTER unless exists $points{$point};
         }
         push @$selected, $block;
         last if exists $points{LAST};

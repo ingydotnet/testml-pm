@@ -1,4 +1,9 @@
 ---
+version: 0.44
+date:    Wed Aug 13 16:27:24 PDT 2014
+changes:
+- Fixd issue/4, proper ONLY handling
+---
 version: 0.43
 date:    Sat Aug  9 00:25:05 PDT 2014
 changes:
