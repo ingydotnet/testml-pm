@@ -1,4 +1,9 @@
 ---
+version: 0.46
+date:    Sat Aug 16 00:23:39 PDT 2014
+changes:
+- Move Module::Install::TestML out of dist
+---
 version: 0.45
 date:    Fri Aug 15 20:51:09 PDT 2014
 changes:
