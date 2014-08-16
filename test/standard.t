@@ -1,5 +1,4 @@
-use File::Basename;
-use lib dirname(__FILE__);
+use lib -e 't' ? 't' : 'test';
 use TestML;
 use TestMLBridge;
 

@@ -15,9 +15,8 @@ use TestML::Runtime;
 use TestML::Compiler::Pegex;
 use TestML::Compiler::Lite;
 use YAML::XS;
-use File::Basename;
 
-my $test_dir = dirname(__FILE__);
+my $t = -e 't' ? 't' : 'test';
 
 test('testml/arguments.tml', 'TestML::Compiler::Pegex');
 test('testml/assertions.tml', 'TestML::Compiler::Pegex');
@@ -40,12 +39,12 @@ test('testml/semicolons.tml', 'TestML::Compiler::Lite');
 sub test {
     my ($file, $compiler) = @_;
     (my $filename = $file) =~ s!(.*)/!!;
-    my $runtime = TestML::Runtime->new(base => "$test_dir/$1");
+    my $runtime = TestML::Runtime->new(base => "$t/$1");
     my $testml = $runtime->read_testml_file($filename);
     my $ast1 = $compiler->new->compile($testml);
     my $yaml1 = Dump($ast1);
 
-    my $ast2 = YAML::XS::LoadFile("$test_dir/ast/$filename");
+    my $ast2 = YAML::XS::LoadFile("$t/ast/$filename");
     my $yaml2 = Dump($ast2);
 
     is $yaml1, $yaml2, "$filename - $compiler";

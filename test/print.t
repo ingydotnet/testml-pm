@@ -1,6 +1,6 @@
 use strict;
+my $t; use lib ($t = -e 't' ? 't' : 'test');
 use Test::More;
-use File::Basename;
 
 BEGIN {
     if (not eval "use Capture::Tiny ':all'; 1") {
@@ -10,7 +10,7 @@ BEGIN {
 }
 
 my ($out, $err) = capture {
-    system $^X, '-Ilib', dirname(__FILE__).'/script/hello.pl';
+    system $^X, '-Ilib', "$t/script/hello.pl";
 };
 die "Run failed:\nstdout: $out\nstderr:$err\n" unless 0 == $?;
 
