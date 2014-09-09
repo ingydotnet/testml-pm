@@ -62,8 +62,11 @@ sub assert_EQ {
     my ($self, $got, $want) = @_;
     $got = $got->str->value;
     $want = $want->str->value;
+    my $block = $self->function->getvar('Block');
+    if (exists $block->points->{TODO}) {
+        $self->tap_object->todo_start;
+    }
     if ($got ne $want and $want =~ /\n/) {
-        my $block = $self->function->getvar('Block');
         my $diff = $self->function->getvar('Diff');
         if ($diff or exists $block->points->{DIFF}) {
             require Text::Diff;
@@ -78,11 +81,16 @@ sub assert_EQ {
             return;
         }
     }
-    $self->tap_object->is_eq(
-        $got,
-        $want,
-        $self->get_label,
-    );
+    else {
+        $self->tap_object->is_eq(
+            $got,
+            $want,
+            $self->get_label,
+        );
+    }
+    if (exists $block->points->{TODO}) {
+        $self->tap_object->todo_end;
+    }
 }
 
 sub assert_HAS {
