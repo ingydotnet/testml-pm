@@ -9,7 +9,7 @@ Generate Test Files for a TestML Suite
 
 = Synopsis
 
-  perl -MTestML::Setup -e setup testml.yaml
+  perl -MTestML::Setup -e setup t/testml.yaml
 
 = Description
 
