@@ -3,7 +3,7 @@ package TestML::Compiler::Pegex::Grammar;
 use TestML::Base;
 extends 'Pegex::Grammar';
 
-use constant file => '../testml-pgx/testml.pgx';
+use constant file => 'ext/testml-pgx/testml.pgx';
 
 sub make_tree {   # Generated/Inlined by Pegex::Grammar (0.43)
   {
