@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git@github.com:ingydotnet/testml-pgx
+	branch = master
+	commit = 2788a842221167f712b09535d58af02adb848733
+	parent = b68c96a8643bab99a5f0d104b521b01e3b1d5de1
+	cmdver = 0.1.0
