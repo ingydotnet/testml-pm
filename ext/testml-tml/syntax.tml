@@ -1,0 +1,35 @@
+%TestML 0.1.0
+
+Plan = 7
+
+compare(*testml, *testml1)
+compare(*testml, *testml2)
+compare(*testml, *testml3)
+compare(*testml, *testml4)
+
+compare = (one, two) ->
+    one.compile == two.compile
+
+=== Optional semi-colons
+--- testml
+Plan = 123;
+*a == *b;
+--- testml1
+Plan = 123; *a == *b;
+--- testml2
+Plan = 123; *a == *b
+--- testml3
+Plan = 123
+*a == *b
+
+=== Empty Function
+--- testml
+a = ->
+--- testml1
+a = {}
+--- testml2
+a = ()->
+--- testml3
+a = () ->
+--- testml4
+a = () {}

@@ -1,0 +1,39 @@
+%TestML 0.1.0
+
+Plan = 7
+
+compare(*testml)
+
+a b, c
+
+compare = ->
+    list = testml.SplitByBlankLines
+    ast = list.shift.compile.yaml
+    list.each (testml)->
+        $Label = '$BlockLabel - '
+            + testml.FirstLine.Chomp
+        ast == testml.compile.yaml
+
+=== Optional semi-colons
+--- testml
+Plan = 123;
+*a == *b;
+
+Plan = 123; *a == *b;
+
+Plan = 123; *a == *b
+
+Plan = 123
+*a == *b
+
+=== Empty Function
+--- testml
+a = ->
+
+a = {}
+
+a = ()->
+
+a = () ->
+
+a = () {}
