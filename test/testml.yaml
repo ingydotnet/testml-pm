@@ -2,13 +2,15 @@ source_testml_dir: ../../testml-tml
 local_testml_dir: ./testml
 test_file_prefix: testml-
 test_file_template: |
+  [% testml_setup_comment -%]
   use strict;
   use lib -e 't' ? 't' : 'test';
   use TestML;
   use TestMLBridge;
+  use File::Spec;
 
   TestML->new(
-      testml => '[% file %]',
+      testml => File::Spec->catfile(qw{[% path.join(' ') %]}),
       bridge => 'TestMLBridge',
   )->run;
 exclude_testml_files:
