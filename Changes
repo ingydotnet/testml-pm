@@ -1,4 +1,10 @@
 ---
+version: 0.50
+date:    Fri Dec 12 10:52:23 PST 2014
+changes:
+- Make TestML::Setup more clear
+- Share TestML grammar
+---
 version: 0.49
 date:    Sat Aug 16 12:46:47 PDT 2014
 changes:
