@@ -1,4 +1,9 @@
 ---
+version: 0.51
+date:    Sun Dec 14 12:53:02 PST 2014
+changes:
+- Fix a bug causing 000compile to fail
+---
 version: 0.50
 date:    Fri Dec 12 10:52:23 PST 2014
 changes:

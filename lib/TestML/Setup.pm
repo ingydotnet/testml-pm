@@ -5,7 +5,9 @@ use TestML::Base;
 use TestML();
 BEGIN {
     for (qw( YAML::XS IO::All Template::Toolkit::Simple )) {
-        eval "use $_; 1" or die "TestML::Setup requires $_:\n$@";
+        if (not $ENV{PERL_ZILD_TEST_000_COMPILE_MODULES}) {
+            eval "use $_; 1" or die "TestML::Setup requires $_:\n$@";
+        }
     }
 }
 use File::Basename;
