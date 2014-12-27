@@ -13,10 +13,13 @@ has error => ();
 has global => ();
 has base => ();
 
+use File::Basename();
+use File::Spec();
+
 sub BUILD {
     my ($self) = @_;
     $TestML::Runtime::Singleton = $self;
-    $self->{base} ||= $0 =~ m!(.*)/! ? $1 : ".";
+    $self->{base} ||= File::Basename::dirname($0);
 }
 
 sub run {
@@ -224,9 +227,9 @@ sub compile_testml {
     die "'testml' document required but not found"
         unless $self->testml;
     if ($self->testml !~ /\n/) {
-        $self->testml =~ /(?:(.*)\/)?(.*)/ or die;
-        $self->{testml} = $2;
-        $self->{base} .= '/' . $1 if $1;
+        my ($file, $dir) = File::Basename::fileparse($self->testml);
+        $self->{testml} = $file;
+        $self->{base} = File::Spec->catdir($self->{base}, $dir);
         $self->{testml} = $self->read_testml_file($self->testml);
     }
     $self->{function} = $self->compiler->new->compile($self->testml)
@@ -281,7 +284,7 @@ sub replace_label {
 
 sub read_testml_file {
     my ($self, $file) = @_;
-    my $path = $self->base . '/' . $file;
+    my $path = File::Spec->catfile($self->base, $file);
     open my $fh, $path
         or die "Can't open '$path' for input: $!";
     local $/;

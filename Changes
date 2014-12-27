@@ -1,4 +1,9 @@
 ---
+version: 0.52
+date:    Sat Dec 27 14:45:50 PST 2014
+changes:
+- Fix file path creation issues on MSWin32
+---
 version: 0.51
 date:    Sun Dec 14 12:53:02 PST 2014
 changes:
