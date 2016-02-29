@@ -14,7 +14,7 @@ my $WS = qr!\s+!;
 my $ANY = qr!.!;
 my $STAR = qr!\*!;
 my $NUM = qr!-?[0-9]+!;
-my $WORD = qr!\w+!;
+my $WORD = qr![-\w]+!;
 my $HASH = qr!#!;
 my $EQ = qr!=!;
 my $TILDE = qr!~!;
@@ -123,8 +123,10 @@ sub parse_expression {
         }
         elsif ($token =~ /^$POINT$/) {
             $token =~ /($WORD)/ or die;
-            push @{$self->{points}}, $1;
-            push @$calls, TestML::Point->new(name => $1);
+            $token = $1;
+            $token =~ s/-/_/g;
+            push @{$self->{points}}, $token;
+            push @$calls, TestML::Point->new(name => $token);
         }
         else {
             $self->fail("Unknown token '$token'");
@@ -169,10 +171,11 @@ sub compile_data {
         while (length $string_block) {
             next if $string_block =~ s/^\n+//;
             my ($key, $value);
-            if ($string_block =~ s/\A---\ +(\w+):\ +(.*)\n//g or
-                $string_block =~ s/\A---\ +(\w+)\n(.*?)(?=^---|\z)//msg
+            if ($string_block =~ s/\A---\ +($WORD):\ +(.*)\n//g or
+                $string_block =~ s/\A---\ +($WORD)\n(.*?)(?=^---|\z)//msg
             ) {
                 ($key, $value) = ($1, $2);
+                $key =~ s/-/_/g;
             }
             else {
                 die "Failed to parse TestML string:\n$string_block";
