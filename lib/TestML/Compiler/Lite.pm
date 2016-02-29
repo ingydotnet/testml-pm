@@ -35,6 +35,9 @@ my $PUNCT = qr!(?:$LP|$RP|$DOT|$COMMA|$SEMI)!;
 
 my $TOKENS = qr!(?:$POINT|$NUM|$WORD|$QSTR|$PUNCT|$OPER)!;
 
+our $block_marker = '===';
+our $point_marker = '---';
+
 sub compile_code {
     my ($self) = @_;
     $self->{function} = TestML::Function->new;
@@ -157,7 +160,7 @@ sub compile_data {
     my $input = $self->data;
     $input =~ s/^#.*\n/\n/mg;
     $input =~ s/^\\//mg;
-    my @blocks = grep $_, split /(^===.*?(?=^===|\z))/ms, $input;
+    my @blocks = grep $_, split /(^$block_marker.*?(?=^$block_marker|\z))/ms, $input;
     for my $block (@blocks) {
         $block =~ s/\n+\z/\n/;
     }
@@ -165,14 +168,16 @@ sub compile_data {
     my $data = [];
     for my $string_block (@blocks) {
         my $block = TestML::Block->new;
-        $string_block =~ s/^===\ +(.*?)\ *\n//g
+        $string_block =~ s/^$block_marker\ +(.*?)\ *\n//g
             or die "No block label! $string_block";
         $block->{label} = $1;
+        $string_block =~ s/\A(.*?)(^$point_marker\ )/$2/sm;
         while (length $string_block) {
             next if $string_block =~ s/^\n+//;
             my ($key, $value);
-            if ($string_block =~ s/\A---\ +($WORD):\ +(.*)\n//g or
-                $string_block =~ s/\A---\ +($WORD)\n(.*?)(?=^---|\z)//msg
+            if ($string_block =~ s/\A$point_marker\ +($WORD):\ +(.*)\n//g or
+                $string_block =~
+                    s/\A$point_marker\ +($WORD)\n(.*?)(?=^$point_marker|\z)//msg
             ) {
                 ($key, $value) = ($1, $2);
                 $key =~ s/-/_/g;
