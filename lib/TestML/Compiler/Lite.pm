@@ -186,6 +186,10 @@ sub compile_data {
                 die "Failed to parse TestML string:\n$string_block";
             }
             $block->{points} ||= {};
+            $value =~ s/(\r?\n)\s*\z//;
+            if (length $value) {
+                $value .= $1;
+            }
             $block->{points}{$key} = $value;
 
             if ($key =~ /^(ONLY|SKIP|LAST)$/) {
