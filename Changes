@@ -1,4 +1,10 @@
 ---
+version: 0.53
+date:    Fri Jan  6 20:20:13 CET 2017
+changes:
+- Support configable markers in Lite compiler
+- Allow dashes in words
+---
 version: 0.52
 date:    Sat Dec 27 14:45:50 PST 2014
 changes:
