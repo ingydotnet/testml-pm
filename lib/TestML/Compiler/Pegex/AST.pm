@@ -192,9 +192,12 @@ sub got_data_block {
 
 sub got_block_point {
     my ($self, $point) = @_;
-    return {
-        $point->[0] => $point->[1],
-    };
+    my ($name, $value) = @$point;
+    my $eol = ($value =~ s/(\r?\n)\s*\z//) ? $1 : '';
+    if (length $value) {
+        $value .= $eol;
+    }
+    return { $name => $value };
 }
 
 1;

@@ -186,9 +186,9 @@ sub compile_data {
                 die "Failed to parse TestML string:\n$string_block";
             }
             $block->{points} ||= {};
-            $value =~ s/(\r?\n)\s*\z//;
+            my $eol = ($value =~ s/(\r?\n)\s*\z//) ? $1 : '';
             if (length $value) {
-                $value .= $1;
+                $value .= $eol;
             }
             $block->{points}{$key} = $value;
 
