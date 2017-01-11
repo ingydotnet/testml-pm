@@ -1,4 +1,9 @@
 ---
+version: 0.54
+date:    Wed Jan 11 17:53:47 CET 2017
+changes:
+- Fix bug in lite compiler. \ being removed too early.
+---
 version: 0.53
 date:    Fri Jan  6 20:20:13 CET 2017
 changes:
