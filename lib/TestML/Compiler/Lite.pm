@@ -159,7 +159,6 @@ sub compile_data {
     my ($self) = @_;
     my $input = $self->data;
     $input =~ s/^#.*\n/\n/mg;
-    $input =~ s/^\\//mg;
     my @blocks = grep $_, split /(^$block_marker.*?(?=^$block_marker|\z))/ms, $input;
     for my $block (@blocks) {
         $block =~ s/\n+\z/\n/;
