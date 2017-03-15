@@ -197,6 +197,9 @@ sub got_block_point {
     if (length $value) {
         $value .= $eol;
     }
+    elsif ($name =~ /^(LAST|ONLY|SKIP)$/) {
+        $value = 1;
+    }
     return { $name => $value };
 }
 
