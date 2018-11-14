@@ -1,6 +1,6 @@
 ---
 version: 0.55
-date:    Tue Nov 13 21:42:37 PST 2018
+date:    Tue Nov 13 21:56:10 PST 2018
 changes:
 - Remove TestML from CPAN
 - Now installed from https://github.com/testml-lang/testml/
